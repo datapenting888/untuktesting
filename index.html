@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fenomena Alam - Aurora Borealis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        /* Latar Belakang dengan Efek Gradasi Bergerak (Fenomena Aurora) */
+        .hero-background {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 400% 400%;
+            animation: auroraEffect 15s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @keyframes auroraEffect {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Konten di atas latar belakang */
+        .content {
+            z-index: 2;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #e0e0e0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: #ffffff;
+            background: linear-gradient(45deg, #00b4db, #0083b0);
+            border-radius: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 180, 219, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 180, 219, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero-background">
+        <div class="content">
+            <h1>Fenomena Aurora Borealis</h1>
+            <p>Keajaiban alam berupa pancaran cahaya yang menyala-nyala di lapisan ionosfer bumi sebagai akibat dari interaksi antara medan magnetik planet tersebut dengan angin matahari.</p>
+            <a href="#jelajahi" class="btn">Pelajari Lebih Lanjut</a>
+        </div>
+    </div>
+
+</body>
+</html>
