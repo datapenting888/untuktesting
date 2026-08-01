@@ -3,102 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fenomena Alam - Aurora Borealis</title>
+    <title>Fenomena - Gold Aesthetic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #0c0c0c;
+            --card-bg: #141414;
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-dark: #aa7c11;
+            --text-main: #e0e0e0;
+            --text-muted: #999999;
+            --border-gold: rgba(212, 175, 55, 0.3);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body, html {
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Efek Kilau Background Halus */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #ffffff;
-            overflow: hidden;
+            background: radial-gradient(circle at 50% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
         }
 
-        /* Latar Belakang dengan Efek Gradasi Bergerak (Fenomena Aurora) */
-        .hero-background {
-            position: relative;
-            height: 100vh;
-            width: 100vw;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364, #1a2a6c, #b21f1f, #fdbb2d);
-            background-size: 400% 400%;
-            animation: auroraEffect 15s ease infinite;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        header {
             text-align: center;
-            padding: 20px;
+            padding: 80px 20px 40px 20px;
         }
 
-        @keyframes auroraEffect {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        /* Konten di atas latar belakang */
-        .content {
-            z-index: 2;
-            max-width: 800px;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 40px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+        .tagline {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--gold-light);
+            margin-bottom: 15px;
+            opacity: 0.8;
         }
 
         h1 {
-            font-size: 3rem;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-primary) 50%, var(--gold-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 20px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px 80px 20px;
+        }
+
+        /* Kartu Fenomena */
+        .phenomenon-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-gold);
+            border-radius: 12px;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .phenomenon-card:hover {
+            border-color: var(--gold-primary);
+            transform: translateY(-3px);
+        }
+
+        .phenomenon-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--gold-light);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--gold-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--gold-primary);
         }
 
         p {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        p.highlight {
+            font-style: italic;
+            color: var(--gold-light);
+            border-left: 2px solid var(--gold-primary);
+            padding-left: 15px;
+            margin: 25px 0;
+        }
+
+        .quote-box {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            font-family: 'Playfair Display', serif;
             font-size: 1.2rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
-            color: #e0e0e0;
+            color: var(--gold-light);
         }
 
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            font-size: 1rem;
-            font-weight: bold;
-            text-decoration: none;
-            color: #ffffff;
-            background: linear-gradient(45deg, #00b4db, #0083b0);
-            border-radius: 25px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 180, 219, 0.4);
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 180, 219, 0.6);
+        footer {
+            text-align: center;
+            padding: 30px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
     </style>
 </head>
 <body>
 
-    <div class="hero-background">
-        <div class="content">
-            <h1>Fenomena Aurora Borealis</h1>
-            <p>Keajaiban alam berupa pancaran cahaya yang menyala-nyala di lapisan ionosfer bumi sebagai akibat dari interaksi antara medan magnetik planet tersebut dengan angin matahari.</p>
-            <a href="#jelajahi" class="btn">Pelajari Lebih Lanjut</a>
+    <header>
+        <div class="tagline">Eksplorasi & Realitas</div>
+        <h1>Fenomena Semesta</h1>
+    </header>
+
+    <div class="container">
+        <div class="phenomenon-card">
+            <h2>Awal Mula & Latar Belakang</h2>
+            <p>
+                Setiap kejadian agung di alam semesta berakar dari sebuah anomali kecil—sebuah titik balik di mana keseimbangan lama runtuh demi melahirkan tatanan yang baru. Fenomena ini tidak hanya mencakup ruang fisik, tetapi juga pergeseran nilai dalam peradaban manusia yang bergerak secara senyap namun pasti.
+            </p>
+            <p class="highlight">
+                "Kemewahan sejati bukanlah tentang apa yang tampak berlebihan, melainkan bagaimana esensi dan kedalaman sebuah fenomena mampu memancarkan nilai abadi."
+            </p>
+            <p>
+                Melalui pendekatan estetika emas (*gold aesthetic*), latar belakang ini diterjemahkan sebagai simbol transformasi: dari tekanan gelap yang pekat, terbentuklah kilau keemasan yang bernilai tinggi, merepresentasikan ketahanan, kemegahan, dan pencerahan.
+            </p>
+
+            <div class="quote-box">
+                "Keindahan terbesar lahir dari proses yang paling sunyi."
+            </div>
         </div>
     </div>
+
+    <footer>
+        &copy; 2026 Gold Aesthetic Theme. All Rights Reserved.
+    </footer>
 
 </body>
 </html>
