@@ -3,187 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fenomena - Gold Aesthetic</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>Latar Belakang Gold Estetik</title>
     <style>
-        :root {
-            --bg-color: #0c0c0c;
-            --card-bg: #141414;
-            --gold-primary: #d4af37;
-            --gold-light: #f3e5ab;
-            --gold-dark: #aa7c11;
-            --text-main: #e0e0e0;
-            --text-muted: #999999;
-            --border-gold: rgba(212, 175, 55, 0.3);
-        }
-
+        /* Mengatur reset dasar dan memastikan layar penuh */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow-x: hidden;
-            line-height: 1.6;
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0b0906; /* Latar belakang gelap bernuansa mewah */
         }
 
-        /* Efek Kilau Background Halus */
-        body::before {
-            content: '';
-            position: fixed;
+        /* Kontainer Utama Efek Fenomena Emas */
+        .gold-phenomenon {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 50% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
+            background: linear-gradient(125deg, #1a1405, #33260a, #120d04);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            z-index: 1;
         }
 
-        header {
+        /* Lapisan Cahaya Berkilau (Glow & Particles Effect) */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: floatOrb 10s ease-in-out infinite alternate;
+            z-index: 2;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: #d4af37; /* Gold klasik */
+            top: -10%;
+            left: -10%;
+            animation-duration: 12s;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: #aa771c; /* Gold gelap/perunggu */
+            bottom: -20%;
+            right: -10%;
+            animation-duration: 15s;
+            animation-delay: -3s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: #ffd700; /* Gold terang */
+            top: 40%;
+            left: 40%;
+            opacity: 0.3;
+            animation-duration: 8s;
+            animation-delay: -5s;
+        }
+
+        /* Animasi Pergerakan Gradasi Latar Belakang */
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Animasi Mengambang untuk Bola Cahaya */
+        @keyframes floatOrb {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            50% {
+                transform: translate(50px, 80px) scale(1.1);
+            }
+            100% {
+                transform: translate(-30px, 50px) scale(0.9);
+            }
+        }
+
+        /* Konten Opsional di Atas Latar Belakang */
+        .content {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            padding: 80px 20px 40px 20px;
+            color: #f3e5ab;
+            padding: 0 20px;
         }
 
-        .tagline {
-            font-size: 0.85rem;
-            text-transform: uppercase;
+        .content h1 {
+            font-size: 3rem;
+            font-weight: 300;
             letter-spacing: 4px;
-            color: var(--gold-light);
             margin-bottom: 15px;
-            opacity: 0.8;
-        }
-
-        h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-primary) 50%, var(--gold-dark) 100%);
+            text-shadow: 0 2px 20px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(to right, #bf953f, #fc6, #fbf5b7, #f7ef8a, #aa771c);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 20px 80px 20px;
-        }
-
-        /* Kartu Fenomena */
-        .phenomenon-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-gold);
-            border-radius: 12px;
-            padding: 40px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-
-        .phenomenon-card:hover {
-            border-color: var(--gold-primary);
-            transform: translateY(-3px);
-        }
-
-        .phenomenon-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
-        }
-
-        h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            color: var(--gold-light);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        h2::before {
-            content: '';
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: var(--gold-primary);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--gold-primary);
-        }
-
-        p {
-            font-size: 1.05rem;
-            color: var(--text-main);
-            margin-bottom: 20px;
-            text-align: justify;
-        }
-
-        p.highlight {
-            font-style: italic;
-            color: var(--gold-light);
-            border-left: 2px solid var(--gold-primary);
-            padding-left: 15px;
-            margin: 25px 0;
-        }
-
-        .quote-box {
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            text-align: center;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            color: var(--gold-light);
-        }
-
-        footer {
-            text-align: center;
-            padding: 30px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        .content p {
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            color: #d1c7a3;
+            font-weight: 300;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="tagline">Eksplorasi & Realitas</div>
-        <h1>Fenomena Semesta</h1>
-    </header>
+    <!-- Elemen Latar Belakang Fenomena Gold -->
+    <div class="gold-phenomenon"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
 
-    <div class="container">
-        <div class="phenomenon-card">
-            <h2>Awal Mula & Latar Belakang</h2>
-            <p>
-                Setiap kejadian agung di alam semesta berakar dari sebuah anomali kecil—sebuah titik balik di mana keseimbangan lama runtuh demi melahirkan tatanan yang baru. Fenomena ini tidak hanya mencakup ruang fisik, tetapi juga pergeseran nilai dalam peradaban manusia yang bergerak secara senyap namun pasti.
-            </p>
-            <p class="highlight">
-                "Kemewahan sejati bukanlah tentang apa yang tampak berlebihan, melainkan bagaimana esensi dan kedalaman sebuah fenomena mampu memancarkan nilai abadi."
-            </p>
-            <p>
-                Melalui pendekatan estetika emas (*gold aesthetic*), latar belakang ini diterjemahkan sebagai simbol transformasi: dari tekanan gelap yang pekat, terbentuklah kilau keemasan yang bernilai tinggi, merepresentasikan ketahanan, kemegahan, dan pencerahan.
-            </p>
-
-            <div class="quote-box">
-                "Keindahan terbesar lahir dari proses yang paling sunyi."
-            </div>
-        </div>
+    <!-- Teks Contoh di Atas Latar Belakang -->
+    <div class="content">
+        <h1>ELEGANCE & LUXURY</h1>
+        <p>Fenomena Estetik Nuansa Keemasan</p>
     </div>
-
-    <footer>
-        &copy; 2026 Gold Aesthetic Theme. All Rights Reserved.
-    </footer>
 
 </body>
 </html>
