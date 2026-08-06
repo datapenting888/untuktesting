@@ -901,6 +901,8 @@
   color: var(--ds-text-primary);
   min-height: 100vh;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
 }
 
 .ds-scope .container {
@@ -913,6 +915,10 @@
   box-shadow: var(--ds-shadow);
   position: relative;
   overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .ds-scope .container::before {
@@ -993,6 +999,8 @@
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 10;
 }
 .ds-scope .left-controls {
     display: flex;
@@ -1102,9 +1110,16 @@
 
 .ds-scope .table-scroll {
   margin-top: 4px;
-  overflow-x: auto;
+  overflow: auto;
   border-radius: 12px;
   border: 1px solid var(--ds-border);
+  flex: 1;
+  min-height: 200px;
+}
+.ds-scope .table-scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 .ds-scope table {
   width: 100%;
@@ -1390,8 +1405,10 @@
   <!--
     Menu "DATA SCREENSHOT" — galeri untuk menyimpan & melihat screenshot
     (bukti taruhan/hasil, dll) langsung di dalam dashboard (lihat
-    <div id="pageDataScreenshot"> di bawah). Data disimpan di localStorage
-    browser (bukan server), jadi hanya tersimpan di perangkat/browser ini.
+    <div id="pageDataScreenshot"> di bawah). Data disimpan real-time di
+    Firebase Realtime Database (path "dataScreenshot"), sehingga tersinkron
+    otomatis antar perangkat/browser, dan otomatis terhapus sendiri setelah
+    3 minggu.
   -->
   <div class="nav-item" id="navDataScreenshot">
     <span class="icon">
@@ -3444,10 +3461,12 @@ setInterval(() => {
 
 <!--
   Halaman "DATA SCREENSHOT" — tabel data rekening & bukti screenshot
-  transaksi. Setiap baris tersimpan otomatis di localStorage browser
-  (kunci "transaksiRekeningData") dan otomatis terhapus sendiri setelah
-  3 minggu. Style-nya dibuat senada dengan menu "PERHITUNGAN BOLA PNG"
-  (nuansa gelap + aksen emas), lihat class ".ds-scope" di bawah.
+  transaksi. Setiap baris tersimpan REAL-TIME di Firebase Realtime Database
+  (path "dataScreenshot", pakai firebaseConfig yang sama dengan menu
+  "Result & Jadwal Pasaran"), sehingga otomatis tersinkron ke semua
+  perangkat/browser yang membuka menu ini, dan otomatis terhapus sendiri
+  setelah 3 minggu. Style-nya dibuat senada dengan menu "PERHITUNGAN BOLA
+  PNG" (nuansa gelap + aksen emas), lihat class ".ds-scope" di bawah.
 -->
 <div id="pageDataScreenshot" style="display:none;">
   <div class="topbar">
@@ -3523,20 +3542,129 @@ setInterval(() => {
     // Semua fungsi diberi prefix "ds" / diekspos lewat window.dsXxx
     // (dibutuhkan karena dipanggil dari atribut onclick/oninput di HTML)
     // supaya tidak bentrok dengan script menu lain di dashboard ini.
+    //
+    // Penyimpanan data: Firebase Realtime Database, path "dataScreenshot",
+    // memakai instance Firebase yang SAMA dengan menu "Result & Jadwal
+    // Pasaran" (firebaseConfig & firebase.initializeApp sudah dijalankan
+    // di sana, di sini kita cukup panggil firebase.database() lagi).
+    // Data disinkron real-time lewat listener child_added/child_changed/
+    // child_removed, dan baris yang timestamp-nya sudah lebih dari 21 hari
+    // (3 minggu) otomatis dihapus dari Firebase saat menu ini dibuka.
     // -----------------------------------------------------------------
     const dsBankList = ["DANA", "OVO", "GOPAY", "LINKAJA", "BCA", "BRI", "BNI", "MANDIRI", "JAGO", "MAYBANK", "BSI", "CIMB", "DANAMON", "SEABANK"];
+    const DS_FB_PATH = 'dataScreenshot';
+    const DS_EXPIRY_MS = 21 * 24 * 60 * 60 * 1000; // 3 minggu
+
+    let dsDB = null;
 
     window.addEventListener('DOMContentLoaded', () => {
-        dsLoadAndCleanData();
-
         const today = new Date();
         const yyyy = today.getFullYear();
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const dd = String(today.getDate()).padStart(2, '0');
         const searchDateEl = document.getElementById('dsSearchDate');
         if (searchDateEl) searchDateEl.value = `${yyyy}-${mm}-${dd}`;
+
+        dsInitFirebase();
         dsFilterTable();
     });
+
+    // Inisialisasi koneksi ke Firebase Realtime Database & pasang listener
+    // real-time untuk path "dataScreenshot". Dipanggil sekali saat halaman
+    // dimuat (firebase.initializeApp() sendiri sudah dipanggil sekali di
+    // blok script menu "Result & Jadwal Pasaran", jadi TIDAK dipanggil lagi
+    // di sini supaya tidak error "Firebase App named '[DEFAULT]' already
+    // exists").
+    function dsInitFirebase() {
+        if (typeof firebase === 'undefined') {
+            console.error('[Firebase] SDK belum dimuat untuk DATA SCREENSHOT.');
+            dsShowToast('⚠ Firebase belum termuat. Cek koneksi internet Anda, lalu muat ulang halaman.', 8000);
+            dsEnsureDraftRow();
+            return;
+        }
+
+        try {
+            dsDB = firebase.database();
+        } catch (e) {
+            console.error('[Firebase] Gagal menghubungkan DATA SCREENSHOT ke Firebase:', e);
+            dsShowToast('⚠ Gagal terhubung ke Firebase: ' + (e && e.message ? e.message : String(e)), 8000);
+            dsEnsureDraftRow();
+            return;
+        }
+
+        dsCleanupExpired();
+
+        const ref = dsDB.ref(DS_FB_PATH).orderByChild('timestamp');
+        ref.on('child_added', (snap) => dsUpsertRowFromSnapshot(snap.key, snap.val()));
+        ref.on('child_changed', (snap) => dsUpsertRowFromSnapshot(snap.key, snap.val()));
+        ref.on('child_removed', (snap) => dsRemoveRowByKey(snap.key));
+
+        dsEnsureDraftRow();
+    }
+
+    // Hapus dari Firebase baris-baris yang timestamp-nya sudah lebih dari
+    // 3 minggu (21 hari). Dipanggil sekali tiap kali menu DATA SCREENSHOT
+    // dibuka; siapapun yang membuka menu ini akan otomatis memicu
+    // pembersihan data kadaluarsa untuk semua pengguna (real-time).
+    function dsCleanupExpired() {
+        if (!dsDB) return;
+        const cutoff = Date.now() - DS_EXPIRY_MS;
+        dsDB.ref(DS_FB_PATH).orderByChild('timestamp').endAt(cutoff).once('value').then((snapshot) => {
+            snapshot.forEach((child) => { child.ref.remove(); });
+        }).catch((err) => {
+            console.error('[Firebase] Gagal membersihkan data DATA SCREENSHOT yang kadaluarsa:', err);
+        });
+    }
+
+    // Pastikan selalu ada satu baris "draft" (kosong, belum terkunci) di
+    // baris paling bawah tabel untuk input data baru. Baris draft TIDAK
+    // punya data-fb-key karena belum tersimpan ke Firebase.
+    function dsEnsureDraftRow() {
+        const tbody = document.getElementById('dsTableBody');
+        if (!tbody) return;
+        const hasDraft = Array.from(tbody.children).some(r => !r.dataset.fbKey);
+        if (!hasDraft) {
+            dsAddRow(dsGetFormattedDate(), "NO REKENING", "-", "", false, null, "");
+        }
+    }
+
+    function dsGetDraftRow() {
+        const tbody = document.getElementById('dsTableBody');
+        if (!tbody) return null;
+        return Array.from(tbody.children).find(r => !r.dataset.fbKey) || null;
+    }
+
+    // Buat/perbarui baris tabel sesuai data terbaru dari Firebase untuk
+    // key tertentu (dipanggil dari listener child_added & child_changed).
+    function dsUpsertRowFromSnapshot(key, data) {
+        if (!data) return;
+        const tbody = document.getElementById('dsTableBody');
+        if (!tbody) return;
+        const existing = tbody.querySelector(`tr[data-fb-key="${CSS.escape(key)}"]`);
+        const built = dsAddRow(data.date, data.rek, data.jenis, data.imgUrl, true, data.timestamp, data.link || "", key, false);
+        if (existing) {
+            existing.replaceWith(built);
+        } else {
+            const draft = dsGetDraftRow();
+            if (draft) {
+                tbody.insertBefore(built, draft);
+            } else {
+                tbody.appendChild(built);
+            }
+        }
+        dsEnsureDraftRow();
+    }
+
+    // Hapus baris tabel sesuai key yang sudah dihapus dari Firebase
+    // (dipanggil dari listener child_removed, mis. karena kadaluarsa 3
+    // minggu atau dihapus dari perangkat lain).
+    function dsRemoveRowByKey(key) {
+        const tbody = document.getElementById('dsTableBody');
+        if (!tbody) return;
+        const existing = tbody.querySelector(`tr[data-fb-key="${CSS.escape(key)}"]`);
+        if (existing) existing.remove();
+        dsEnsureDraftRow();
+    }
 
     function dsToggleInfo(event) {
         event.stopPropagation();
@@ -3627,60 +3755,6 @@ setInterval(() => {
         return div.innerHTML;
     }
 
-    function dsLoadAndCleanData() {
-        const tbody = document.getElementById('dsTableBody');
-        tbody.innerHTML = '';
-
-        let savedData = JSON.parse(localStorage.getItem('transaksiRekeningData')) || [];
-        const now = new Date().getTime();
-        const threeWeeksMs = 21 * 24 * 60 * 60 * 1000;
-
-        savedData = savedData.filter(item => {
-            return (now - item.timestamp) < threeWeeksMs;
-        });
-
-        localStorage.setItem('transaksiRekeningData', JSON.stringify(savedData));
-
-        if (savedData.length === 0) {
-            dsAddRow(dsGetFormattedDate(), "NO REKENING", "-", "", false, null, "");
-        } else {
-            savedData.forEach(item => {
-                dsAddRow(item.date, item.rek, item.jenis, item.imgUrl, item.isLocked, item.timestamp, item.link || "");
-            });
-            dsAddRow(dsGetFormattedDate(), "NO REKENING", "-", "", false, null, "");
-        }
-    }
-
-    function dsSaveToLocalStorage() {
-        const rows = document.querySelectorAll('#dsTransTable tbody tr');
-        const dataToSave = [];
-
-        rows.forEach(row => {
-            const date = row.querySelector('.ds-row-date').value;
-            const rek = row.querySelector('.ds-row-rek').value;
-            const jenis = row.querySelector('.ds-row-jenis').value;
-            const imgContainer = row.querySelector('.ds-paste-area');
-            const imgElem = imgContainer.querySelector('.ds-preview-img');
-            const isLocked = row.querySelector('.ds-row-rek').disabled;
-            const linkInput = row.querySelector('.ds-row-link');
-            const link = linkInput ? linkInput.value : "";
-
-            if (isLocked && imgElem) {
-                dataToSave.push({
-                    date: date,
-                    rek: rek,
-                    jenis: jenis,
-                    imgUrl: imgElem.src,
-                    link: link,
-                    isLocked: true,
-                    timestamp: parseInt(row.dataset.timestamp) || new Date().getTime()
-                });
-            }
-        });
-
-        localStorage.setItem('transaksiRekeningData', JSON.stringify(dataToSave));
-    }
-
     const dsOpenLinkIconSvg = `<svg viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM5 5h5V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-5h-2v5H5V5z"/></svg>`;
 
     function dsBuildLinkCellHtml(isLocked, linkVal) {
@@ -3702,17 +3776,24 @@ setInterval(() => {
 
     function dsBuildEditableLinkInputHtml() {
         return `
-            <input type="text" class="ds-row-link" placeholder="Tempel tautan di sini" oninput="dsSaveToLocalStorage()" onblur="dsLockLinkInput(this)" onkeydown="if(event.key==='Enter'){this.blur();}" title="Tempel tautan hasil unggah dari imgbb.com">
+            <input type="text" class="ds-row-link" placeholder="Tempel tautan di sini" onblur="dsLockLinkInput(this)" onkeydown="if(event.key==='Enter'){this.blur();}" title="Tempel tautan hasil unggah dari imgbb.com">
             <button type="button" class="ds-open-link-btn" onclick="dsOpenSavedLink(this)" title="Belum ada tautan? Klik untuk kembali ke imgbb.com">
                 ${dsOpenLinkIconSvg}
             </button>`;
     }
 
-    function dsAddRow(dateVal = null, rekVal = "NO REKENING", jenisVal = "-", imgDataUrl = "", isLocked = false, timestamp = null, linkVal = "") {
-        const tbody = document.getElementById('dsTableBody');
+    // fbKey: kunci Firebase (push key) baris ini, null jika baris "draft"
+    // (belum tersimpan). append: jika false, baris dibuat TAPI TIDAK
+    // langsung ditambahkan ke tbody (dipakai saat merender ulang baris
+    // dari data Firebase, karena posisinya perlu disisipkan manual sebelum
+    // baris draft, bukan selalu di paling bawah).
+    function dsAddRow(dateVal = null, rekVal = "NO REKENING", jenisVal = "-", imgDataUrl = "", isLocked = false, timestamp = null, linkVal = "", fbKey = null, append = true) {
         const newRow = document.createElement('tr');
         if (timestamp) {
             newRow.dataset.timestamp = timestamp;
+        }
+        if (fbKey) {
+            newRow.dataset.fbKey = fbKey;
         }
 
         let optionsHtml = '';
@@ -3747,7 +3828,10 @@ setInterval(() => {
                 </div>
             </td>
         `;
-        tbody.appendChild(newRow);
+        if (append) {
+            const tbody = document.getElementById('dsTableBody');
+            tbody.appendChild(newRow);
+        }
         return newRow;
     }
 
@@ -3795,7 +3879,6 @@ setInterval(() => {
 
         const linkCell = row.querySelector('.ds-link-cell');
         linkCell.innerHTML = dsBuildEditableLinkInputHtml();
-        dsSaveToLocalStorage();
 
         const newInput = linkCell.querySelector('.ds-row-link');
         if (newInput) {
@@ -3810,7 +3893,15 @@ setInterval(() => {
         }
         input.readOnly = true;
         input.classList.add('locked');
-        dsSaveToLocalStorage();
+
+        const row = input.closest('tr');
+        const key = row ? row.dataset.fbKey : null;
+        if (key && dsDB) {
+            dsDB.ref(`${DS_FB_PATH}/${key}`).update({ link: val }).catch((err) => {
+                console.error('[Firebase] Gagal menyimpan tautan:', err);
+                dsShowToast('⚠ Gagal menyimpan tautan ke Firebase: ' + (err && err.message ? err.message : String(err)));
+            });
+        }
     }
 
     async function dsOpenSavedLink(btn) {
@@ -3856,40 +3947,48 @@ setInterval(() => {
             return;
         }
 
-        rekInput.classList.remove("samar");
-        rekInput.disabled = true;
-        jenisSelect.disabled = true;
-        dateInput.disabled = true;
+        if (!dsDB) {
+            alert("Firebase belum terhubung, data tidak dapat disimpan. Cek koneksi internet Anda lalu muat ulang halaman.");
+            return;
+        }
 
-        pasteArea.innerHTML = '';
-
-        const img = document.createElement('img');
-        img.src = dataUrl;
-        img.className = 'ds-preview-img';
-        img.title = 'Klik untuk memperbesar gambar';
-        img.onclick = function() {
-            dsOpenModal(dataUrl);
+        const dataToSave = {
+            date: dateInput.value,
+            rek: rekInput.value,
+            jenis: jenisSelect.value,
+            imgUrl: dataUrl,
+            link: "",
+            timestamp: Date.now()
         };
-        pasteArea.appendChild(img);
 
+        dsDB.ref(DS_FB_PATH).push(dataToSave).catch((err) => {
+            console.error('[Firebase] Gagal menyimpan screenshot:', err);
+            dsShowToast('⚠ Gagal menyimpan ke Firebase: ' + (err && err.message ? err.message : String(err)));
+        });
+
+        // Baris "terkunci" (locked) untuk entri ini akan otomatis muncul di
+        // atas baris draft lewat listener child_added (real-time). Baris
+        // draft ini sendiri di-reset ke kondisi kosong supaya siap dipakai
+        // untuk input entri berikutnya, tanpa membuat baris draft ganda.
+        dsResetDraftRow(row);
+    }
+
+    function dsResetDraftRow(row) {
+        const rekInput = row.querySelector('.ds-row-rek');
+        const jenisSelect = row.querySelector('.ds-row-jenis');
+        const dateInput = row.querySelector('.ds-row-date');
+        const pasteArea = row.querySelector('.ds-paste-area');
         const linkCell = row.querySelector('.ds-link-cell');
-        if (linkCell) {
-            linkCell.innerHTML = dsBuildLinkCellHtml(true, "");
-        }
 
-        row.dataset.timestamp = new Date().getTime();
-        dsSaveToLocalStorage();
+        rekInput.value = "NO REKENING";
+        rekInput.classList.add('samar');
+        jenisSelect.value = "-";
+        dateInput.value = dsGetFormattedDate();
+        pasteArea.innerHTML = '<span style="font-size:11px; color:var(--ds-text-muted);">Klik &amp; Paste (Ctrl+V)</span>';
+        linkCell.innerHTML = dsBuildLinkCellHtml(false, "");
 
-        const tbody = document.getElementById('dsTableBody');
-        const rows = Array.from(tbody.children);
-        if (rows[rows.length - 1] === row) {
-            const newRow = dsAddRow(dsGetFormattedDate(), "NO REKENING", "-", "", false, null, "");
-            const newRekInput = newRow.querySelector('.ds-row-rek');
-            if (newRekInput) {
-                newRekInput.focus();
-                newRekInput.select();
-            }
-        }
+        rekInput.focus();
+        rekInput.select();
     }
 
     function dsOpenModal(src) {
@@ -3920,7 +4019,6 @@ setInterval(() => {
     window.dsFilterTable = dsFilterTable;
     window.dsClearPlaceholder = dsClearPlaceholder;
     window.dsRestorePlaceholder = dsRestorePlaceholder;
-    window.dsSaveToLocalStorage = dsSaveToLocalStorage;
     window.dsLockLinkInput = dsLockLinkInput;
     window.dsOpenSavedLink = dsOpenSavedLink;
     window.dsHandleCopyAndOpen = dsHandleCopyAndOpen;
