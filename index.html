@@ -862,6 +862,457 @@
   letter-spacing: 0.01em;
   text-shadow: 0 0 10px rgba(219,245,0,0.25);
 }
+
+/* =====================================================================
+   Menu "DATA SCREENSHOT" — di-scope lewat class ".ds-scope" (sama seperti
+   ".bola-scope" pada menu PERHITUNGAN BOLA PNG) supaya style di bawah ini
+   TIDAK bocor/bentrok ke menu lain. Palet warna & nuansa gelap+emas
+   sengaja dibuat senada dengan ".bola-scope" agar terlihat konsisten.
+   ===================================================================== */
+.ds-scope {
+  --ds-bg-deep: #0a0d1a;
+  --ds-bg-mid: #12162a;
+  --ds-surface: #161b31;
+  --ds-surface-alt: #1c2138;
+  --ds-border: rgba(255,255,255,0.08);
+  --ds-border-soft: rgba(255,255,255,0.05);
+  --ds-text-primary: #f5f3f8;
+  --ds-text-muted: #9297b3;
+  --ds-teal: #2dd4bf;
+  --ds-teal-dim: rgba(45,212,191,0.15);
+  --ds-shadow: 0 20px 60px rgba(0,0,0,0.45);
+  --ds-gold-light: #f6e7a8;
+  --ds-gold: #d9b45a;
+  --ds-gold-deep: #a7782c;
+  --ds-gold-dim: rgba(217,180,90,0.15);
+  --ds-gold-gradient: linear-gradient(120deg, var(--ds-gold-light) 0%, var(--ds-gold) 45%, var(--ds-gold-deep) 100%);
+}
+
+.ds-scope, .ds-scope *{ box-sizing: border-box; }
+
+.ds-scope {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: radial-gradient(1200px 600px at 15% -10%, #1b1440 0%, transparent 60%),
+              radial-gradient(1000px 500px at 110% 10%, #101c3a 0%, transparent 55%),
+              linear-gradient(180deg, var(--ds-bg-deep) 0%, var(--ds-bg-mid) 100%);
+  background-attachment: fixed;
+  margin: 0;
+  padding: 40px 20px;
+  color: var(--ds-text-primary);
+  min-height: 100vh;
+  border-radius: 8px;
+}
+
+.ds-scope .container {
+  max-width: 100%;
+  margin: auto;
+  background: linear-gradient(180deg, var(--ds-surface) 0%, var(--ds-bg-mid) 100%);
+  padding: 36px 40px 44px;
+  border-radius: 18px;
+  border: 1px solid var(--ds-border);
+  box-shadow: var(--ds-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.ds-scope .container::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--ds-gold-gradient);
+  box-shadow: 0 0 14px rgba(217,180,90,0.5);
+  border-radius: 18px 18px 0 0;
+}
+
+.ds-scope .container::after {
+  content: "";
+  position: absolute;
+  bottom: -60px; right: -60px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(217,180,90,0.10) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.ds-scope .container > * { position: relative; z-index: 1; }
+
+.ds-scope .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ds-gold-light);
+  background: rgba(217,180,90,0.08);
+  border: 1px solid rgba(217,180,90,0.35);
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+.ds-scope .eyebrow::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ds-gold);
+  box-shadow: 0 0 8px var(--ds-gold);
+}
+
+.ds-scope h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 2.2vw, 28px);
+  background: var(--ds-gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+  padding-bottom: 16px;
+  margin: 0 0 22px;
+  letter-spacing: -0.01em;
+  filter: drop-shadow(0 0 18px rgba(217,180,90,0.18));
+}
+.ds-scope h2::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 8px;
+  background:
+    linear-gradient(90deg, transparent 0%, var(--ds-gold) 100%) bottom / 100% 1px no-repeat,
+    radial-gradient(circle at 0 0, var(--ds-gold-light) 0 3px, transparent 4px) left bottom no-repeat;
+  opacity: 0.9;
+}
+
+.ds-scope .controls {
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.ds-scope .left-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+.ds-scope .info-container {
+    position: relative;
+    display: inline-block;
+}
+.ds-scope .info-btn {
+    background: var(--ds-gold-gradient);
+    color: #1c1608;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 8px 20px rgba(217,180,90,0.25);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+.ds-scope .info-btn:hover { filter: brightness(1.08); box-shadow: 0 10px 26px rgba(217,180,90,0.35); transform: translateY(-1px); }
+.ds-scope .info-icon {
+    width: 17px;
+    height: 17px;
+    background-color: #1c1608;
+    color: var(--ds-gold-light);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+}
+.ds-scope .info-popup {
+    display: none;
+    position: absolute;
+    top: 42px;
+    left: 0;
+    background: var(--ds-surface-alt);
+    border: 1px solid rgba(217,180,90,0.35);
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--ds-text-primary);
+    box-shadow: var(--ds-shadow);
+    z-index: 20;
+    width: 340px;
+    max-width: 80vw;
+    line-height: 1.6;
+}
+.ds-scope .info-popup.show { display: block; }
+.ds-scope .info-popup b { color: var(--ds-gold-light); }
+.ds-scope .info-popup ul { margin: 8px 0 0 15px; padding: 0; }
+.ds-scope .info-popup li { margin-bottom: 8px; }
+
+.ds-scope .search-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+.ds-scope .search-wrapper svg {
+    position: absolute;
+    left: 12px;
+    width: 16px;
+    height: 16px;
+    fill: var(--ds-text-muted);
+    pointer-events: none;
+}
+.ds-scope .search-box {
+    padding: 9px 14px 9px 36px;
+    border: 1px solid var(--ds-border);
+    border-radius: 999px;
+    font-size: 13px;
+    width: 180px;
+    background: rgba(255,255,255,0.03);
+    color: var(--ds-text-primary);
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.ds-scope .search-box::placeholder { color: var(--ds-text-muted); }
+.ds-scope .search-box:focus {
+    background: rgba(217,180,90,0.06);
+    border-color: var(--ds-gold);
+    box-shadow: 0 0 0 3px var(--ds-gold-dim);
+}
+.ds-scope .date-search-wrapper { margin-left: 4px; }
+.ds-scope .date-search-box {
+    padding: 9px 14px;
+    width: 145px;
+    text-align: center;
+    cursor: pointer;
+    color-scheme: dark;
+}
+.ds-scope .date-search-box::-webkit-calendar-picker-indicator {
+    filter: invert(0.75) sepia(1) saturate(4) hue-rotate(5deg);
+    cursor: pointer;
+}
+
+.ds-scope .table-scroll {
+  margin-top: 4px;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--ds-border);
+}
+.ds-scope table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: transparent;
+}
+.ds-scope th {
+  background: var(--ds-surface-alt);
+  color: var(--ds-gold-light);
+  text-align: center;
+  padding: 14px 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(217,180,90,0.25);
+}
+.ds-scope td {
+  border-bottom: 1px solid var(--ds-border-soft);
+  padding: 8px;
+  text-align: center;
+  vertical-align: middle;
+  background: rgba(255,255,255,0.015);
+  color: var(--ds-text-primary);
+}
+.ds-scope tbody tr:last-child td { border-bottom: none; }
+
+.ds-scope input[type="text"], .ds-scope select {
+    width: 90%;
+    padding: 7px;
+    border: 1px solid var(--ds-border);
+    border-radius: 6px;
+    text-align: center;
+    font-size: 13px;
+    background: rgba(255,255,255,0.03);
+    color: var(--ds-text-primary);
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.ds-scope input[type="text"]:focus, .ds-scope select:focus {
+    outline: none;
+    border-color: var(--ds-gold);
+    background: rgba(217,180,90,0.06);
+    box-shadow: 0 0 0 3px var(--ds-gold-dim);
+}
+.ds-scope .ds-row-rek.samar { color: var(--ds-text-muted); }
+.ds-scope input[type="text"]:disabled, .ds-scope select:disabled {
+    background-color: rgba(255,255,255,0.05);
+    color: var(--ds-text-primary);
+    border-color: var(--ds-border);
+    font-weight: 700;
+}
+.ds-scope .ds-row-date { cursor: default; }
+.ds-scope .ds-row-date:read-only {
+    background-color: transparent;
+    color: var(--ds-gold-light);
+    font-weight: 700;
+    border-color: var(--ds-border);
+}
+
+.ds-scope .ds-paste-area {
+    border: 2px dashed var(--ds-border);
+    background: rgba(255,255,255,0.02);
+    padding: 10px;
+    border-radius: 8px;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+.ds-scope .ds-paste-area:focus {
+    border-color: var(--ds-gold);
+    background: rgba(217,180,90,0.06);
+}
+.ds-scope .ds-preview-img {
+    max-width: 70px;
+    max-height: 50px;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid var(--ds-border);
+}
+
+.ds-scope .ds-link-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.ds-scope .link-placeholder {
+    color: var(--ds-text-muted);
+    font-size: 13px;
+}
+.ds-scope .ds-row-link {
+    width: 100%;
+    padding: 7px 8px;
+    border: 1px solid var(--ds-border);
+    border-radius: 6px;
+    font-size: 12px;
+    background: rgba(255,255,255,0.03);
+    color: var(--ds-teal);
+    outline: none;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+}
+.ds-scope .ds-row-link::placeholder {
+    color: var(--ds-text-muted);
+    font-style: italic;
+    font-family: 'Inter', sans-serif;
+}
+.ds-scope .ds-row-link:focus {
+    border-color: var(--ds-gold);
+    background: rgba(217,180,90,0.06);
+}
+.ds-scope .ds-row-link.locked {
+    color: var(--ds-teal);
+    font-weight: 700;
+    cursor: default;
+    background-color: rgba(255,255,255,0.02);
+}
+.ds-scope .ds-open-link-btn {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--ds-border);
+    background: var(--ds-surface-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+}
+.ds-scope .ds-open-link-btn svg { width: 14px; height: 14px; fill: var(--ds-gold-light); }
+.ds-scope .ds-open-link-btn:hover { background: var(--ds-gold-gradient); border-color: var(--ds-gold); }
+.ds-scope .ds-open-link-btn:hover svg { fill: #1c1608; }
+.ds-scope .ds-copy-open-btn { width: 32px; height: 32px; border-color: var(--ds-teal); }
+.ds-scope .ds-copy-open-btn svg { fill: var(--ds-teal); }
+.ds-scope .ds-copy-open-btn:hover { background: var(--ds-teal); border-color: var(--ds-teal); }
+.ds-scope .ds-copy-open-btn:hover svg { fill: #0f1016; }
+
+@media (max-width: 720px) {
+  .ds-scope .container { padding: 24px 18px 30px; }
+}
+
+/* Toast & modal untuk halaman DATA SCREENSHOT — sengaja TIDAK di-scope di
+   dalam ".ds-scope" karena posisinya "position:fixed" menutupi seluruh
+   layar/viewport, jadi elemennya berada di luar div ".container". */
+.ds-toast-notif {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1c2138;
+    border: 1px solid var(--ds-gold, #d9b45a);
+    color: #f5f3f8;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 420px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+.ds-toast-notif.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.ds-toast-notif b { color: #f6e7a8; }
+
+.ds-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.85);
+}
+.ds-modal-content {
+    margin: auto;
+    display: block;
+    max-width: 80%;
+    max-height: 80vh;
+    border-radius: 8px;
+}
+.ds-close {
+    position: absolute;
+    top: 30px;
+    right: 45px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
 </style>
 
 </head>
@@ -2992,154 +3443,490 @@ setInterval(() => {
 </div>
 
 <!--
-  Halaman "DATA SCREENSHOT" — galeri sederhana untuk menyimpan screenshot
-  (mis. bukti taruhan/hasil) langsung di browser. Gambar disimpan di
-  localStorage (kunci "dataScreenshotList") sebagai base64, jadi TIDAK
-  terupload ke server mana pun — hanya tersimpan di perangkat/browser ini.
-  Kalau localStorage penuh (banyak gambar besar), browser akan menolak
-  penyimpanan; pesan error akan muncul lewat alert.
+  Halaman "DATA SCREENSHOT" — tabel data rekening & bukti screenshot
+  transaksi. Setiap baris tersimpan otomatis di localStorage browser
+  (kunci "transaksiRekeningData") dan otomatis terhapus sendiri setelah
+  3 minggu. Style-nya dibuat senada dengan menu "PERHITUNGAN BOLA PNG"
+  (nuansa gelap + aksen emas), lihat class ".ds-scope" di bawah.
 -->
 <div id="pageDataScreenshot" style="display:none;">
   <div class="topbar">
-    <h1><span>DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT</span></h1>
+    <h1><span>DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT</span><span>DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT</span></h1>
   </div>
 
-  <div class="panel" style="padding:16px;">
-    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px;">
-      <span style="font-family:'Bree Serif', serif; color:#dcdce3; font-size:14.5px;">
-        Simpan &amp; lihat screenshot langsung di dashboard ini (tersimpan di browser).
-      </span>
-      <label for="dsFileInput" style="background:var(--calm-teal); color:#fff; font-weight:700; font-size:14px; letter-spacing:0.3px; padding:9px 16px; border-radius:6px; cursor:pointer; white-space:nowrap;">
-        + Tambah Screenshot
-      </label>
-      <input type="file" id="dsFileInput" accept="image/*" multiple style="display:none;">
-    </div>
+  <div class="panel" style="padding:0; background:transparent;">
+    <div class="ds-scope">
+      <div class="container">
+        <span class="eyebrow">LAPAK GOLAN</span>
+        <h2>DATA REKENING &amp; BUKTI SCREENSHOT</h2>
 
-    <div id="dsEmptyMsg" style="text-align:center; color:rgba(255,255,255,0.5); font-size:14px; padding:30px 10px;">
-      Belum ada screenshot. Klik "Tambah Screenshot" untuk mengunggah.
-    </div>
+        <div class="controls">
+            <div class="left-controls">
+                <div class="info-container">
+                    <button type="button" class="info-btn" onclick="dsToggleInfo(event)" title="Klik untuk informasi">
+                        <span class="info-icon">i</span> INFORMASI
+                    </button>
+                    <div id="dsInfoPopup" class="info-popup">
+                        <b>Informasi Penggunaan:</b>
+                        <ul>
+                            <li>Input nomor rekening dan gambar maka akan tersimpan secara otomatis.</li>
+                            <li>Data yang sudah di input akan terhapus secara otomatis jika sudah 3 x 24 (selama 3 minggu).</li>
+                            <li>Jika ingin melakukan pengecekan gambar yang sudah di simpan dapat di lihat dengan setting tanggal atau input nomor di menu cari.</li>
+                        </ul>
+                    </div>
+                </div>
 
-    <div id="dsGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:14px;"></div>
+                <div class="search-wrapper">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    <input type="text" id="dsSearchInput" class="search-box" placeholder="Cari" onkeyup="dsFilterTable()">
+                </div>
+            </div>
+
+            <div class="search-wrapper date-search-wrapper">
+                <input type="date" id="dsSearchDate" class="search-box date-search-box" onchange="dsFilterTable()" onclick="if(this.showPicker) this.showPicker()" title="Klik untuk pilih tanggal yang ingin dicari">
+            </div>
+        </div>
+
+        <div class="table-scroll">
+          <table id="dsTransTable">
+              <thead>
+                  <tr>
+                      <th style="width: 14%;">TANGGAL</th>
+                      <th style="width: 22%;">NOMOR REKENING</th>
+                      <th style="width: 16%;">JENIS</th>
+                      <th style="width: 20%;">SCREENSHOT</th>
+                      <th style="width: 28%;">TAUTAN</th>
+                  </tr>
+              </thead>
+              <tbody id="dsTableBody">
+              </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!--
-  Modal preview untuk melihat screenshot ukuran penuh saat thumbnail diklik.
--->
-<div id="dsModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:100; align-items:center; justify-content:center; padding:24px;">
-  <div style="position:relative; max-width:min(900px, 92vw); max-height:90vh;">
-    <img id="dsModalImg" src="" alt="Screenshot"
-         style="display:block; max-width:100%; max-height:90vh; border-radius:8px; box-shadow:0 0 40px rgba(0,0,0,0.6);">
-    <button id="dsModalClose" title="Tutup"
-            style="position:absolute; top:-14px; right:-14px; width:32px; height:32px; border-radius:50%; border:none; background:var(--pink); color:#fff; font-size:18px; font-weight:800; cursor:pointer; line-height:1;">
-      &times;
-    </button>
-  </div>
+<div id="dsImgModal" class="ds-modal">
+    <span class="ds-close" onclick="dsCloseModal()">&times;</span>
+    <img class="ds-modal-content" id="dsModalImg">
 </div>
+
+<div id="dsToastNotif" class="ds-toast-notif"></div>
 
 <script>
 (function(){
-  // ---------------------------------------------------------------------
-  // Halaman "DATA SCREENSHOT": simpan/tampilkan gambar via localStorage.
-  // ---------------------------------------------------------------------
-  var DS_KEY = 'dataScreenshotList';
-  var fileInput = document.getElementById('dsFileInput');
-  var grid = document.getElementById('dsGrid');
-  var emptyMsg = document.getElementById('dsEmptyMsg');
-  var modal = document.getElementById('dsModal');
-  var modalImg = document.getElementById('dsModalImg');
-  var modalClose = document.getElementById('dsModalClose');
+    // -----------------------------------------------------------------
+    // Halaman "DATA SCREENSHOT": tabel data rekening & bukti screenshot.
+    // Semua fungsi diberi prefix "ds" / diekspos lewat window.dsXxx
+    // (dibutuhkan karena dipanggil dari atribut onclick/oninput di HTML)
+    // supaya tidak bentrok dengan script menu lain di dashboard ini.
+    // -----------------------------------------------------------------
+    const dsBankList = ["DANA", "OVO", "GOPAY", "LINKAJA", "BCA", "BRI", "BNI", "MANDIRI", "JAGO", "MAYBANK", "BSI", "CIMB", "DANAMON", "SEABANK"];
 
-  function dsLoad(){
-    try{
-      return JSON.parse(localStorage.getItem(DS_KEY) || '[]');
-    }catch(e){
-      return [];
-    }
-  }
-  function dsSave(list){
-    try{
-      localStorage.setItem(DS_KEY, JSON.stringify(list));
-    }catch(e){
-      alert('Gagal menyimpan screenshot (kemungkinan penyimpanan browser penuh). Coba hapus beberapa screenshot lama lalu ulangi.');
-    }
-  }
-  function dsRender(){
-    var list = dsLoad();
-    grid.innerHTML = '';
-    emptyMsg.style.display = list.length === 0 ? 'block' : 'none';
-    list.forEach(function(item){
-      var card = document.createElement('div');
-      card.style.cssText = 'background:var(--bg-card); border:1px solid rgba(255,255,255,0.2); border-radius:8px; overflow:hidden; position:relative;';
+    window.addEventListener('DOMContentLoaded', () => {
+        dsLoadAndCleanData();
 
-      var img = document.createElement('img');
-      img.src = item.dataUrl;
-      img.alt = item.name || 'Screenshot';
-      img.style.cssText = 'width:100%; height:120px; object-fit:cover; display:block; cursor:pointer;';
-      img.addEventListener('click', function(){
-        modalImg.src = item.dataUrl;
-        modal.style.display = 'flex';
-      });
-
-      var caption = document.createElement('div');
-      caption.style.cssText = 'padding:6px 8px; font-size:11.5px; color:#dcdce3; font-family:Arial, sans-serif; display:flex; align-items:center; justify-content:space-between; gap:6px;';
-      var nameSpan = document.createElement('span');
-      nameSpan.textContent = item.date || '';
-      nameSpan.style.cssText = 'overflow:hidden; text-overflow:ellipsis; white-space:nowrap;';
-      var delBtn = document.createElement('button');
-      delBtn.textContent = 'Hapus';
-      delBtn.style.cssText = 'flex-shrink:0; border:none; background:transparent; color:#ff8080; font-size:11px; font-weight:700; cursor:pointer; padding:2px 4px;';
-      delBtn.addEventListener('click', function(){
-        var current = dsLoad().filter(function(x){ return x.id !== item.id; });
-        dsSave(current);
-        dsRender();
-      });
-      caption.appendChild(nameSpan);
-      caption.appendChild(delBtn);
-
-      card.appendChild(img);
-      card.appendChild(caption);
-      grid.appendChild(card);
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const searchDateEl = document.getElementById('dsSearchDate');
+        if (searchDateEl) searchDateEl.value = `${yyyy}-${mm}-${dd}`;
+        dsFilterTable();
     });
-  }
 
-  if (fileInput){
-    fileInput.addEventListener('change', function(e){
-      var files = Array.prototype.slice.call(e.target.files || []);
-      if (files.length === 0) return;
-      var remaining = files.length;
-      var list = dsLoad();
-      files.forEach(function(file){
-        var reader = new FileReader();
-        reader.onload = function(ev){
-          list.push({
-            id: Date.now() + '-' + Math.random().toString(36).slice(2, 8),
-            name: file.name,
-            dataUrl: ev.target.result,
-            date: new Date().toLocaleString('id-ID')
-          });
-          remaining--;
-          if (remaining === 0){
-            dsSave(list);
-            dsRender();
-          }
+    function dsToggleInfo(event) {
+        event.stopPropagation();
+        const popup = document.getElementById('dsInfoPopup');
+        popup.classList.toggle('show');
+    }
+
+    document.addEventListener('click', function(event) {
+        const popup = document.getElementById('dsInfoPopup');
+        if (popup && !event.target.closest('.info-container') && popup.classList.contains('show')) {
+            popup.classList.remove('show');
+        }
+
+        const modal = document.getElementById('dsImgModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    function dsGetFormattedDate() {
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        return `${dd}/${mm}/${yyyy}`;
+    }
+
+    function dsClearPlaceholder(input) {
+        if (input.value === "NO REKENING") {
+            input.value = "";
+            input.classList.remove("samar");
+        }
+    }
+
+    function dsRestorePlaceholder(input) {
+        if (input.value.trim() === "") {
+            input.value = "NO REKENING";
+            input.classList.add("samar");
+        }
+    }
+
+    function dsFilterTable() {
+        const input = document.getElementById('dsSearchInput');
+        const filter = input.value.toUpperCase();
+
+        const dateInput = document.getElementById('dsSearchDate');
+        const dateRaw = dateInput.value; // format: yyyy-mm-dd
+        let dateFilter = "";
+        if (dateRaw) {
+            const parts = dateRaw.split('-');
+            dateFilter = `${parts[2]}/${parts[1]}/${parts[0]}`; // ubah ke dd/mm/yyyy
+        }
+
+        const tbody = document.getElementById('dsTableBody');
+        const rows = tbody.getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            const rekInput = rows[i].querySelector('.ds-row-rek');
+            const jenisSelect = rows[i].querySelector('.ds-row-jenis');
+            const dateEl = rows[i].querySelector('.ds-row-date');
+
+            const isLastActiveRow = !rows[i].querySelector('.ds-row-rek').disabled;
+            if (isLastActiveRow) {
+                rows[i].style.display = "";
+                continue;
+            }
+
+            if (rekInput && jenisSelect) {
+                const rekValue = rekInput.value || "";
+                const jenisValue = jenisSelect.value || "";
+                const rowDateValue = dateEl ? dateEl.value : "";
+
+                const matchesText = rekValue.toUpperCase().indexOf(filter) > -1 || jenisValue.toUpperCase().indexOf(filter) > -1;
+                const matchesDate = !dateFilter || rowDateValue === dateFilter;
+
+                if (matchesText && matchesDate) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    function dsEscapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str || "";
+        return div.innerHTML;
+    }
+
+    function dsLoadAndCleanData() {
+        const tbody = document.getElementById('dsTableBody');
+        tbody.innerHTML = '';
+
+        let savedData = JSON.parse(localStorage.getItem('transaksiRekeningData')) || [];
+        const now = new Date().getTime();
+        const threeWeeksMs = 21 * 24 * 60 * 60 * 1000;
+
+        savedData = savedData.filter(item => {
+            return (now - item.timestamp) < threeWeeksMs;
+        });
+
+        localStorage.setItem('transaksiRekeningData', JSON.stringify(savedData));
+
+        if (savedData.length === 0) {
+            dsAddRow(dsGetFormattedDate(), "NO REKENING", "-", "", false, null, "");
+        } else {
+            savedData.forEach(item => {
+                dsAddRow(item.date, item.rek, item.jenis, item.imgUrl, item.isLocked, item.timestamp, item.link || "");
+            });
+            dsAddRow(dsGetFormattedDate(), "NO REKENING", "-", "", false, null, "");
+        }
+    }
+
+    function dsSaveToLocalStorage() {
+        const rows = document.querySelectorAll('#dsTransTable tbody tr');
+        const dataToSave = [];
+
+        rows.forEach(row => {
+            const date = row.querySelector('.ds-row-date').value;
+            const rek = row.querySelector('.ds-row-rek').value;
+            const jenis = row.querySelector('.ds-row-jenis').value;
+            const imgContainer = row.querySelector('.ds-paste-area');
+            const imgElem = imgContainer.querySelector('.ds-preview-img');
+            const isLocked = row.querySelector('.ds-row-rek').disabled;
+            const linkInput = row.querySelector('.ds-row-link');
+            const link = linkInput ? linkInput.value : "";
+
+            if (isLocked && imgElem) {
+                dataToSave.push({
+                    date: date,
+                    rek: rek,
+                    jenis: jenis,
+                    imgUrl: imgElem.src,
+                    link: link,
+                    isLocked: true,
+                    timestamp: parseInt(row.dataset.timestamp) || new Date().getTime()
+                });
+            }
+        });
+
+        localStorage.setItem('transaksiRekeningData', JSON.stringify(dataToSave));
+    }
+
+    const dsOpenLinkIconSvg = `<svg viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM5 5h5V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-5h-2v5H5V5z"/></svg>`;
+
+    function dsBuildLinkCellHtml(isLocked, linkVal) {
+        if (!isLocked) {
+            return `<span class="link-placeholder">-</span>`;
+        }
+        if (linkVal) {
+            return `
+                <input type="text" class="ds-row-link locked" value="${dsEscapeHtml(linkVal)}" readonly title="Tautan tersimpan (tidak dapat diubah)">
+                <button type="button" class="ds-open-link-btn" onclick="dsOpenSavedLink(this)" title="Buka tautan">
+                    ${dsOpenLinkIconSvg}
+                </button>`;
+        }
+        return `
+            <button type="button" class="ds-open-link-btn ds-copy-open-btn" onclick="dsHandleCopyAndOpen(this)" title="Salin screenshot & buka imgbb.com">
+                ${dsOpenLinkIconSvg}
+            </button>`;
+    }
+
+    function dsBuildEditableLinkInputHtml() {
+        return `
+            <input type="text" class="ds-row-link" placeholder="Tempel tautan di sini" oninput="dsSaveToLocalStorage()" onblur="dsLockLinkInput(this)" onkeydown="if(event.key==='Enter'){this.blur();}" title="Tempel tautan hasil unggah dari imgbb.com">
+            <button type="button" class="ds-open-link-btn" onclick="dsOpenSavedLink(this)" title="Belum ada tautan? Klik untuk kembali ke imgbb.com">
+                ${dsOpenLinkIconSvg}
+            </button>`;
+    }
+
+    function dsAddRow(dateVal = null, rekVal = "NO REKENING", jenisVal = "-", imgDataUrl = "", isLocked = false, timestamp = null, linkVal = "") {
+        const tbody = document.getElementById('dsTableBody');
+        const newRow = document.createElement('tr');
+        if (timestamp) {
+            newRow.dataset.timestamp = timestamp;
+        }
+
+        let optionsHtml = '';
+        dsBankList.forEach(bank => {
+            const sel = (bank === jenisVal) ? ' selected' : '';
+            optionsHtml += `<option value="${bank}"${sel}>${bank}</option>`;
+        });
+
+        const isSamar = (rekVal === "NO REKENING") ? ' samar' : '';
+        const dateStr = dateVal !== null ? dateVal : dsGetFormattedDate();
+
+        newRow.innerHTML = `
+            <td><input type="text" class="ds-row-date" value="${dateStr}" ${isLocked ? 'disabled' : 'readonly'}></td>
+            <td><input type="text" class="ds-row-rek${isSamar}" value="${rekVal}" onfocus="dsClearPlaceholder(this)" onblur="dsRestorePlaceholder(this)" ${isLocked ? 'disabled' : ''}></td>
+            <td>
+                <select class="ds-row-jenis" ${isLocked ? 'disabled' : ''}>
+                    <option value="-" ${jenisVal === '-' ? 'selected' : ''}>-</option>
+                    ${optionsHtml}
+                </select>
+            </td>
+            <td>
+                <div class="ds-paste-area" tabindex="0" onpaste="dsHandlePaste(event, this)" title="Klik lalu tekan Ctrl+V untuk paste gambar" ${isLocked ? 'style="border:none; background:transparent;"' : ''}>
+                    ${isLocked && imgDataUrl ?
+                        `<img src="${imgDataUrl}" class="ds-preview-img" title="Klik untuk memperbesar gambar" onclick="dsOpenModal('${imgDataUrl}')">` :
+                        `<span style="font-size:11px; color:var(--ds-text-muted);">Klik &amp; Paste (Ctrl+V)</span>`
+                    }
+                </div>
+            </td>
+            <td>
+                <div class="ds-link-cell">
+                    ${dsBuildLinkCellHtml(isLocked, linkVal)}
+                </div>
+            </td>
+        `;
+        tbody.appendChild(newRow);
+        return newRow;
+    }
+
+    let dsToastTimer = null;
+    function dsShowToast(message, duration = 6000) {
+        const toast = document.getElementById('dsToastNotif');
+        toast.innerHTML = message;
+        toast.classList.add('show');
+        clearTimeout(dsToastTimer);
+        dsToastTimer = setTimeout(() => {
+            toast.classList.remove('show');
+        }, duration);
+    }
+
+    async function dsCopyScreenshotAndOpenUploadSite(row) {
+        const imgElem = row.querySelector('.ds-preview-img');
+        if (!imgElem) {
+            alert("Belum ada screenshot pada baris ini. Silakan tempel gambar terlebih dahulu.");
+            return false;
+        }
+
+        try {
+            const response = await fetch(imgElem.src);
+            const blob = await response.blob();
+            if (navigator.clipboard && window.ClipboardItem) {
+                await navigator.clipboard.write([
+                    new ClipboardItem({ [blob.type]: blob })
+                ]);
+            }
+        } catch (err) {
+            console.warn("Gagal menyalin gambar ke clipboard:", err);
+        }
+
+        window.open('https://imgbb.com/', '_blank', 'noopener');
+        dsShowToast("<b>Langkah selanjutnya:</b> di tab imgbb.com, klik UNGGAH lalu klik SALIN pada tautan yang muncul. Setelah tersalin, tutup tab tersebut lalu kembali ke sini dan tempel tautannya di kolom TAUTAN pada baris ini.");
+        return true;
+    }
+
+    async function dsHandleCopyAndOpen(btn) {
+        const row = btn.closest('tr');
+        const success = await dsCopyScreenshotAndOpenUploadSite(row);
+        if (!success) {
+            return;
+        }
+
+        const linkCell = row.querySelector('.ds-link-cell');
+        linkCell.innerHTML = dsBuildEditableLinkInputHtml();
+        dsSaveToLocalStorage();
+
+        const newInput = linkCell.querySelector('.ds-row-link');
+        if (newInput) {
+            newInput.focus();
+        }
+    }
+
+    function dsLockLinkInput(input) {
+        const val = input.value.trim();
+        if (!val) {
+            return;
+        }
+        input.readOnly = true;
+        input.classList.add('locked');
+        dsSaveToLocalStorage();
+    }
+
+    async function dsOpenSavedLink(btn) {
+        const row = btn.closest('tr');
+        const linkInput = row.querySelector('.ds-row-link');
+        const url = linkInput.value.trim();
+
+        if (!url) {
+            await dsCopyScreenshotAndOpenUploadSite(row);
+            linkInput.focus();
+            return;
+        }
+
+        const finalUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+        window.open(finalUrl, '_blank', 'noopener');
+    }
+
+    function dsHandlePaste(event, pasteArea) {
+        const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf("image") !== -1) {
+                const blob = items[i].getAsFile();
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    dsProcessImageInput(pasteArea, e.target.result);
+                };
+                reader.readAsDataURL(blob);
+                event.preventDefault();
+                break;
+            }
+        }
+    }
+
+    function dsProcessImageInput(pasteArea, dataUrl) {
+        const row = pasteArea.closest('tr');
+
+        const rekInput = row.querySelector('.ds-row-rek');
+        const jenisSelect = row.querySelector('.ds-row-jenis');
+        const dateInput = row.querySelector('.ds-row-date');
+
+        if (rekInput.value === "NO REKENING" || rekInput.value.trim() === "") {
+            alert("Harap masukkan nomor rekening terlebih dahulu!");
+            return;
+        }
+
+        rekInput.classList.remove("samar");
+        rekInput.disabled = true;
+        jenisSelect.disabled = true;
+        dateInput.disabled = true;
+
+        pasteArea.innerHTML = '';
+
+        const img = document.createElement('img');
+        img.src = dataUrl;
+        img.className = 'ds-preview-img';
+        img.title = 'Klik untuk memperbesar gambar';
+        img.onclick = function() {
+            dsOpenModal(dataUrl);
         };
-        reader.readAsDataURL(file);
-      });
-      fileInput.value = '';
-    });
-  }
+        pasteArea.appendChild(img);
 
-  if (modalClose){
-    modalClose.addEventListener('click', function(){ modal.style.display = 'none'; });
-  }
-  if (modal){
-    modal.addEventListener('click', function(e){
-      if (e.target === modal) modal.style.display = 'none';
-    });
-  }
+        const linkCell = row.querySelector('.ds-link-cell');
+        if (linkCell) {
+            linkCell.innerHTML = dsBuildLinkCellHtml(true, "");
+        }
 
-  dsRender();
+        row.dataset.timestamp = new Date().getTime();
+        dsSaveToLocalStorage();
+
+        const tbody = document.getElementById('dsTableBody');
+        const rows = Array.from(tbody.children);
+        if (rows[rows.length - 1] === row) {
+            const newRow = dsAddRow(dsGetFormattedDate(), "NO REKENING", "-", "", false, null, "");
+            const newRekInput = newRow.querySelector('.ds-row-rek');
+            if (newRekInput) {
+                newRekInput.focus();
+                newRekInput.select();
+            }
+        }
+    }
+
+    function dsOpenModal(src) {
+        const modal = document.getElementById('dsImgModal');
+        const modalImg = document.getElementById('dsModalImg');
+        modal.style.display = 'block';
+        modalImg.src = src;
+    }
+
+    function dsCloseModal() {
+        const modal = document.getElementById('dsImgModal');
+        modal.style.display = 'none';
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modal = document.getElementById('dsImgModal');
+            if (modal && modal.style.display === 'block') {
+                dsCloseModal();
+            }
+        }
+    });
+
+    // Fungsi-fungsi berikut dipanggil lewat atribut onclick/oninput/onblur/
+    // onfocus/onpaste/onkeyup/onchange di HTML, jadi perlu diekspos ke scope
+    // global (window) supaya tetap bisa dipanggil dari luar IIFE ini.
+    window.dsToggleInfo = dsToggleInfo;
+    window.dsFilterTable = dsFilterTable;
+    window.dsClearPlaceholder = dsClearPlaceholder;
+    window.dsRestorePlaceholder = dsRestorePlaceholder;
+    window.dsSaveToLocalStorage = dsSaveToLocalStorage;
+    window.dsLockLinkInput = dsLockLinkInput;
+    window.dsOpenSavedLink = dsOpenSavedLink;
+    window.dsHandleCopyAndOpen = dsHandleCopyAndOpen;
+    window.dsHandlePaste = dsHandlePaste;
+    window.dsOpenModal = dsOpenModal;
+    window.dsCloseModal = dsCloseModal;
 })();
 </script>
 
