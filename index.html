@@ -3495,7 +3495,8 @@ setInterval(() => {
                     <div id="dsInfoPopup" class="info-popup">
                         <b>Informasi Penggunaan:</b>
                         <ul>
-                            <li>Input nomor rekening dan gambar maka akan tersimpan secara otomatis.</li>
+                            <li>Isi NOMOR REKENING dan tempel SCREENSHOT — boleh urutan mana saja, begitu keduanya terisi data akan tersimpan otomatis.</li>
+                            <li>Kolom SCREENSHOT 2 sifatnya opsional, boleh dikosongkan.</li>
                             <li>Data yang sudah di input akan terhapus secara otomatis jika sudah 3 x 24 (selama 3 minggu).</li>
                             <li>Jika ingin melakukan pengecekan gambar yang sudah di simpan dapat di lihat dengan setting tanggal atau input nomor di menu cari.</li>
                         </ul>
@@ -3519,10 +3520,11 @@ setInterval(() => {
           <table id="dsTransTable">
               <thead>
                   <tr>
-                      <th style="width: 14%;">TANGGAL</th>
-                      <th style="width: 22%;">NOMOR REKENING</th>
-                      <th style="width: 16%;">JENIS</th>
-                      <th style="width: 20%;">SCREENSHOT</th>
+                      <th style="width: 12%;">TANGGAL</th>
+                      <th style="width: 18%;">NOMOR REKENING</th>
+                      <th style="width: 12%;">JENIS</th>
+                      <th style="width: 15%;">SCREENSHOT</th>
+                      <th style="width: 15%;">SCREENSHOT 2</th>
                       <th style="width: 28%;">TAUTAN</th>
                   </tr>
               </thead>
@@ -3648,7 +3650,7 @@ setInterval(() => {
         const tbody = document.getElementById('dsTableBody');
         if (!tbody) return;
         const existing = tbody.querySelector(`tr[data-fb-key="${CSS.escape(key)}"]`);
-        const built = dsAddRow(data.date, data.rek, data.jenis, data.imgUrl, true, data.timestamp, data.link || "", key, false);
+        const built = dsAddRow(data.date, data.rek, data.jenis, data.imgUrl, true, data.timestamp, data.link || "", key, false, data.imgUrl2 || "");
         if (existing) {
             existing.replaceWith(built);
         } else {
@@ -3710,6 +3712,19 @@ setInterval(() => {
         if (input.value.trim() === "") {
             input.value = "NO REKENING";
             input.classList.add("samar");
+        }
+    }
+
+    // Dipanggil saat kolom NOMOR REKENING kehilangan fokus. Selain
+    // mengembalikan placeholder jika kosong, fungsi ini juga mencoba
+    // menyimpan baris draft apabila screenshot sudah lebih dulu ditempel
+    // (urutan pengisian NOMOR REKENING vs SCREENSHOT dibebaskan — yang
+    // wajib hanya keduanya harus terisi).
+    function dsHandleRekBlur(input) {
+        dsRestorePlaceholder(input);
+        const row = input.closest('tr');
+        if (row) {
+            dsTrySaveDraftRow(row);
         }
     }
 
@@ -3794,7 +3809,7 @@ setInterval(() => {
     // langsung ditambahkan ke tbody (dipakai saat merender ulang baris
     // dari data Firebase, karena posisinya perlu disisipkan manual sebelum
     // baris draft, bukan selalu di paling bawah).
-    function dsAddRow(dateVal = null, rekVal = "NO REKENING", jenisVal = "-", imgDataUrl = "", isLocked = false, timestamp = null, linkVal = "", fbKey = null, append = true) {
+    function dsAddRow(dateVal = null, rekVal = "NO REKENING", jenisVal = "-", imgDataUrl = "", isLocked = false, timestamp = null, linkVal = "", fbKey = null, append = true, imgDataUrl2 = "") {
         const newRow = document.createElement('tr');
         newRow.dataset.rowUid = 'ds-row-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
         if (timestamp) {
@@ -3815,7 +3830,7 @@ setInterval(() => {
 
         newRow.innerHTML = `
             <td><input type="text" class="ds-row-date" value="${dateStr}" ${isLocked ? 'disabled' : 'readonly'}></td>
-            <td><input type="text" class="ds-row-rek${isSamar}" value="${rekVal}" onfocus="dsClearPlaceholder(this)" onblur="dsRestorePlaceholder(this)" ${isLocked ? 'disabled' : ''}></td>
+            <td><input type="text" class="ds-row-rek${isSamar}" value="${rekVal}" onfocus="dsClearPlaceholder(this)" onblur="dsHandleRekBlur(this)" ${isLocked ? 'disabled' : ''}></td>
             <td>
                 <select class="ds-row-jenis" ${isLocked ? 'disabled' : ''}>
                     <option value="-" ${jenisVal === '-' ? 'selected' : ''}>-</option>
@@ -3823,10 +3838,20 @@ setInterval(() => {
                 </select>
             </td>
             <td>
-                <div class="ds-paste-area" data-automa="ds-paste-area" tabindex="0" onpaste="dsHandlePaste(event, this)" title="Klik lalu tekan Ctrl+V untuk paste gambar" ${isLocked ? 'style="border:none; background:transparent;"' : ''}>
+                <div class="ds-paste-area" data-automa="ds-paste-area" tabindex="0" onpaste="dsHandlePaste(event, this, 1)" title="Klik lalu tekan Ctrl+V untuk paste gambar" ${isLocked ? 'style="border:none; background:transparent;"' : ''}>
                     ${isLocked && imgDataUrl ?
                         `<img src="${imgDataUrl}" class="ds-preview-img" title="Klik untuk memperbesar gambar" onclick="dsOpenModal('${imgDataUrl}')">` :
-                        `<span style="font-size:11px; color:var(--ds-text-muted);">Klik &amp; Paste (Ctrl+V)</span>`
+                        `<span style="font-size:13px; color:var(--ds-text-muted);">Klik &amp; Paste (Ctrl+V)</span>`
+                    }
+                </div>
+            </td>
+            <td>
+                <div class="ds-paste-area" data-automa="ds-paste-area-2" tabindex="0" onpaste="dsHandlePaste(event, this, 2)" title="Klik lalu tekan Ctrl+V untuk paste gambar (opsional)" ${isLocked ? 'style="border:none; background:transparent;"' : ''}>
+                    ${isLocked && imgDataUrl2 ?
+                        `<img src="${imgDataUrl2}" class="ds-preview-img" title="Klik untuk memperbesar gambar" onclick="dsOpenModal('${imgDataUrl2}')">` :
+                        (isLocked ?
+                            `<span style="font-size:13px; color:var(--ds-text-muted);">-</span>` :
+                            `<span style="font-size:13px; color:var(--ds-text-muted);">Klik &amp; Paste (opsional)</span>`)
                     }
                 </div>
             </td>
@@ -3946,14 +3971,22 @@ setInterval(() => {
         window.open(finalUrl, '_blank', 'noopener');
     }
 
-    function dsHandlePaste(event, pasteArea) {
+    // Menyimpan sementara gambar yang sudah di-paste tapi baris-nya belum
+    // tersimpan ke Firebase (karena NOMOR REKENING belum diisi). Key-nya
+    // adalah rowUid (lihat dsAddRow). Dengan ini urutan pengisian NOMOR
+    // REKENING vs SCREENSHOT jadi bebas — screenshot boleh ditempel duluan.
+    // Tiap rowUid menyimpan objek { 1: dataUrl, 2: dataUrl } — slot 1 wajib,
+    // slot 2 (SCREENSHOT 2) opsional.
+    let dsPendingImages = {};
+
+    function dsHandlePaste(event, pasteArea, slot) {
         const items = (event.clipboardData || event.originalEvent.clipboardData).items;
         for (let i = 0; i < items.length; i++) {
             if (items[i].type.indexOf("image") !== -1) {
                 const blob = items[i].getAsFile();
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    dsProcessImageInput(pasteArea, e.target.result);
+                    dsProcessImageInput(pasteArea, e.target.result, slot);
                 };
                 reader.readAsDataURL(blob);
                 event.preventDefault();
@@ -3962,28 +3995,56 @@ setInterval(() => {
         }
     }
 
-    function dsProcessImageInput(pasteArea, dataUrl) {
+    function dsProcessImageInput(pasteArea, dataUrl, slot) {
         const row = pasteArea.closest('tr');
+        const rowUid = row.dataset.rowUid;
 
+        // Tampilkan preview gambar segera, terlepas dari NOMOR REKENING
+        // sudah diisi atau belum.
+        pasteArea.innerHTML = `<img src="${dataUrl}" class="ds-preview-img" title="Klik untuk memperbesar gambar" onclick="dsOpenModal('${dataUrl}')">`;
+        if (!dsPendingImages[rowUid]) {
+            dsPendingImages[rowUid] = {};
+        }
+        dsPendingImages[rowUid][slot] = dataUrl;
+
+        const saved = dsTrySaveDraftRow(row);
+        if (!saved && slot === 1) {
+            dsShowToast("Screenshot tersimpan sementara. Lengkapi juga NOMOR REKENING agar data ini tersimpan otomatis.");
+        }
+    }
+
+    // Mencoba menyimpan baris draft ke Firebase. Baru benar-benar tersimpan
+    // kalau NOMOR REKENING sudah valid DAN SCREENSHOT (slot 1) sudah ada
+    // (tidak peduli mana yang diisi lebih dulu). SCREENSHOT 2 (slot 2)
+    // sifatnya opsional, boleh kosong. Mengembalikan true jika berhasil
+    // disimpan, false jika belum lengkap / gagal.
+    function dsTrySaveDraftRow(row) {
+        const rowUid = row.dataset.rowUid;
         const rekInput = row.querySelector('.ds-row-rek');
         const jenisSelect = row.querySelector('.ds-row-jenis');
         const dateInput = row.querySelector('.ds-row-date');
 
-        if (rekInput.value === "NO REKENING" || rekInput.value.trim() === "") {
-            alert("Harap masukkan nomor rekening terlebih dahulu!");
-            return;
+        const rekValue = rekInput.value.trim();
+        const rekValid = rekValue !== "" && rekValue !== "NO REKENING";
+        const pending = dsPendingImages[rowUid] || {};
+        const imgDataUrl = pending[1];
+        const imgDataUrl2 = pending[2] || "";
+
+        if (!rekValid || !imgDataUrl) {
+            return false;
         }
 
         if (!dsDB) {
             alert("Firebase belum terhubung, data tidak dapat disimpan. Cek koneksi internet Anda lalu muat ulang halaman.");
-            return;
+            return false;
         }
 
         const dataToSave = {
             date: dateInput.value,
-            rek: rekInput.value,
+            rek: rekValue,
             jenis: jenisSelect.value,
-            imgUrl: dataUrl,
+            imgUrl: imgDataUrl,
+            imgUrl2: imgDataUrl2,
             link: "",
             timestamp: Date.now()
         };
@@ -3997,21 +4058,29 @@ setInterval(() => {
         // atas baris draft lewat listener child_added (real-time). Baris
         // draft ini sendiri di-reset ke kondisi kosong supaya siap dipakai
         // untuk input entri berikutnya, tanpa membuat baris draft ganda.
+        delete dsPendingImages[rowUid];
         dsResetDraftRow(row);
+        return true;
     }
+
 
     function dsResetDraftRow(row) {
         const rekInput = row.querySelector('.ds-row-rek');
         const jenisSelect = row.querySelector('.ds-row-jenis');
         const dateInput = row.querySelector('.ds-row-date');
-        const pasteArea = row.querySelector('.ds-paste-area');
+        const pasteAreas = row.querySelectorAll('.ds-paste-area');
         const linkCell = row.querySelector('.ds-link-cell');
 
         rekInput.value = "NO REKENING";
         rekInput.classList.add('samar');
         jenisSelect.value = "-";
         dateInput.value = dsGetFormattedDate();
-        pasteArea.innerHTML = '<span style="font-size:11px; color:var(--ds-text-muted);">Klik &amp; Paste (Ctrl+V)</span>';
+        if (pasteAreas[0]) {
+            pasteAreas[0].innerHTML = '<span style="font-size:13px; color:var(--ds-text-muted);">Klik &amp; Paste (Ctrl+V)</span>';
+        }
+        if (pasteAreas[1]) {
+            pasteAreas[1].innerHTML = '<span style="font-size:13px; color:var(--ds-text-muted);">Klik &amp; Paste (opsional)</span>';
+        }
         linkCell.innerHTML = dsBuildLinkCellHtml(false, "");
 
         rekInput.focus();
