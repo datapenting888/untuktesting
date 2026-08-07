@@ -1108,6 +1108,53 @@
     cursor: pointer;
 }
 
+.ds-scope select.search-box {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--ds-surface-alt);
+    background-image: linear-gradient(45deg, transparent 50%, var(--ds-gold) 50%), linear-gradient(135deg, var(--ds-gold) 50%, transparent 50%);
+    background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 13px) calc(50% - 3px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    color: var(--ds-text-primary);
+    color-scheme: dark;
+    cursor: pointer;
+}
+.ds-scope select.search-box:focus {
+    background-color: rgba(217,180,90,0.06);
+}
+.ds-scope select.search-box option {
+    background-color: var(--ds-surface-alt);
+    color: var(--ds-text-primary);
+}
+
+.ds-scope .autoSs-staff-name-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(217,180,90,0.08);
+    border: 1px solid rgba(217,180,90,0.3);
+    color: var(--ds-text-primary);
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+}
+.ds-scope .autoSs-staff-name-btn:hover {
+    background: rgba(217,180,90,0.16);
+    border-color: var(--ds-gold);
+    transform: translateY(-1px);
+}
+.ds-scope .autoSs-staff-name-btn .autoSs-name-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--ds-gold-light);
+}
+
 .ds-scope .table-scroll {
   margin-top: 4px;
   overflow: auto;
@@ -3799,68 +3846,126 @@ setInterval(() => {
     };
 
     // ---------------------------------------------------------------
-    // Galeri hasil capture, dikelompokkan per staff & difilter sesuai
-    // tanggal yang dipilih di date picker.
+    // Galeri: menampilkan daftar nama staff sebagai tombol. Klik nama
+    // staff akan meminta PIN staff tersebut sebelum menampilkan hasil
+    // tangkap layarnya (difilter sesuai tanggal yang dipilih).
     // ---------------------------------------------------------------
+    var viewingStaffId = null;
+
     function renderGallery(){
         var wrap = document.getElementById('autoSsGallery');
         if (!wrap || !autoSsDB) return;
 
-        autoSsDB.ref(CAPTURES_PATH).once('value').then(function(capSnap){
-            var allCaptures = capSnap.val() || {};
+        var staffIds = Object.keys(staffCache);
+        if (staffIds.length === 0) {
+            wrap.innerHTML = '<div style="color:var(--ds-text-muted); font-size:13px;">Belum ada staff. Tambahkan staff dulu lewat tombol "+ TAMBAH STAFF".</div>';
+            return;
+        }
+
+        if (viewingStaffId && !staffCache[viewingStaffId]) {
+            viewingStaffId = null; // staff yang sedang dilihat sudah dihapus
+        }
+
+        if (!viewingStaffId) {
+            renderStaffNameList(wrap, staffIds);
+        } else {
+            renderStaffGallery(wrap, viewingStaffId);
+        }
+    }
+
+    function renderStaffNameList(wrap, staffIds){
+        wrap.innerHTML = '';
+
+        var heading = document.createElement('div');
+        heading.style.cssText = 'font-weight:700; color:var(--ds-text-primary); margin-bottom:12px; font-size:14px;';
+        heading.textContent = 'LIHAT HASIL TANGKAP LAYAR (pilih staff, lalu masukkan PIN)';
+        wrap.appendChild(heading);
+
+        var list = document.createElement('div');
+        list.style.cssText = 'display:flex; flex-wrap:wrap; gap:10px;';
+
+        staffIds.forEach(function(staffId){
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'autoSs-staff-name-btn';
+            btn.innerHTML = '<svg class="autoSs-name-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> ' + staffCache[staffId].name;
+            btn.onclick = function(){ promptPinAndView(staffId); };
+            list.appendChild(btn);
+        });
+
+        wrap.appendChild(list);
+    }
+
+    function promptPinAndView(staffId){
+        var staff = staffCache[staffId];
+        if (!staff) return;
+        var pin = window.prompt('Masukkan PIN untuk melihat hasil tangkap layar "' + staff.name + '":');
+        if (pin === null) return;
+        if (pin.trim() !== staff.pin) {
+            window.alert('PIN salah.');
+            return;
+        }
+        viewingStaffId = staffId;
+        renderGallery();
+    }
+
+    function renderStaffGallery(wrap, staffId){
+        var staff = staffCache[staffId];
+        wrap.innerHTML = '';
+
+        var header = document.createElement('div');
+        header.style.cssText = 'display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;';
+
+        var title = document.createElement('div');
+        title.style.cssText = 'font-weight:700; color:var(--ds-gold-light); font-size:14px;';
+        title.textContent = 'HASIL TANGKAP LAYAR — ' + (staff ? staff.name : '');
+        header.appendChild(title);
+
+        var backBtn = document.createElement('button');
+        backBtn.type = 'button';
+        backBtn.className = 'autoSs-staff-name-btn';
+        backBtn.textContent = '← Kembali';
+        backBtn.onclick = function(){ viewingStaffId = null; renderGallery(); };
+        header.appendChild(backBtn);
+
+        wrap.appendChild(header);
+
+        var grid = document.createElement('div');
+        grid.style.cssText = 'display:flex; flex-wrap:wrap; gap:10px;';
+        wrap.appendChild(grid);
+
+        autoSsDB.ref(CAPTURES_PATH + '/' + staffId).once('value').then(function(snap){
+            var staffCaps = snap.val() || {};
             var dateInput = document.getElementById('autoSsViewDate');
             var filterDate = dateInput ? dateInput.value : '';
 
-            wrap.innerHTML = '';
-            var staffIds = Object.keys(staffCache);
-            if (staffIds.length === 0) {
-                wrap.innerHTML = '<div style="color:var(--ds-text-muted); font-size:13px;">Belum ada staff. Tambahkan staff dulu lewat tombol "+ TAMBAH STAFF".</div>';
+            var items = Object.keys(staffCaps).map(function(k){
+                var v = staffCaps[k]; v._key = k; return v;
+            }).filter(function(item){
+                if (!filterDate) return true;
+                var d = new Date(item.timestamp);
+                var dStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+                return dStr === filterDate;
+            }).sort(function(a, b){ return b.timestamp - a.timestamp; });
+
+            if (items.length === 0) {
+                var empty = document.createElement('div');
+                empty.style.cssText = 'color:var(--ds-text-muted); font-size:13px;';
+                empty.textContent = 'Belum ada screenshot pada tanggal ini.';
+                grid.appendChild(empty);
                 return;
             }
 
-            staffIds.forEach(function(staffId){
-                var staffCaps = allCaptures[staffId] || {};
-                var items = Object.keys(staffCaps).map(function(k){
-                    var v = staffCaps[k]; v._key = k; return v;
-                }).filter(function(item){
-                    if (!filterDate) return true;
-                    var d = new Date(item.timestamp);
-                    var dStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-                    return dStr === filterDate;
-                }).sort(function(a, b){ return b.timestamp - a.timestamp; });
-
-                var section = document.createElement('div');
-                section.style.cssText = 'margin-bottom:22px;';
-
-                var title = document.createElement('div');
-                title.style.cssText = 'font-weight:700; color:var(--ds-gold-light); margin-bottom:10px; font-size:14px;';
-                title.textContent = staffCache[staffId].name + ' (' + items.length + ')';
-                section.appendChild(title);
-
-                var grid = document.createElement('div');
-                grid.style.cssText = 'display:flex; flex-wrap:wrap; gap:10px;';
-
-                if (items.length === 0) {
-                    var empty = document.createElement('div');
-                    empty.style.cssText = 'color:var(--ds-text-muted); font-size:13px;';
-                    empty.textContent = 'Belum ada screenshot pada tanggal ini.';
-                    grid.appendChild(empty);
-                }
-
-                items.forEach(function(item){
-                    var thumb = document.createElement('img');
-                    thumb.src = item.image;
-                    thumb.style.cssText = 'width:96px; height:64px; object-fit:cover; border-radius:8px; cursor:pointer; border:1px solid var(--ds-border);';
-                    thumb.title = new Date(item.timestamp).toLocaleString('id-ID');
-                    thumb.onclick = function(){
-                        if (window.dsOpenModal) { window.dsOpenModal(item.image); }
-                        else { window.open(item.image, '_blank'); }
-                    };
-                    grid.appendChild(thumb);
-                });
-
-                section.appendChild(grid);
-                wrap.appendChild(section);
+            items.forEach(function(item){
+                var thumb = document.createElement('img');
+                thumb.src = item.image;
+                thumb.style.cssText = 'width:120px; height:80px; object-fit:cover; border-radius:8px; cursor:pointer; border:1px solid var(--ds-border);';
+                thumb.title = new Date(item.timestamp).toLocaleString('id-ID');
+                thumb.onclick = function(){
+                    if (window.dsOpenModal) { window.dsOpenModal(item.image); }
+                    else { window.open(item.image, '_blank'); }
+                };
+                grid.appendChild(thumb);
             });
         });
     }
