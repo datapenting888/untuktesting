@@ -3476,7 +3476,6 @@ setInterval(() => {
   <div class="panel" style="padding:0; background:transparent;">
     <div class="ds-scope">
       <div class="container">
-        <span class="eyebrow">LAPAK GOLAN</span>
         <h2>DATA REKENING &amp; BUKTI SCREENSHOT</h2>
 
         <div class="controls">
@@ -3759,25 +3758,25 @@ setInterval(() => {
 
     function dsBuildLinkCellHtml(isLocked, linkVal) {
         if (!isLocked) {
-            return `<span class="link-placeholder">-</span>`;
+            return `<span class="link-placeholder" data-automa="ds-link-empty">-</span>`;
         }
         if (linkVal) {
             return `
-                <input type="text" class="ds-row-link locked" value="${dsEscapeHtml(linkVal)}" readonly title="Tautan tersimpan (tidak dapat diubah)">
-                <button type="button" class="ds-open-link-btn" onclick="dsOpenSavedLink(this)" title="Buka tautan">
+                <input type="text" class="ds-row-link locked" data-automa="ds-link-input-locked" value="${dsEscapeHtml(linkVal)}" readonly title="Tautan tersimpan (tidak dapat diubah)">
+                <button type="button" class="ds-open-link-btn" data-automa="ds-link-open-btn" onclick="dsOpenSavedLink(this)" title="Buka tautan">
                     ${dsOpenLinkIconSvg}
                 </button>`;
         }
         return `
-            <button type="button" class="ds-open-link-btn ds-copy-open-btn" onclick="dsHandleCopyAndOpen(this)" title="Salin screenshot & buka imgbb.com">
+            <button type="button" class="ds-open-link-btn ds-copy-open-btn" data-automa="ds-copy-open-btn" onclick="dsHandleCopyAndOpen(this)" title="Salin screenshot & buka imgbb.com">
                 ${dsOpenLinkIconSvg}
             </button>`;
     }
 
     function dsBuildEditableLinkInputHtml() {
         return `
-            <input type="text" class="ds-row-link" placeholder="Tempel tautan di sini" onblur="dsLockLinkInput(this)" onkeydown="if(event.key==='Enter'){this.blur();}" title="Tempel tautan hasil unggah dari imgbb.com">
-            <button type="button" class="ds-open-link-btn" onclick="dsOpenSavedLink(this)" title="Belum ada tautan? Klik untuk kembali ke imgbb.com">
+            <input type="text" class="ds-row-link" data-automa="ds-link-input" placeholder="Tempel tautan di sini" onblur="dsLockLinkInput(this)" onkeydown="if(event.key==='Enter'){this.blur();}" title="Tempel tautan hasil unggah dari imgbb.com">
+            <button type="button" class="ds-open-link-btn" data-automa="ds-link-open-btn" onclick="dsOpenSavedLink(this)" title="Belum ada tautan? Klik untuk kembali ke imgbb.com">
                 ${dsOpenLinkIconSvg}
             </button>`;
     }
@@ -3789,6 +3788,7 @@ setInterval(() => {
     // baris draft, bukan selalu di paling bawah).
     function dsAddRow(dateVal = null, rekVal = "NO REKENING", jenisVal = "-", imgDataUrl = "", isLocked = false, timestamp = null, linkVal = "", fbKey = null, append = true) {
         const newRow = document.createElement('tr');
+        newRow.dataset.rowUid = 'ds-row-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
         if (timestamp) {
             newRow.dataset.timestamp = timestamp;
         }
@@ -3815,7 +3815,7 @@ setInterval(() => {
                 </select>
             </td>
             <td>
-                <div class="ds-paste-area" tabindex="0" onpaste="dsHandlePaste(event, this)" title="Klik lalu tekan Ctrl+V untuk paste gambar" ${isLocked ? 'style="border:none; background:transparent;"' : ''}>
+                <div class="ds-paste-area" data-automa="ds-paste-area" tabindex="0" onpaste="dsHandlePaste(event, this)" title="Klik lalu tekan Ctrl+V untuk paste gambar" ${isLocked ? 'style="border:none; background:transparent;"' : ''}>
                     ${isLocked && imgDataUrl ?
                         `<img src="${imgDataUrl}" class="ds-preview-img" title="Klik untuk memperbesar gambar" onclick="dsOpenModal('${imgDataUrl}')">` :
                         `<span style="font-size:11px; color:var(--ds-text-muted);">Klik &amp; Paste (Ctrl+V)</span>`
@@ -3877,6 +3877,12 @@ setInterval(() => {
             return;
         }
 
+        // Tandai baris ini sebagai baris aktif (target Automa), hapus penanda dari baris lain
+        document.querySelectorAll('#dsTableBody tr[data-automa-active]').forEach(r => {
+            r.removeAttribute('data-automa-active');
+        });
+        row.setAttribute('data-automa-active', 'true');
+
         const linkCell = row.querySelector('.ds-link-cell');
         linkCell.innerHTML = dsBuildEditableLinkInputHtml();
 
@@ -3884,6 +3890,11 @@ setInterval(() => {
         if (newInput) {
             newInput.focus();
         }
+
+        // Event khusus untuk trigger workflow Automa (dengarkan via block "Trigger" > "EventListener")
+        document.dispatchEvent(new CustomEvent('ds-automa-ready-for-paste', {
+            detail: { rowUid: row.dataset.rowUid || null }
+        }));
     }
 
     function dsLockLinkInput(input) {
@@ -3895,6 +3906,9 @@ setInterval(() => {
         input.classList.add('locked');
 
         const row = input.closest('tr');
+        if (row) {
+            row.removeAttribute('data-automa-active');
+        }
         const key = row ? row.dataset.fbKey : null;
         if (key && dsDB) {
             dsDB.ref(`${DS_FB_PATH}/${key}`).update({ link: val }).catch((err) => {
@@ -3902,6 +3916,11 @@ setInterval(() => {
                 dsShowToast('⚠ Gagal menyimpan tautan ke Firebase: ' + (err && err.message ? err.message : String(err)));
             });
         }
+
+        // Event konfirmasi untuk Automa: tautan sudah tersimpan pada baris ini
+        document.dispatchEvent(new CustomEvent('ds-automa-link-saved', {
+            detail: { rowUid: row ? row.dataset.rowUid || null : null, link: val }
+        }));
     }
 
     async function dsOpenSavedLink(btn) {
