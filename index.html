@@ -1421,6 +1421,19 @@
     <span class="label label-sm">DATA SCREENSHOT</span>
   </div>
 
+  <!--
+    Menu "AUTO SS" — placeholder untuk fitur automasi screenshot
+    (lihat <div id="pageAutoSs"> di bawah).
+  -->
+  <div class="nav-item" id="navAutoSs">
+    <span class="icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="label label-sm">AUTO SS</span>
+  </div>
+
   <div class="sidebar-footer">© 2026 RIKI GOLAN — All Rights Reserved</div>
 </div>
 
@@ -3476,6 +3489,7 @@ setInterval(() => {
   <div class="panel" style="padding:0; background:transparent;">
     <div class="ds-scope">
       <div class="container">
+        <span class="eyebrow">LAPAK GOLAN</span>
         <h2>DATA REKENING &amp; BUKTI SCREENSHOT</h2>
 
         <div class="controls">
@@ -3526,6 +3540,118 @@ setInterval(() => {
     </div>
   </div>
 </div>
+
+<!--
+  Halaman "AUTO SS" — placeholder untuk fitur automasi screenshot.
+  Style-nya disamakan dengan pola halaman lain (topbar marquee + panel gelap).
+-->
+<div id="pageAutoSs" style="display:none;">
+  <div class="topbar">
+    <h1><span>AUTO SS &nbsp;&nbsp; • &nbsp;&nbsp; AUTO SS &nbsp;&nbsp; • &nbsp;&nbsp; AUTO SS &nbsp;&nbsp; • &nbsp;&nbsp; AUTO SS &nbsp;&nbsp; • &nbsp;&nbsp; AUTO SS</span><span>AUTO SS &nbsp;&nbsp; • &nbsp;&nbsp; AUTO SS &nbsp;&nbsp; • &nbsp;&nbsp; AUTO SS &nbsp;&nbsp; • &nbsp;&nbsp; AUTO SS &nbsp;&nbsp; • &nbsp;&nbsp; AUTO SS</span></h1>
+  </div>
+
+  <div class="panel" style="padding:0; background:transparent;">
+    <div class="ds-scope">
+      <div class="container">
+        <div class="controls" style="margin-bottom:24px;">
+          <div class="left-controls">
+            <button type="button" class="info-btn" id="autoSsAddStaffBtn" onclick="autoSsAddStaff()">
+              <span class="info-icon">+</span> TAMBAH STAFF
+            </button>
+          </div>
+
+          <div class="search-wrapper date-search-wrapper">
+            <input type="date" id="autoSsViewDate" class="search-box date-search-box" onchange="autoSsChangeDate()" onclick="if(this.showPicker) this.showPicker()" title="Klik untuk pilih tanggal yang ingin dilihat">
+          </div>
+        </div>
+
+        <div id="autoSsStaffList" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px;"></div>
+
+        <div style="display:flex; align-items:center; justify-content:center; min-height:220px; text-align:center; color:var(--ds-text-muted);">
+          <div>
+            <div style="font-size:18px; font-weight:700; color:var(--ds-text-primary); margin-bottom:8px;">AUTO SS</div>
+            <div>Fitur automasi screenshot akan ditambahkan di sini.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+    var STAFF_KEY = 'autoSsStaffList';
+    var DATE_KEY = 'autoSsViewDate';
+
+    function autoSsGetStaff(){
+        try {
+            return JSON.parse(localStorage.getItem(STAFF_KEY)) || [];
+        } catch(e){ return []; }
+    }
+
+    function autoSsSaveStaff(list){
+        localStorage.setItem(STAFF_KEY, JSON.stringify(list));
+    }
+
+    function autoSsRenderStaff(){
+        var wrap = document.getElementById('autoSsStaffList');
+        if (!wrap) return;
+        var list = autoSsGetStaff();
+        wrap.innerHTML = '';
+        list.forEach(function(name, idx){
+            var chip = document.createElement('span');
+            chip.style.cssText = 'display:inline-flex; align-items:center; gap:8px; background:rgba(217,180,90,0.1); border:1px solid rgba(217,180,90,0.3); color:var(--ds-text-primary); padding:6px 12px; border-radius:999px; font-size:13px;';
+            chip.textContent = name;
+            var del = document.createElement('span');
+            del.textContent = '×';
+            del.style.cssText = 'cursor:pointer; font-weight:800; color:var(--ds-gold-light);';
+            del.onclick = function(){
+                var l = autoSsGetStaff();
+                l.splice(idx, 1);
+                autoSsSaveStaff(l);
+                autoSsRenderStaff();
+            };
+            chip.appendChild(del);
+            wrap.appendChild(chip);
+        });
+    }
+
+    window.autoSsAddStaff = function(){
+        var name = window.prompt('Nama staff yang ingin ditambahkan:');
+        if (!name) return;
+        name = name.trim();
+        if (!name) return;
+        var list = autoSsGetStaff();
+        list.push(name);
+        autoSsSaveStaff(list);
+        autoSsRenderStaff();
+    };
+
+    window.autoSsChangeDate = function(){
+        var input = document.getElementById('autoSsViewDate');
+        if (!input) return;
+        localStorage.setItem(DATE_KEY, input.value);
+        // TODO: dipakai nanti untuk memfilter data AUTO SS berdasarkan tanggal ini.
+    };
+
+    function autoSsInit(){
+        var dateInput = document.getElementById('autoSsViewDate');
+        if (dateInput) {
+            var savedDate = localStorage.getItem(DATE_KEY);
+            var today = new Date();
+            var todayStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+            dateInput.value = savedDate || todayStr;
+        }
+        autoSsRenderStaff();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', autoSsInit);
+    } else {
+        autoSsInit();
+    }
+})();
+</script>
 
 <div id="dsImgModal" class="ds-modal">
     <span class="ds-close" onclick="dsCloseModal()">&times;</span>
@@ -5425,7 +5551,8 @@ setInterval(() => {
       bola: document.getElementById("navBola"),
       hasilJadwal: document.getElementById("navHasilJadwal"),
       cekNawala: document.getElementById("navCekNawala"),
-      dataScreenshot: document.getElementById("navDataScreenshot")
+      dataScreenshot: document.getElementById("navDataScreenshot"),
+      autoSs: document.getElementById("navAutoSs")
     };
     var pages = {
       prediksi: document.getElementById("pagePrediksi"),
@@ -5434,7 +5561,8 @@ setInterval(() => {
       bola: document.getElementById("pageBola"),
       hasilJadwal: document.getElementById("pageHasilJadwal"),
       cekNawala: document.getElementById("pageCekNawala"),
-      dataScreenshot: document.getElementById("pageDataScreenshot")
+      dataScreenshot: document.getElementById("pageDataScreenshot"),
+      autoSs: document.getElementById("pageAutoSs")
     };
 
     var ACTIVE_PAGE_KEY = 'dashboardActivePage';
@@ -5454,6 +5582,7 @@ setInterval(() => {
     navs.hasilJadwal.addEventListener("click", function(){ showPage("hasilJadwal"); });
     navs.cekNawala.addEventListener("click", function(){ showPage("cekNawala"); });
     navs.dataScreenshot.addEventListener("click", function(){ showPage("dataScreenshot"); });
+    navs.autoSs.addEventListener("click", function(){ showPage("autoSs"); });
 
     var savedPage = localStorage.getItem(ACTIVE_PAGE_KEY);
     showPage(pages[savedPage] ? savedPage : "prediksi");
