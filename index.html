@@ -3565,7 +3565,34 @@ setInterval(() => {
           </div>
         </div>
 
-        <div id="autoSsStaffList" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px;"></div>
+        <div id="autoSsStaffList" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px;"></div>
+
+        <!-- Login staff: staff pilih namanya sendiri + masukkan PIN masing-masing
+             sebelum AUTO SS bisa dijalankan. Ini memastikan setiap capture layar
+             ditandai atas nama staff yang benar-benar login sendiri. -->
+        <div id="autoSsLoginBox" style="padding:18px; border:1px solid var(--ds-border); border-radius:14px; background:rgba(255,255,255,0.02); max-width:420px;">
+          <div style="font-weight:700; color:var(--ds-text-primary); margin-bottom:12px; font-size:14px;">LOGIN STAFF UNTUK AUTO SS</div>
+          <select id="autoSsStaffSelect" class="search-box" style="width:100%; padding-left:14px; margin-bottom:10px;">
+            <option value="">— Pilih nama staff —</option>
+          </select>
+          <input type="password" id="autoSsPinInput" class="search-box" placeholder="Masukkan PIN" inputmode="numeric" maxlength="6" style="width:100%; padding-left:14px; margin-bottom:10px;">
+          <button type="button" class="info-btn" id="autoSsLoginBtn" onclick="autoSsLogin()" style="width:100%; justify-content:center;">MULAI AUTO SS</button>
+          <div id="autoSsLoginMsg" style="margin-top:8px; font-size:12px; color:#f87171; min-height:16px;"></div>
+        </div>
+
+        <!-- Muncul setelah PIN benar & izin berbagi layar diberikan (browser selalu
+             menampilkan dialog izin + indikator "sedang berbagi layar" secara native,
+             jadi staff selalu tahu kapan layarnya sedang di-capture). -->
+        <div id="autoSsActiveBox" style="display:none; padding:18px; border:1px solid var(--ds-gold); border-radius:14px; background:rgba(217,180,90,0.06); max-width:420px;">
+          <div style="font-weight:700; color:var(--ds-gold-light); margin-bottom:8px;">AUTO SS AKTIF — <span id="autoSsActiveName"></span></div>
+          <div style="font-size:12px; color:var(--ds-text-muted); margin-bottom:14px;">Setiap kali "AMBIL SCREENSHOT" ditekan, hasil tangkapan layar disimpan langsung ke staff ini.</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="button" class="info-btn" onclick="autoSsCaptureNow()">AMBIL SCREENSHOT</button>
+            <button type="button" class="info-btn" style="background:#334155; color:#e2e8f0; box-shadow:none;" onclick="autoSsStop()">STOP</button>
+          </div>
+        </div>
+
+        <div id="autoSsGallery" style="margin-top:26px;"></div>
       </div>
     </div>
   </div>
@@ -3573,69 +3600,310 @@ setInterval(() => {
 
 <script>
 (function(){
-    var STAFF_KEY = 'autoSsStaffList';
+    var STAFF_PATH = 'autoSs/staff';
+    var CAPTURES_PATH = 'autoSs/captures';
     var DATE_KEY = 'autoSsViewDate';
+    var EXPIRE_MS = 21 * 24 * 60 * 60 * 1000; // 3 minggu, sama seperti DATA SCREENSHOT
 
-    function autoSsGetStaff(){
+    var autoSsDB = null;
+    var currentStaffId = null;
+    var currentStaffName = null;
+    var mediaStream = null;
+    var staffCache = {};
+
+    function initFirebase(){
+        if (typeof firebase === 'undefined') {
+            console.error('[AUTO SS] Firebase SDK belum dimuat.');
+            return;
+        }
         try {
-            return JSON.parse(localStorage.getItem(STAFF_KEY)) || [];
-        } catch(e){ return []; }
+            autoSsDB = firebase.database();
+        } catch (e) {
+            console.error('[AUTO SS] Gagal terhubung ke Firebase:', e);
+        }
     }
 
-    function autoSsSaveStaff(list){
-        localStorage.setItem(STAFF_KEY, JSON.stringify(list));
+    function todayStr(){
+        var d = new Date();
+        return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
     }
 
-    function autoSsRenderStaff(){
+    function autoSsToast(message){
+        var el = document.getElementById('dsToastNotif');
+        if (!el) { console.log('[AUTO SS]', message); return; }
+        el.textContent = message;
+        el.classList.add('show');
+        clearTimeout(el._autoSsTimer);
+        el._autoSsTimer = setTimeout(function(){ el.classList.remove('show'); }, 3000);
+    }
+
+    // ---------------------------------------------------------------
+    // Manajemen staff (nama + PIN), tersimpan di Firebase supaya sinkron
+    // di semua perangkat, sama seperti data lain di dashboard ini.
+    // ---------------------------------------------------------------
+    function renderStaffUI(){
         var wrap = document.getElementById('autoSsStaffList');
-        if (!wrap) return;
-        var list = autoSsGetStaff();
+        var select = document.getElementById('autoSsStaffSelect');
+        if (!wrap || !select) return;
+
         wrap.innerHTML = '';
-        list.forEach(function(name, idx){
+        select.innerHTML = '<option value="">— Pilih nama staff —</option>';
+
+        Object.keys(staffCache).forEach(function(id){
+            var staff = staffCache[id];
+
             var chip = document.createElement('span');
             chip.style.cssText = 'display:inline-flex; align-items:center; gap:8px; background:rgba(217,180,90,0.1); border:1px solid rgba(217,180,90,0.3); color:var(--ds-text-primary); padding:6px 12px; border-radius:999px; font-size:13px;';
-            chip.textContent = name;
+            chip.textContent = staff.name;
             var del = document.createElement('span');
             del.textContent = '×';
+            del.title = 'Hapus staff ini beserta seluruh screenshot miliknya';
             del.style.cssText = 'cursor:pointer; font-weight:800; color:var(--ds-gold-light);';
             del.onclick = function(){
-                var l = autoSsGetStaff();
-                l.splice(idx, 1);
-                autoSsSaveStaff(l);
-                autoSsRenderStaff();
+                if (!window.confirm('Hapus staff "' + staff.name + '"? Semua screenshot milik staff ini akan ikut terhapus.')) return;
+                autoSsDB.ref(STAFF_PATH + '/' + id).remove();
+                autoSsDB.ref(CAPTURES_PATH + '/' + id).remove();
             };
             chip.appendChild(del);
             wrap.appendChild(chip);
+
+            var opt = document.createElement('option');
+            opt.value = id;
+            opt.textContent = staff.name;
+            select.appendChild(opt);
         });
     }
 
     window.autoSsAddStaff = function(){
+        if (!autoSsDB) { window.alert('Firebase belum terhubung, coba muat ulang halaman.'); return; }
+
         var name = window.prompt('Nama staff yang ingin ditambahkan:');
         if (!name) return;
         name = name.trim();
         if (!name) return;
-        var list = autoSsGetStaff();
-        list.push(name);
-        autoSsSaveStaff(list);
-        autoSsRenderStaff();
+
+        var pin = window.prompt('Buat PIN untuk "' + name + '" (4-6 digit angka, staff akan memakai PIN ini untuk login sendiri):');
+        if (!pin) return;
+        pin = pin.trim();
+        if (!/^\d{4,6}$/.test(pin)) {
+            window.alert('PIN harus berupa 4-6 digit angka.');
+            return;
+        }
+
+        autoSsDB.ref(STAFF_PATH).push({ name: name, pin: pin, createdAt: Date.now() })
+            .then(function(){ autoSsToast('Staff "' + name + '" ditambahkan.'); })
+            .catch(function(err){
+                console.error('[AUTO SS] Gagal menambah staff:', err);
+                window.alert('Gagal menyimpan staff ke Firebase.');
+            });
     };
+
+    function listenStaff(){
+        if (!autoSsDB) return;
+        autoSsDB.ref(STAFF_PATH).on('value', function(snap){
+            staffCache = snap.val() || {};
+            renderStaffUI();
+            renderGallery();
+        });
+    }
+
+    // ---------------------------------------------------------------
+    // Login staff (verifikasi PIN) lalu minta izin berbagi layar.
+    // getDisplayMedia() SELALU memicu dialog izin native browser dan
+    // indikator "sedang berbagi layar" yang tidak bisa disembunyikan —
+    // jadi staff selalu sadar kapan AUTO SS sedang aktif.
+    // ---------------------------------------------------------------
+    window.autoSsLogin = function(){
+        var select = document.getElementById('autoSsStaffSelect');
+        var pinInput = document.getElementById('autoSsPinInput');
+        var msg = document.getElementById('autoSsLoginMsg');
+        msg.textContent = '';
+
+        var staffId = select.value;
+        if (!staffId) { msg.textContent = 'Pilih nama staff terlebih dahulu.'; return; }
+        var pin = pinInput.value.trim();
+        if (!pin) { msg.textContent = 'Masukkan PIN.'; return; }
+
+        var staff = staffCache[staffId];
+        if (!staff || staff.pin !== pin) {
+            msg.textContent = 'PIN salah, coba lagi.';
+            return;
+        }
+
+        currentStaffId = staffId;
+        currentStaffName = staff.name;
+        pinInput.value = '';
+        msg.textContent = '';
+        requestScreenShare();
+    };
+
+    function requestScreenShare(){
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+            window.alert('Browser ini tidak mendukung fitur berbagi layar.');
+            return;
+        }
+        navigator.mediaDevices.getDisplayMedia({ video: true })
+            .then(function(stream){
+                mediaStream = stream;
+                document.getElementById('autoSsLoginBox').style.display = 'none';
+                document.getElementById('autoSsActiveBox').style.display = 'block';
+                document.getElementById('autoSsActiveName').textContent = currentStaffName;
+                // Kalau staff menekan tombol "Stop sharing" bawaan browser,
+                // ikut hentikan sesi AUTO SS di dashboard.
+                stream.getVideoTracks()[0].addEventListener('ended', autoSsStop);
+            })
+            .catch(function(err){
+                console.error('[AUTO SS] Izin berbagi layar ditolak/gagal:', err);
+                window.alert('Izin berbagi layar tidak diberikan, AUTO SS dibatalkan.');
+                currentStaffId = null;
+                currentStaffName = null;
+            });
+    }
+
+    window.autoSsCaptureNow = function(){
+        if (!mediaStream || !currentStaffId) return;
+        var video = document.createElement('video');
+        video.srcObject = mediaStream;
+        video.muted = true;
+        video.play();
+        video.addEventListener('loadedmetadata', function(){
+            var canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+            autoSsDB.ref(CAPTURES_PATH + '/' + currentStaffId).push({
+                image: dataUrl,
+                timestamp: Date.now()
+            }).then(function(){
+                autoSsToast('Screenshot tersimpan untuk ' + currentStaffName);
+            }).catch(function(err){
+                console.error('[AUTO SS] Gagal menyimpan screenshot:', err);
+                window.alert('Gagal menyimpan screenshot ke Firebase.');
+            });
+        }, { once: true });
+    };
+
+    window.autoSsStop = function(){
+        if (mediaStream) {
+            mediaStream.getTracks().forEach(function(t){ t.stop(); });
+            mediaStream = null;
+        }
+        currentStaffId = null;
+        currentStaffName = null;
+        var activeBox = document.getElementById('autoSsActiveBox');
+        var loginBox = document.getElementById('autoSsLoginBox');
+        if (activeBox) activeBox.style.display = 'none';
+        if (loginBox) loginBox.style.display = 'block';
+    };
+
+    // ---------------------------------------------------------------
+    // Galeri hasil capture, dikelompokkan per staff & difilter sesuai
+    // tanggal yang dipilih di date picker.
+    // ---------------------------------------------------------------
+    function renderGallery(){
+        var wrap = document.getElementById('autoSsGallery');
+        if (!wrap || !autoSsDB) return;
+
+        autoSsDB.ref(CAPTURES_PATH).once('value').then(function(capSnap){
+            var allCaptures = capSnap.val() || {};
+            var dateInput = document.getElementById('autoSsViewDate');
+            var filterDate = dateInput ? dateInput.value : '';
+
+            wrap.innerHTML = '';
+            var staffIds = Object.keys(staffCache);
+            if (staffIds.length === 0) {
+                wrap.innerHTML = '<div style="color:var(--ds-text-muted); font-size:13px;">Belum ada staff. Tambahkan staff dulu lewat tombol "+ TAMBAH STAFF".</div>';
+                return;
+            }
+
+            staffIds.forEach(function(staffId){
+                var staffCaps = allCaptures[staffId] || {};
+                var items = Object.keys(staffCaps).map(function(k){
+                    var v = staffCaps[k]; v._key = k; return v;
+                }).filter(function(item){
+                    if (!filterDate) return true;
+                    var d = new Date(item.timestamp);
+                    var dStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+                    return dStr === filterDate;
+                }).sort(function(a, b){ return b.timestamp - a.timestamp; });
+
+                var section = document.createElement('div');
+                section.style.cssText = 'margin-bottom:22px;';
+
+                var title = document.createElement('div');
+                title.style.cssText = 'font-weight:700; color:var(--ds-gold-light); margin-bottom:10px; font-size:14px;';
+                title.textContent = staffCache[staffId].name + ' (' + items.length + ')';
+                section.appendChild(title);
+
+                var grid = document.createElement('div');
+                grid.style.cssText = 'display:flex; flex-wrap:wrap; gap:10px;';
+
+                if (items.length === 0) {
+                    var empty = document.createElement('div');
+                    empty.style.cssText = 'color:var(--ds-text-muted); font-size:13px;';
+                    empty.textContent = 'Belum ada screenshot pada tanggal ini.';
+                    grid.appendChild(empty);
+                }
+
+                items.forEach(function(item){
+                    var thumb = document.createElement('img');
+                    thumb.src = item.image;
+                    thumb.style.cssText = 'width:96px; height:64px; object-fit:cover; border-radius:8px; cursor:pointer; border:1px solid var(--ds-border);';
+                    thumb.title = new Date(item.timestamp).toLocaleString('id-ID');
+                    thumb.onclick = function(){
+                        if (window.dsOpenModal) { window.dsOpenModal(item.image); }
+                        else { window.open(item.image, '_blank'); }
+                    };
+                    grid.appendChild(thumb);
+                });
+
+                section.appendChild(grid);
+                wrap.appendChild(section);
+            });
+        });
+    }
 
     window.autoSsChangeDate = function(){
         var input = document.getElementById('autoSsViewDate');
-        if (!input) return;
-        localStorage.setItem(DATE_KEY, input.value);
-        // TODO: dipakai nanti untuk memfilter data AUTO SS berdasarkan tanggal ini.
+        if (input) localStorage.setItem(DATE_KEY, input.value);
+        renderGallery();
     };
 
+    // ---------------------------------------------------------------
+    // Pembersihan otomatis screenshot yang sudah lebih dari 3 minggu,
+    // pola yang sama seperti menu DATA SCREENSHOT.
+    // ---------------------------------------------------------------
+    function cleanupOldCaptures(){
+        if (!autoSsDB) return;
+        var cutoff = Date.now() - EXPIRE_MS;
+        autoSsDB.ref(CAPTURES_PATH).once('value').then(function(snap){
+            var allCaptures = snap.val() || {};
+            Object.keys(allCaptures).forEach(function(staffId){
+                var staffCaps = allCaptures[staffId] || {};
+                Object.keys(staffCaps).forEach(function(key){
+                    if (staffCaps[key].timestamp && staffCaps[key].timestamp < cutoff) {
+                        autoSsDB.ref(CAPTURES_PATH + '/' + staffId + '/' + key).remove();
+                    }
+                });
+            });
+        }).catch(function(err){
+            console.error('[AUTO SS] Gagal membersihkan screenshot kadaluarsa:', err);
+        });
+    }
+
     function autoSsInit(){
+        initFirebase();
+
         var dateInput = document.getElementById('autoSsViewDate');
         if (dateInput) {
             var savedDate = localStorage.getItem(DATE_KEY);
-            var today = new Date();
-            var todayStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
-            dateInput.value = savedDate || todayStr;
+            dateInput.value = savedDate || todayStr();
         }
-        autoSsRenderStaff();
+
+        listenStaff();
+        cleanupOldCaptures();
     }
 
     if (document.readyState === 'loading') {
