@@ -1225,7 +1225,9 @@
 
 .ds-scope input[type="text"], .ds-scope select {
     width: 90%;
-    padding: 7px;
+    height: 38px;
+    box-sizing: border-box;
+    padding: 0 7px;
     border: 1px solid var(--ds-border);
     border-radius: 6px;
     text-align: center;
@@ -1272,13 +1274,13 @@
 .ds-scope .ds-paste-area {
     border: 2px dashed var(--ds-border);
     background: rgba(255,255,255,0.02);
-    padding: 10px;
+    padding: 0 10px;
     border-radius: 8px;
-    min-height: 45px;
+    height: 38px;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
     cursor: pointer;
     outline: none;
     transition: border-color 0.2s ease, background 0.2s ease;
@@ -1287,9 +1289,15 @@
     border-color: var(--ds-gold);
     background: rgba(217,180,90,0.06);
 }
+.ds-scope .ds-paste-area span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
 .ds-scope .ds-preview-img {
     max-width: 70px;
-    max-height: 50px;
+    max-height: 32px;
     cursor: pointer;
     border-radius: 4px;
     border: 1px solid var(--ds-border);
@@ -3753,9 +3761,9 @@ setInterval(() => {
                         <b>Informasi Penggunaan:</b>
                         <ul>
                             <li>Input nomor rekening dan gambar maka akan tersimpan secara otomatis.</li>
-                            <li>Jika sudah pergantian hari, data hari sebelumnya otomatis tersimpan dan tidak ditampilkan lagi di tabel.</li>
                             <li>Data yang sudah di input akan terhapus secara otomatis jika sudah 3 x 24 (selama 3 minggu).</li>
-                            <li>Jika ingin melakukan pengecekan data/gambar yang sudah di simpan (termasuk data hari sebelumnya), atur dulu tanggal di kolom cari tanggal, atau gunakan input nomor di menu cari.</li>
+                            <li>Untuk melakukan pengecekan data/gambar yang sudah di simpan (Tanggal Semalam), atur dulu tanggal atau dapat gunakan menu cari.</li>
+                            <li>Klik tautan, langsung tekan ctrl+v pada keyboard maka dapat di klik unggah, kemudian salin linknya dan tempel pada kolom tautannya.</li>
                         </ul>
                     </div>
                 </div>
@@ -4153,7 +4161,7 @@ setInterval(() => {
                 <div class="ds-paste-area" tabindex="0" onpaste="dsHandlePaste(event, this)" title="Klik lalu tekan Ctrl+V untuk paste gambar" ${isLocked ? 'style="border:none; background:transparent;"' : ''}>
                     ${isLocked && imgDataUrl ?
                         `<img src="${imgDataUrl}" class="ds-preview-img" title="Klik untuk memperbesar gambar" onclick="dsOpenModal('${imgDataUrl}')">` :
-                        `<span style="font-size:11px; color:var(--ds-text-muted);">Klik &amp; Paste (Ctrl+V)</span>`
+                        `<span style="font-size:11px; color:var(--ds-text-muted);">Paste ( Ctrl+V )</span>`
                     }
                 </div>
             </td>
@@ -4319,7 +4327,7 @@ setInterval(() => {
         rekInput.classList.add('samar');
         jenisSelect.value = "-";
         dateInput.value = dsGetFormattedDate();
-        pasteArea.innerHTML = '<span style="font-size:11px; color:var(--ds-text-muted);">Klik &amp; Paste (Ctrl+V)</span>';
+        pasteArea.innerHTML = '<span style="font-size:11px; color:var(--ds-text-muted);">Paste ( Ctrl+V )</span>';
         linkCell.innerHTML = dsBuildLinkCellHtml(false, "");
 
         rekInput.focus();
