@@ -9,11 +9,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Fraunces:ital,wght@0,400;0,600;0,700;1,500;1,600;1,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg-app: #11113d;
-    --bg-panel: #0a0d1a;
-    --bg-card: #0a0d24;
-    --sidebar: #13131c;
-    --sidebar-2: #1c1c28;
+    --bg-app: #000000;
+    --bg-panel: #050505;
+    --bg-card: #0a0a0a;
+    --sidebar: #000000;
+    --sidebar-2: #161616;
     --accent-emas: #dbc36e;
     --pink: #e91e63;
     --pink-dark: #c2185b;
@@ -22,8 +22,8 @@
     --border-soft: rgba(255,255,255,0.12);
     --text-light: #f3ede7;
     --text-dim: #9a9aad;
-    --bubble-me: #2c2c8f;
-    --bubble-them: #1c1c28;
+    --bubble-me: #1f1f4d;
+    --bubble-them: #161616;
     --danger: #e05252;
   }
   *{ box-sizing:border-box; }
@@ -810,6 +810,16 @@
 
   document.getElementById('btnLogout').addEventListener('click', function(){
     auth.signOut();
+  });
+
+  // Enter untuk submit form login/daftar langsung dari kolom manapun
+  [inputName, inputEmail, inputPassword].forEach(function(el){
+    el.addEventListener('keydown', function(e){
+      if (e.key === 'Enter'){
+        e.preventDefault();
+        if (!btnAuthSubmit.disabled) btnAuthSubmit.click();
+      }
+    });
   });
 
   // ===================================================================
