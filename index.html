@@ -2354,11 +2354,6 @@
 <div class="block block-sg">
   <table class="lot-table">
     <tr>
-      <td colspan="2" class="clear-row">
-        <button type="button" class="clear-btn" onclick="hapusData('sg', this)"> Hapus Data</button>
-      </td>
-    </tr>
-    <tr>
       <td class="lbl-cell editable-text" id="sg-name" contenteditable="true"></td>
       <td class="info-cell" id="sg-title">Hasil Pengeluaran SINGAPORE</td>
     </tr>
@@ -2398,11 +2393,6 @@
 <!-- CALIFORNIA BLOCK -->
 <div class="block block-ca">
   <table class="lot-table">
-    <tr>
-      <td colspan="2" class="clear-row">
-        <button type="button" class="clear-btn" onclick="hapusData('ca', this)"> Hapus Data</button>
-      </td>
-    </tr>
     <tr>
       <td class="lbl-cell editable-text" id="ca-name" contenteditable="true"></td>
       <td class="info-cell" id="ca-title">Hasil Pengeluaran CALIFORNIA</td>
@@ -2942,6 +2932,11 @@ function salinTeks(jenis, btn){
     salinFallback(teks);
     tandaiTersalin();
   }
+
+  // Setelah teks berhasil disalin, kosongkan otomatis nama PASARAN &
+  // ANGKA pada blok terkait supaya siap dipakai untuk input berikutnya
+  // (menggantikan tombol "Hapus Data" yang sebelumnya harus diklik manual).
+  hapusData(jenis);
 }
 
 function salinFallback(teks){
