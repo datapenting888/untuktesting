@@ -3489,8 +3489,9 @@ setInterval(() => {
                         <b>Informasi Penggunaan:</b>
                         <ul>
                             <li>Input nomor rekening dan gambar maka akan tersimpan secara otomatis.</li>
+                            <li>Jika sudah pergantian hari, data hari sebelumnya otomatis tersimpan dan tidak ditampilkan lagi di tabel.</li>
                             <li>Data yang sudah di input akan terhapus secara otomatis jika sudah 3 x 24 (selama 3 minggu).</li>
-                            <li>Jika ingin melakukan pengecekan gambar yang sudah di simpan dapat di lihat dengan setting tanggal atau input nomor di menu cari.</li>
+                            <li>Jika ingin melakukan pengecekan data/gambar yang sudah di simpan (termasuk data hari sebelumnya), atur dulu tanggal di kolom cari tanggal, atau gunakan input nomor di menu cari.</li>
                         </ul>
                     </div>
                 </div>
@@ -3557,17 +3558,62 @@ setInterval(() => {
 
     let dsDB = null;
 
-    window.addEventListener('DOMContentLoaded', () => {
+    // Kunci tanggal (format yyyy-mm-dd) yang dipakai untuk mendeteksi
+    // pergantian hari secara otomatis selagi halaman tetap terbuka
+    // (tanpa perlu reload), lihat dsCheckDayChange() di bawah.
+    let dsCurrentDateKey = null;
+
+    function dsGetDateKey() {
         const today = new Date();
         const yyyy = today.getFullYear();
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const dd = String(today.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        dsCurrentDateKey = dsGetDateKey();
         const searchDateEl = document.getElementById('dsSearchDate');
-        if (searchDateEl) searchDateEl.value = `${yyyy}-${mm}-${dd}`;
+        if (searchDateEl) searchDateEl.value = dsCurrentDateKey;
 
         dsInitFirebase();
         dsFilterTable();
+
+        // Cek pergantian hari tiap 30 detik. Kalau tanggal sistem sudah
+        // berganti (mis. lewat tengah malam) sementara menu ini masih
+        // terbuka, data tanggal sebelumnya (yang sudah tersimpan otomatis
+        // di Firebase) akan otomatis disembunyikan dari tampilan tanpa
+        // perlu reload halaman.
+        setInterval(dsCheckDayChange, 30000);
     });
+
+    // Dipanggil berkala untuk mendeteksi pergantian hari. Saat hari
+    // berganti: (1) kolom "cari tanggal" otomatis diarahkan ke hari yang
+    // baru sehingga tabel hanya menampilkan baris draft kosong (data hari
+    // sebelumnya tetap tersimpan di Firebase, hanya disembunyikan dari
+    // tampilan), (2) tanggal pada baris draft ikut diperbarui supaya
+    // entri baru tercatat dengan tanggal yang benar, dan (3) pengguna
+    // diberi tahu lewat toast bahwa untuk melihat data lama tinggal atur
+    // ulang tanggal pencarian.
+    function dsCheckDayChange() {
+        const newKey = dsGetDateKey();
+        if (newKey === dsCurrentDateKey) return;
+
+        dsCurrentDateKey = newKey;
+
+        const searchDateEl = document.getElementById('dsSearchDate');
+        if (searchDateEl) searchDateEl.value = newKey;
+
+        const draft = dsGetDraftRow();
+        if (draft) {
+            const dateInput = draft.querySelector('.ds-row-date');
+            if (dateInput) dateInput.value = dsGetFormattedDate();
+        }
+
+        dsFilterTable();
+
+        dsShowToast('📅 Tanggal sudah berganti ke hari baru. Data tanggal sebelumnya tersimpan otomatis dan disembunyikan dari tampilan. Atur tanggal pencarian di atas untuk melihat data yang sudah tersimpan.', 8000);
+    }
 
     // Inisialisasi koneksi ke Firebase Realtime Database & pasang listener
     // real-time untuk path "dataScreenshot". Dipanggil sekali saat halaman
