@@ -2047,8 +2047,8 @@
     flex-direction:row;
     align-items:flex-start;
     justify-content:center;
-    gap:26px;
-    flex-wrap:wrap;
+    gap:clamp(8px, 2vw, 26px);
+    flex-wrap:nowrap;
   }
   .hasil-scope .col-left {
     display:flex;
@@ -2057,41 +2057,43 @@
     gap:18px;
     width:100%;
     max-width:520px;
-    flex:0 0 auto;
+    flex:1 1 320px;
+    min-width:0;
   }
   .hasil-scope .col-right {
     display:flex;
     flex-direction:column;
     align-items:stretch;
     gap:10px;
-    flex:1 1 680px;
-    min-width:320px;
+    flex:1 1 420px;
+    min-width:0;
     max-width:980px;
   }
   .hasil-scope .col-right .section-tag { max-width:none; }
   .hasil-scope .col-right .block { max-width:none; }
-  @media  (max-width:980px) {
-    .hasil-scope .layout { flex-direction:column; align-items:center; }
-    .hasil-scope .col-right { max-width:520px; }
-  }
+  /* Kontener kanan (Jadwal Pasaran) tetap sejajar di sisi kanan pada
+     ukuran layar berapa pun -- TIDAK berpindah ke bawah col-left.
+     Sebagai gantinya, ukuran tulisan pada tabel menyusut mengikuti
+     lebar layar lewat clamp()/vw di aturan .jadwal-table di bawah. */
 
   /* ===== JADWAL PASARAN ===== */
   .hasil-scope .jadwal-wrap { padding:2px; }
   .hasil-scope .jadwal-scroll {
-    overflow-x:auto;
+    overflow-x:visible;
     border-radius:2px;
   }
   .hasil-scope .jadwal-table {
     width:100%;
-    min-width:700px;
+    min-width:0;
+    table-layout:auto;
     border-collapse:collapse;
   }
   .hasil-scope .jadwal-table thead th {
     background:var(--panel-2);
     color:var(--gold-bright);
-    padding:9px 8px;
-    font-size:11.5px;
-    font-family:var(--font-mono);
+    padding:clamp(3px, 0.6vw, 9px) clamp(2px, 0.5vw, 8px);
+    font-size:clamp(7.5px, 1.05vw, 11.5px);
+    font-family:Arial, sans-serif;
     letter-spacing:1.5px;
     text-transform:uppercase;
     border:1px dashed var(--line);
@@ -2100,9 +2102,9 @@
     top:0;
   }
   .hasil-scope .jadwal-table tbody td {
-    padding:6px 6px;
-    font-size:12.5px;
-    font-family:var(--font-mono);
+    padding:clamp(2px, 0.45vw, 6px) clamp(2px, 0.45vw, 6px);
+    font-size:clamp(8px, 1vw, 12.5px);
+    font-family:Arial, sans-serif;
     text-align:center;
     border:1px dashed var(--line);
     color:var(--text-uniform);
