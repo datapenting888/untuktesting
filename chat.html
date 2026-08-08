@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Privasi — Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Fraunces:ital,wght@0,400;0,600;0,700;1,500;1,600;1,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-app: #11113d;
+    --bg-panel: #0a0d1a;
+    --bg-card: #0a0d24;
+    --sidebar: #13131c;
+    --sidebar-2: #1c1c28;
+    --accent-emas: #dbc36e;
+    --pink: #e91e63;
+    --pink-dark: #c2185b;
+    --blue: #2196d8;
+    --white: #f5f3cb;
+    --border-soft: rgba(255,255,255,0.12);
+    --text-light: #f3ede7;
+    --text-dim: #9a9aad;
+    --bubble-me: #2c2c8f;
+    --bubble-them: #1c1c28;
+    --danger: #e05252;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; margin:0; }
+  body{
+    font-family:'Work Sans', Arial, sans-serif;
+    background:var(--bg-app);
+    color:var(--text-light);
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+    overflow:hidden;
+  }
+  a{ color:inherit; }
+  button{ font-family:inherit; cursor:pointer; }
+  input, textarea{ font-family:inherit; }
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.15); border-radius:8px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+
+  /* ---------- Topbar ---------- */
+  .topbar{
+    height:56px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 18px;
+    background:var(--sidebar);
+    border-bottom:1px solid var(--border-soft);
+  }
+  .topbar .brand{
+    font-family:'Bree Serif', serif;
+    font-size:18px;
+    letter-spacing:0.4px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .topbar .brand .dot{
+    width:9px; height:9px; border-radius:50%;
+    background:var(--accent-emas);
+    box-shadow:0 0 8px var(--accent-emas);
+  }
+  .topbar .who{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  .topbar .who b{ color:var(--text-light); font-weight:600; }
+  .btn{
+    border:1px solid var(--border-soft);
+    background:var(--sidebar-2);
+    color:var(--text-light);
+    padding:8px 14px;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:600;
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .btn:hover{ background:#26263a; }
+  .btn.primary{ background:linear-gradient(90deg,#7c5cff,#5b7cff); border:none; }
+  .btn.primary:hover{ filter:brightness(1.08); }
+  .btn.danger{ background:transparent; border-color:rgba(224,82,82,0.5); color:var(--danger); }
+  .btn.danger:hover{ background:rgba(224,82,82,0.12); }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; }
+  .btn.small{ padding:6px 10px; font-size:12px; border-radius:8px; }
+
+  /* ---------- Auth screen ---------- */
+  #authScreen{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .auth-card{
+    width:100%;
+    max-width:380px;
+    background:var(--bg-card);
+    border:1px solid var(--border-soft);
+    border-radius:16px;
+    padding:28px 26px;
+  }
+  .auth-card h1{
+    font-family:'Bree Serif', serif;
+    font-size:22px;
+    margin:0 0 4px;
+  }
+  .auth-card p.sub{
+    margin:0 0 20px;
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  .field{ margin-bottom:14px; }
+  .field label{
+    display:block;
+    font-size:12px;
+    color:var(--text-dim);
+    margin-bottom:6px;
+    letter-spacing:0.3px;
+  }
+  .field input{
+    width:100%;
+    background:#0f0f1a;
+    border:1px solid var(--border-soft);
+    color:var(--text-light);
+    padding:11px 12px;
+    border-radius:10px;
+    font-size:14px;
+    outline:none;
+  }
+  .field input:focus{ border-color:var(--accent-emas); }
+  .auth-actions{ margin-top:18px; }
+  .auth-actions .btn{ width:100%; padding:11px; font-size:14px; }
+  .auth-toggle{
+    margin-top:16px;
+    text-align:center;
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  .auth-toggle span{
+    color:var(--accent-emas);
+    cursor:pointer;
+    font-weight:600;
+  }
+  .auth-error{
+    background:rgba(224,82,82,0.12);
+    border:1px solid rgba(224,82,82,0.4);
+    color:#ff9a9a;
+    font-size:12.5px;
+    padding:9px 11px;
+    border-radius:9px;
+    margin-bottom:14px;
+    display:none;
+  }
+  .auth-loading{
+    text-align:center;
+    color:var(--text-dim);
+    font-size:13px;
+    padding:40px;
+  }
+
+  /* ---------- App layout ---------- */
+  #appScreen{ display:none; flex:1; min-height:0; }
+  .app-body{ flex:1; display:flex; min-height:0; width:100%; }
+
+  .left-panel{
+    width:320px;
+    flex-shrink:0;
+    background:var(--sidebar);
+    border-right:1px solid var(--border-soft);
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+  }
+  .tabs-row{
+    display:flex;
+    gap:6px;
+    padding:12px 12px 0;
+  }
+  .tab-btn{
+    flex:1;
+    text-align:center;
+    padding:9px 8px;
+    border-radius:10px 10px 0 0;
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:0.3px;
+    color:var(--text-dim);
+    background:transparent;
+    border:none;
+    border-bottom:2px solid transparent;
+  }
+  .tab-btn.active{
+    color:var(--accent-emas);
+    border-bottom:2px solid var(--accent-emas);
+  }
+  .panel-scroll{
+    flex:1;
+    overflow-y:auto;
+    padding:10px;
+  }
+  .panel-section-title{
+    font-size:11px;
+    letter-spacing:1px;
+    color:var(--text-dim);
+    margin:14px 6px 8px;
+    text-transform:uppercase;
+  }
+  .panel-section-title:first-child{ margin-top:4px; }
+
+  .add-friend-box{
+    display:flex;
+    gap:6px;
+    padding:2px 2px 4px;
+  }
+  .add-friend-box input{
+    flex:1;
+    background:#0f0f1a;
+    border:1px solid var(--border-soft);
+    color:var(--text-light);
+    padding:9px 10px;
+    border-radius:9px;
+    font-size:13px;
+    outline:none;
+  }
+  .add-friend-box input:focus{ border-color:var(--accent-emas); }
+  .add-friend-msg{
+    font-size:12px;
+    padding:2px 6px 8px;
+    min-height:16px;
+  }
+  .add-friend-msg.ok{ color:#7fd88f; }
+  .add-friend-msg.err{ color:#ff9a9a; }
+
+  .list-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 8px;
+    border-radius:11px;
+    cursor:pointer;
+    margin-bottom:4px;
+  }
+  .list-row:hover{ background:var(--sidebar-2); }
+  .list-row.active{ background:rgba(124,92,255,0.18); border:1px solid rgba(124,92,255,0.5); }
+  .avatar{
+    width:38px; height:38px;
+    flex-shrink:0;
+    border-radius:50%;
+    background:linear-gradient(135deg,#5b7cff,#7c5cff);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Bree Serif', serif;
+    font-size:15px;
+    color:#fff;
+    text-transform:uppercase;
+  }
+  .avatar.grp{ background:linear-gradient(135deg,var(--accent-emas),#c99a3a); color:#1a1400; }
+  .row-main{ flex:1; min-width:0; }
+  .row-title{
+    font-size:13.5px;
+    font-weight:600;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .row-sub{
+    font-size:11.5px;
+    color:var(--text-dim);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .row-actions{ display:flex; gap:6px; flex-shrink:0; }
+  .empty-hint{
+    color:var(--text-dim);
+    font-size:12.5px;
+    padding:10px 8px;
+    line-height:1.5;
+  }
+
+  .fab-newgroup{
+    margin:10px;
+    padding:11px;
+    border-radius:11px;
+    text-align:center;
+    font-size:13px;
+    font-weight:700;
+    border:1px dashed rgba(124,92,255,0.5);
+    background:rgba(124,92,255,0.08);
+    color:#b7a9ff;
+  }
+  .fab-newgroup:hover{ background:rgba(124,92,255,0.16); }
+
+  /* ---------- Chat panel ---------- */
+  .chat-panel{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    min-width:0;
+  }
+  .chat-header{
+    height:60px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:0 18px;
+    border-bottom:1px solid var(--border-soft);
+    background:var(--bg-card);
+  }
+  .chat-header .row-title{ font-size:15px; }
+  .chat-empty{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--text-dim);
+    font-size:14px;
+    text-align:center;
+    padding:40px;
+  }
+  .messages{
+    flex:1;
+    overflow-y:auto;
+    padding:20px 22px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .msg-row{ display:flex; }
+  .msg-row.me{ justify-content:flex-end; }
+  .bubble{
+    max-width:62%;
+    padding:9px 13px;
+    border-radius:14px;
+    font-size:13.5px;
+    line-height:1.45;
+    word-wrap:break-word;
+  }
+  .msg-row.me .bubble{
+    background:var(--bubble-me);
+    border-bottom-right-radius:4px;
+  }
+  .msg-row.them .bubble{
+    background:var(--bubble-them);
+    border-bottom-left-radius:4px;
+  }
+  .bubble .sender{
+    font-size:11px;
+    font-weight:700;
+    color:var(--accent-emas);
+    margin-bottom:3px;
+    display:block;
+  }
+  .bubble .time{
+    font-size:10px;
+    color:var(--text-dim);
+    margin-top:4px;
+    display:block;
+    text-align:right;
+  }
+  .chat-input-row{
+    flex-shrink:0;
+    display:flex;
+    gap:10px;
+    padding:14px 18px;
+    border-top:1px solid var(--border-soft);
+    background:var(--bg-card);
+  }
+  .chat-input-row textarea{
+    flex:1;
+    resize:none;
+    background:#0f0f1a;
+    border:1px solid var(--border-soft);
+    color:var(--text-light);
+    padding:11px 13px;
+    border-radius:12px;
+    font-size:13.5px;
+    outline:none;
+    max-height:120px;
+    line-height:1.4;
+  }
+  .chat-input-row textarea:focus{ border-color:var(--accent-emas); }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,0.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+    padding:16px;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal{
+    width:100%;
+    max-width:400px;
+    background:var(--bg-card);
+    border:1px solid var(--border-soft);
+    border-radius:16px;
+    padding:22px;
+  }
+  .modal h2{
+    font-family:'Bree Serif', serif;
+    font-size:18px;
+    margin:0 0 14px;
+  }
+  .modal .friend-pick{
+    max-height:220px;
+    overflow-y:auto;
+    border:1px solid var(--border-soft);
+    border-radius:10px;
+    padding:6px;
+    margin-bottom:16px;
+  }
+  .friend-pick-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px;
+    border-radius:8px;
+  }
+  .friend-pick-row:hover{ background:var(--sidebar-2); }
+  .modal-actions{ display:flex; gap:10px; justify-content:flex-end; }
+
+  @media (max-width:760px){
+    .left-panel{ width:100%; position:absolute; inset:56px 0 0 0; z-index:5; }
+    .left-panel.hide-mobile{ display:none; }
+    .chat-panel.hide-mobile{ display:none; }
+    .app-body{ position:relative; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span> DATA PRIVASI</div>
+  <div class="who" id="topbarWho" style="display:none;">
+    <span>Masuk sebagai <b id="whoName">-</b></span>
+    <button class="btn small danger" id="btnLogout">Keluar</button>
+  </div>
+</div>
+
+<!-- ============ AUTH SCREEN ============ -->
+<div id="authScreen">
+  <div class="auth-card">
+    <h1 id="authTitle">Masuk</h1>
+    <p class="sub" id="authSub">Login ke akun chat privasi kamu.</p>
+
+    <div class="auth-error" id="authError"></div>
+
+    <div class="field" id="fieldName" style="display:none;">
+      <label>Nama Tampilan</label>
+      <input type="text" id="inputName" placeholder="Nama yang dilihat teman kamu">
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="inputEmail" placeholder="nama@email.com" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="inputPassword" placeholder="Minimal 6 karakter" autocomplete="current-password">
+    </div>
+
+    <div class="auth-actions">
+      <button class="btn primary" id="btnAuthSubmit">Masuk</button>
+    </div>
+    <div class="auth-toggle">
+      <span id="authToggleText">Belum punya akun? <span id="authToggleLink">Daftar di sini</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP SCREEN ============ -->
+<div id="appScreen">
+  <div class="app-body">
+
+    <div class="left-panel" id="leftPanel">
+      <div class="tabs-row">
+        <button class="tab-btn active" id="tabChats">PERCAKAPAN</button>
+        <button class="tab-btn" id="tabFriends">TEMAN</button>
+      </div>
+
+      <!-- Tab: daftar percakapan -->
+      <div class="panel-scroll" id="viewChats">
+        <div class="fab-newgroup" id="btnNewGroup">+ Buat Grup Baru</div>
+        <div id="chatListWrap"><div class="empty-hint">Belum ada percakapan. Mulai chat dari tab TEMAN.</div></div>
+      </div>
+
+      <!-- Tab: teman -->
+      <div class="panel-scroll" id="viewFriends" style="display:none;">
+        <div class="panel-section-title">Tambah Teman (via email)</div>
+        <div class="add-friend-box">
+          <input type="email" id="inputAddFriend" placeholder="email@teman.com">
+          <button class="btn small primary" id="btnSendRequest">Kirim</button>
+        </div>
+        <div class="add-friend-msg" id="addFriendMsg"></div>
+
+        <div class="panel-section-title">Permintaan Masuk</div>
+        <div id="incomingRequestsWrap"><div class="empty-hint">Tidak ada permintaan masuk.</div></div>
+
+        <div class="panel-section-title">Daftar Teman</div>
+        <div id="friendsListWrap"><div class="empty-hint">Belum ada teman. Tambahkan lewat email di atas.</div></div>
+      </div>
+    </div>
+
+    <div class="chat-panel" id="chatPanel">
+      <div class="chat-empty" id="chatEmptyState">Pilih percakapan di sebelah kiri, atau tambahkan teman dulu di tab TEMAN.</div>
+
+      <div id="chatActiveWrap" style="display:none; flex:1; display:none; flex-direction:column; min-height:0;">
+        <div class="chat-header">
+          <div class="avatar" id="chatHeaderAvatar">?</div>
+          <div class="row-main">
+            <div class="row-title" id="chatHeaderTitle">-</div>
+            <div class="row-sub" id="chatHeaderSub"></div>
+          </div>
+        </div>
+        <div class="messages" id="messagesWrap"></div>
+        <div class="chat-input-row">
+          <textarea id="msgInput" rows="1" placeholder="Tulis pesan..."></textarea>
+          <button class="btn primary" id="btnSendMsg">Kirim</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ MODAL: Buat Grup ============ -->
+<div class="modal-overlay" id="modalNewGroup">
+  <div class="modal">
+    <h2>Buat Grup Baru</h2>
+    <div class="field">
+      <label>Nama Grup</label>
+      <input type="text" id="groupNameInput" placeholder="Contoh: Tim Prediksi">
+    </div>
+    <div class="panel-section-title" style="margin:10px 0 6px;">Pilih Teman</div>
+    <div class="friend-pick" id="groupFriendPick"></div>
+    <div class="modal-actions">
+      <button class="btn" id="btnCancelGroup">Batal</button>
+      <button class="btn primary" id="btnCreateGroup">Buat Grup</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase (config sama dengan menu Result & Jadwal Pasaran / Data Screenshot di index.html) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB_FppKNjBtmP4aOd4v5JVERC-e2cjqt-s",
+    authDomain: "datapenting888-94bc6.firebaseapp.com",
+    databaseURL: "https://datapenting888-94bc6-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "datapenting888-94bc6",
+    storageBucket: "datapenting888-94bc6.firebasestorage.app",
+    messagingSenderId: "384090086406",
+    appId: "1:384090086406:web:c111526d2f4202d502b787"
+  };
+
+  if (typeof firebase === 'undefined') {
+    document.getElementById('authScreen').innerHTML =
+      '<div class="auth-card"><h1>Firebase gagal dimuat</h1><p class="sub">Cek koneksi internet / ad-blocker, lalu muat ulang halaman.</p></div>';
+    return;
+  }
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+
+  // ---------------------------------------------------------------
+  // Helper umum
+  // ---------------------------------------------------------------
+  function emailKey(email){
+    return (email || '').trim().toLowerCase()
+      .replace(/\./g, ',')
+      .replace(/[#$\[\]\/]/g, '_');
+  }
+  function initials(name){
+    if (!name) return '?';
+    let parts = name.trim().split(/\s+/);
+    let s = parts[0][0] || '';
+    if (parts.length > 1) s += parts[parts.length-1][0] || '';
+    return s.toUpperCase();
+  }
+  function escapeHtml(str){
+    return (str || '').replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function fmtTime(ts){
+    if (!ts) return '';
+    let d = new Date(ts);
+    let h = d.getHours().toString().padStart(2,'0');
+    let m = d.getMinutes().toString().padStart(2,'0');
+    return h + ':' + m;
+  }
+  function privateChatId(uidA, uidB){
+    let pair = [uidA, uidB].sort();
+    return 'priv_' + pair[0] + '_' + pair[1];
+  }
+
+  // ---------------------------------------------------------------
+  // State
+  // ---------------------------------------------------------------
+  let currentUser = null;      // { uid, name, email }
+  let friendsData = {};        // { uid: {name,email} }
+  let incomingRequests = {};   // { fromUid: {fromName,fromEmail} }
+  let chatsIndex = {};         // { chatId: {type,name,members,lastMessage,lastMessageAt} }
+  let activeChatId = null;
+  let messagesListenerRef = null;
+  let isRegisterMode = false;
+
+  // ===================================================================
+  // AUTH UI
+  // ===================================================================
+  const authScreen = document.getElementById('authScreen');
+  const appScreen = document.getElementById('appScreen');
+  const authError = document.getElementById('authError');
+  const fieldName = document.getElementById('fieldName');
+  const inputName = document.getElementById('inputName');
+  const inputEmail = document.getElementById('inputEmail');
+  const inputPassword = document.getElementById('inputPassword');
+  const btnAuthSubmit = document.getElementById('btnAuthSubmit');
+  const authTitle = document.getElementById('authTitle');
+  const authSub = document.getElementById('authSub');
+  const authToggleText = document.getElementById('authToggleText');
+
+  function showAuthError(msg){
+    authError.textContent = msg;
+    authError.style.display = 'block';
+  }
+  function clearAuthError(){
+    authError.style.display = 'none';
+    authError.textContent = '';
+  }
+  function setRegisterMode(on){
+    isRegisterMode = on;
+    clearAuthError();
+    if (on){
+      fieldName.style.display = 'block';
+      authTitle.textContent = 'Daftar Akun';
+      authSub.textContent = 'Buat akun baru untuk mulai chat privasi.';
+      btnAuthSubmit.textContent = 'Daftar';
+      authToggleText.innerHTML = 'Sudah punya akun? <span id="authToggleLink">Masuk di sini</span>';
+    } else {
+      fieldName.style.display = 'none';
+      authTitle.textContent = 'Masuk';
+      authSub.textContent = 'Login ke akun chat privasi kamu.';
+      btnAuthSubmit.textContent = 'Masuk';
+      authToggleText.innerHTML = 'Belum punya akun? <span id="authToggleLink">Daftar di sini</span>';
+    }
+    document.getElementById('authToggleLink').addEventListener('click', function(){
+      setRegisterMode(!isRegisterMode);
+    });
+  }
+  document.getElementById('authToggleLink').addEventListener('click', function(){
+    setRegisterMode(!isRegisterMode);
+  });
+
+  function mapAuthError(err){
+    let code = err && err.code || '';
+    if (code === 'auth/email-already-in-use') return 'Email ini sudah terdaftar. Coba menu Masuk.';
+    if (code === 'auth/invalid-email') return 'Format email tidak valid.';
+    if (code === 'auth/weak-password') return 'Password minimal 6 karakter.';
+    if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') return 'Email atau password salah.';
+    if (code === 'auth/too-many-requests') return 'Terlalu banyak percobaan. Coba lagi beberapa saat lagi.';
+    return err && err.message ? err.message : 'Terjadi kesalahan. Coba lagi.';
+  }
+
+  btnAuthSubmit.addEventListener('click', function(){
+    clearAuthError();
+    let email = inputEmail.value.trim();
+    let password = inputPassword.value;
+    let name = inputName.value.trim();
+
+    if (!email || !password){
+      showAuthError('Email dan password wajib diisi.');
+      return;
+    }
+    if (isRegisterMode && !name){
+      showAuthError('Nama tampilan wajib diisi.');
+      return;
+    }
+
+    btnAuthSubmit.disabled = true;
+
+    if (isRegisterMode){
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(function(cred){
+          let uid = cred.user.uid;
+          return db.ref('users/' + uid).set({
+            name: name,
+            email: email,
+            createdAt: firebase.database.ServerValue.TIMESTAMP
+          }).then(function(){
+            return db.ref('userIndex/' + emailKey(email)).set(uid);
+          });
+        })
+        .catch(function(err){
+          showAuthError(mapAuthError(err));
+        })
+        .finally(function(){ btnAuthSubmit.disabled = false; });
+    } else {
+      auth.signInWithEmailAndPassword(email, password)
+        .catch(function(err){
+          showAuthError(mapAuthError(err));
+        })
+        .finally(function(){ btnAuthSubmit.disabled = false; });
+    }
+  });
+
+  document.getElementById('btnLogout').addEventListener('click', function(){
+    auth.signOut();
+  });
+
+  // ===================================================================
+  // AUTH STATE -> tampilkan app
+  // ===================================================================
+  auth.onAuthStateChanged(function(user){
+    detachAllListeners();
+    if (user){
+      db.ref('users/' + user.uid).once('value').then(function(snap){
+        let profile = snap.val() || { name: user.email, email: user.email };
+        currentUser = { uid: user.uid, name: profile.name, email: profile.email || user.email };
+        document.getElementById('whoName').textContent = currentUser.name;
+        document.getElementById('topbarWho').style.display = 'flex';
+        authScreen.style.display = 'none';
+        appScreen.style.display = 'flex';
+        initFriendsListeners();
+        initChatsListener();
+      });
+    } else {
+      currentUser = null;
+      document.getElementById('topbarWho').style.display = 'none';
+      authScreen.style.display = 'flex';
+      appScreen.style.display = 'none';
+      resetAppState();
+    }
+  });
+
+  function resetAppState(){
+    friendsData = {};
+    incomingRequests = {};
+    chatsIndex = {};
+    activeChatId = null;
+    document.getElementById('chatListWrap').innerHTML = '<div class="empty-hint">Belum ada percakapan. Mulai chat dari tab TEMAN.</div>';
+    document.getElementById('friendsListWrap').innerHTML = '<div class="empty-hint">Belum ada teman. Tambahkan lewat email di atas.</div>';
+    document.getElementById('incomingRequestsWrap').innerHTML = '<div class="empty-hint">Tidak ada permintaan masuk.</div>';
+    document.getElementById('chatEmptyState').style.display = 'flex';
+    document.getElementById('chatActiveWrap').style.display = 'none';
+  }
+
+  let activeListenerRefs = [];
+  function detachAllListeners(){
+    activeListenerRefs.forEach(function(r){ r.ref.off(r.event, r.cb); });
+    activeListenerRefs = [];
+    if (messagesListenerRef){ messagesListenerRef.ref.off('child_added', messagesListenerRef.cb); messagesListenerRef = null; }
+  }
+  function track(ref, event, cb){
+    ref.on(event, cb);
+    activeListenerRefs.push({ ref: ref, event: event, cb: cb });
+  }
+
+  // ===================================================================
+  // TABS
+  // ===================================================================
+  const tabChats = document.getElementById('tabChats');
+  const tabFriends = document.getElementById('tabFriends');
+  const viewChats = document.getElementById('viewChats');
+  const viewFriends = document.getElementById('viewFriends');
+  tabChats.addEventListener('click', function(){
+    tabChats.classList.add('active'); tabFriends.classList.remove('active');
+    viewChats.style.display = 'block'; viewFriends.style.display = 'none';
+  });
+  tabFriends.addEventListener('click', function(){
+    tabFriends.classList.add('active'); tabChats.classList.remove('active');
+    viewFriends.style.display = 'block'; viewChats.style.display = 'none';
+  });
+
+  // ===================================================================
+  // FRIENDS: kirim permintaan, terima/tolak, daftar teman
+  // ===================================================================
+  const inputAddFriend = document.getElementById('inputAddFriend');
+  const addFriendMsg = document.getElementById('addFriendMsg');
+  const btnSendRequest = document.getElementById('btnSendRequest');
+
+  btnSendRequest.addEventListener('click', function(){
+    let targetEmail = inputAddFriend.value.trim();
+    addFriendMsg.className = 'add-friend-msg';
+    addFriendMsg.textContent = '';
+    if (!targetEmail){ return; }
+    if (targetEmail.toLowerCase() === (currentUser.email || '').toLowerCase()){
+      addFriendMsg.className = 'add-friend-msg err';
+      addFriendMsg.textContent = 'Tidak bisa menambahkan diri sendiri.';
+      return;
+    }
+    btnSendRequest.disabled = true;
+    db.ref('userIndex/' + emailKey(targetEmail)).once('value').then(function(snap){
+      let targetUid = snap.val();
+      if (!targetUid){
+        addFriendMsg.className = 'add-friend-msg err';
+        addFriendMsg.textContent = 'Email tidak ditemukan. Pastikan teman kamu sudah punya akun.';
+        return;
+      }
+      if (friendsData[targetUid]){
+        addFriendMsg.className = 'add-friend-msg err';
+        addFriendMsg.textContent = 'Kalian sudah berteman.';
+        return;
+      }
+      return db.ref('friendRequests/' + targetUid + '/' + currentUser.uid).set({
+        fromName: currentUser.name,
+        fromEmail: currentUser.email,
+        createdAt: firebase.database.ServerValue.TIMESTAMP
+      }).then(function(){
+        addFriendMsg.className = 'add-friend-msg ok';
+        addFriendMsg.textContent = 'Permintaan pertemanan terkirim.';
+        inputAddFriend.value = '';
+      });
+    }).catch(function(err){
+      addFriendMsg.className = 'add-friend-msg err';
+      addFriendMsg.textContent = 'Gagal mengirim: ' + err.message;
+    }).finally(function(){
+      btnSendRequest.disabled = false;
+    });
+  });
+
+  function renderIncomingRequests(){
+    let wrap = document.getElementById('incomingRequestsWrap');
+    let uids = Object.keys(incomingRequests);
+    if (uids.length === 0){
+      wrap.innerHTML = '<div class="empty-hint">Tidak ada permintaan masuk.</div>';
+      return;
+    }
+    wrap.innerHTML = '';
+    uids.forEach(function(fromUid){
+      let req = incomingRequests[fromUid];
+      let row = document.createElement('div');
+      row.className = 'list-row';
+      row.innerHTML =
+        '<div class="avatar">' + initials(req.fromName) + '</div>' +
+        '<div class="row-main"><div class="row-title">' + escapeHtml(req.fromName) + '</div>' +
+        '<div class="row-sub">' + escapeHtml(req.fromEmail || '') + '</div></div>' +
+        '<div class="row-actions">' +
+          '<button class="btn small primary" data-act="accept">Terima</button>' +
+          '<button class="btn small danger" data-act="reject">Tolak</button>' +
+        '</div>';
+      row.querySelector('[data-act="accept"]').addEventListener('click', function(e){
+        e.stopPropagation();
+        acceptRequest(fromUid, req);
+      });
+      row.querySelector('[data-act="reject"]').addEventListener('click', function(e){
+        e.stopPropagation();
+        db.ref('friendRequests/' + currentUser.uid + '/' + fromUid).remove();
+      });
+      wrap.appendChild(row);
+    });
+  }
+
+  function acceptRequest(fromUid, req){
+    let updates = {};
+    updates['friends/' + currentUser.uid + '/' + fromUid] = { name: req.fromName, email: req.fromEmail };
+    updates['friends/' + fromUid + '/' + currentUser.uid] = { name: currentUser.name, email: currentUser.email };
+    updates['friendRequests/' + currentUser.uid + '/' + fromUid] = null;
+    db.ref().update(updates);
+  }
+
+  function renderFriendsList(){
+    let wrap = document.getElementById('friendsListWrap');
+    let uids = Object.keys(friendsData);
+    if (uids.length === 0){
+      wrap.innerHTML = '<div class="empty-hint">Belum ada teman. Tambahkan lewat email di atas.</div>';
+      return;
+    }
+    wrap.innerHTML = '';
+    uids.forEach(function(uid){
+      let f = friendsData[uid];
+      let row = document.createElement('div');
+      row.className = 'list-row';
+      row.innerHTML =
+        '<div class="avatar">' + initials(f.name) + '</div>' +
+        '<div class="row-main"><div class="row-title">' + escapeHtml(f.name) + '</div>' +
+        '<div class="row-sub">' + escapeHtml(f.email || '') + '</div></div>' +
+        '<div class="row-actions"><button class="btn small">Chat</button></div>';
+      row.querySelector('button').addEventListener('click', function(e){
+        e.stopPropagation();
+        openPrivateChat(uid, f.name);
+      });
+      wrap.appendChild(row);
+    });
+  }
+
+  function initFriendsListeners(){
+    track(db.ref('friendRequests/' + currentUser.uid), 'value', function(snap){
+      incomingRequests = snap.val() || {};
+      renderIncomingRequests();
+    });
+    track(db.ref('friends/' + currentUser.uid), 'value', function(snap){
+      friendsData = snap.val() || {};
+      renderFriendsList();
+      renderGroupFriendPick();
+    });
+  }
+
+  // ===================================================================
+  // CHATS: index percakapan (private + grup)
+  // ===================================================================
+  function initChatsListener(){
+    track(db.ref('userChats/' + currentUser.uid), 'value', function(snap){
+      let chatIds = Object.keys(snap.val() || {});
+      chatsIndex = {};
+      if (chatIds.length === 0){
+        renderChatList();
+        return;
+      }
+      let remaining = chatIds.length;
+      chatIds.forEach(function(chatId){
+        db.ref('chats/' + chatId).on('value', function(csnap){
+          let val = csnap.val();
+          if (val){
+            chatsIndex[chatId] = Object.assign({ id: chatId }, val);
+          } else {
+            delete chatsIndex[chatId];
+          }
+          renderChatList();
+          if (activeChatId === chatId) updateChatHeader();
+        });
+      });
+    });
+  }
+
+  function chatDisplayName(chat){
+    if (chat.type === 'group') return chat.name || 'Grup';
+    let members = chat.members || {};
+    let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
+    if (otherUid && friendsData[otherUid]) return friendsData[otherUid].name;
+    return 'Percakapan Privat';
+  }
+
+  function renderChatList(){
+    let wrap = document.getElementById('chatListWrap');
+    let ids = Object.keys(chatsIndex);
+    if (ids.length === 0){
+      wrap.innerHTML = '<div class="empty-hint">Belum ada percakapan. Mulai chat dari tab TEMAN.</div>';
+      return;
+    }
+    ids.sort(function(a,b){
+      return (chatsIndex[b].lastMessageAt || 0) - (chatsIndex[a].lastMessageAt || 0);
+    });
+    wrap.innerHTML = '';
+    ids.forEach(function(chatId){
+      let chat = chatsIndex[chatId];
+      let name = chatDisplayName(chat);
+      let row = document.createElement('div');
+      row.className = 'list-row' + (chatId === activeChatId ? ' active' : '');
+      row.innerHTML =
+        '<div class="avatar' + (chat.type === 'group' ? ' grp' : '') + '">' + initials(name) + '</div>' +
+        '<div class="row-main"><div class="row-title">' + escapeHtml(name) + '</div>' +
+        '<div class="row-sub">' + escapeHtml(chat.lastMessage || 'Belum ada pesan') + '</div></div>';
+      row.addEventListener('click', function(){ openChat(chatId); });
+      wrap.appendChild(row);
+    });
+  }
+
+  function openPrivateChat(friendUid, friendName){
+    let chatId = privateChatId(currentUser.uid, friendUid);
+    db.ref('chats/' + chatId).once('value').then(function(snap){
+      if (!snap.exists()){
+        let members = {};
+        members[currentUser.uid] = true;
+        members[friendUid] = true;
+        let updates = {};
+        updates['chats/' + chatId] = {
+          type: 'private',
+          members: members,
+          createdBy: currentUser.uid,
+          createdAt: firebase.database.ServerValue.TIMESTAMP
+        };
+        updates['userChats/' + currentUser.uid + '/' + chatId] = true;
+        updates['userChats/' + friendUid + '/' + chatId] = true;
+        return db.ref().update(updates);
+      }
+    }).then(function(){
+      tabChats.click();
+      openChat(chatId);
+    });
+  }
+
+  // ===================================================================
+  // GRUP: buat grup baru
+  // ===================================================================
+  const modalNewGroup = document.getElementById('modalNewGroup');
+  const groupFriendPick = document.getElementById('groupFriendPick');
+  const groupNameInput = document.getElementById('groupNameInput');
+
+  document.getElementById('btnNewGroup').addEventListener('click', function(){
+    groupNameInput.value = '';
+    renderGroupFriendPick();
+    modalNewGroup.classList.add('show');
+  });
+  document.getElementById('btnCancelGroup').addEventListener('click', function(){
+    modalNewGroup.classList.remove('show');
+  });
+
+  function renderGroupFriendPick(){
+    let uids = Object.keys(friendsData);
+    if (uids.length === 0){
+      groupFriendPick.innerHTML = '<div class="empty-hint">Belum ada teman untuk diajak ke grup.</div>';
+      return;
+    }
+    groupFriendPick.innerHTML = '';
+    uids.forEach(function(uid){
+      let f = friendsData[uid];
+      let row = document.createElement('label');
+      row.className = 'friend-pick-row';
+      row.innerHTML =
+        '<input type="checkbox" value="' + uid + '" class="grpChk">' +
+        '<div class="avatar">' + initials(f.name) + '</div>' +
+        '<div class="row-main"><div class="row-title">' + escapeHtml(f.name) + '</div></div>';
+      groupFriendPick.appendChild(row);
+    });
+  }
+
+  document.getElementById('btnCreateGroup').addEventListener('click', function(){
+    let name = groupNameInput.value.trim();
+    if (!name){ alert('Nama grup wajib diisi.'); return; }
+    let checked = Array.prototype.slice.call(document.querySelectorAll('.grpChk:checked')).map(function(el){ return el.value; });
+    if (checked.length === 0){ alert('Pilih minimal 1 teman.'); return; }
+
+    let members = {};
+    members[currentUser.uid] = true;
+    checked.forEach(function(uid){ members[uid] = true; });
+
+    let newChatRef = db.ref('chats').push();
+    let chatId = newChatRef.key;
+    let updates = {};
+    updates['chats/' + chatId] = {
+      type: 'group',
+      name: name,
+      members: members,
+      createdBy: currentUser.uid,
+      createdAt: firebase.database.ServerValue.TIMESTAMP
+    };
+    Object.keys(members).forEach(function(uid){
+      updates['userChats/' + uid + '/' + chatId] = true;
+    });
+    db.ref().update(updates).then(function(){
+      modalNewGroup.classList.remove('show');
+      openChat(chatId);
+    });
+  });
+
+  // ===================================================================
+  // CHAT AKTIF: header, pesan, kirim
+  // ===================================================================
+  const chatEmptyState = document.getElementById('chatEmptyState');
+  const chatActiveWrap = document.getElementById('chatActiveWrap');
+  const messagesWrap = document.getElementById('messagesWrap');
+  const msgInput = document.getElementById('msgInput');
+  const btnSendMsg = document.getElementById('btnSendMsg');
+
+  function updateChatHeader(){
+    let chat = chatsIndex[activeChatId];
+    if (!chat) return;
+    let name = chatDisplayName(chat);
+    document.getElementById('chatHeaderAvatar').textContent = initials(name);
+    document.getElementById('chatHeaderAvatar').className = 'avatar' + (chat.type === 'group' ? ' grp' : '');
+    document.getElementById('chatHeaderTitle').textContent = name;
+    document.getElementById('chatHeaderSub').textContent = chat.type === 'group'
+      ? (Object.keys(chat.members || {}).length + ' anggota')
+      : 'Percakapan privat';
+  }
+
+  function openChat(chatId){
+    activeChatId = chatId;
+    chatEmptyState.style.display = 'none';
+    chatActiveWrap.style.display = 'flex';
+    messagesWrap.innerHTML = '';
+    renderChatList();
+    updateChatHeader();
+
+    if (messagesListenerRef){
+      messagesListenerRef.ref.off('child_added', messagesListenerRef.cb);
+      messagesListenerRef = null;
+    }
+    let msgsRef = db.ref('chats/' + chatId + '/messages').limitToLast(200);
+    let cb = function(snap){
+      appendMessage(snap.val());
+    };
+    msgsRef.on('child_added', cb);
+    messagesListenerRef = { ref: msgsRef, cb: cb };
+  }
+
+  function appendMessage(m){
+    if (!m) return;
+    let row = document.createElement('div');
+    let isMe = m.sender === currentUser.uid;
+    row.className = 'msg-row ' + (isMe ? 'me' : 'them');
+    let chat = chatsIndex[activeChatId];
+    let showSender = chat && chat.type === 'group' && !isMe;
+    row.innerHTML =
+      '<div class="bubble">' +
+        (showSender ? '<span class="sender">' + escapeHtml(m.senderName || '') + '</span>' : '') +
+        '<span class="text"></span>' +
+        '<span class="time">' + fmtTime(m.createdAt) + '</span>' +
+      '</div>';
+    row.querySelector('.text').textContent = m.text || '';
+    messagesWrap.appendChild(row);
+    messagesWrap.scrollTop = messagesWrap.scrollHeight;
+  }
+
+  function sendMessage(){
+    let text = msgInput.value.trim();
+    if (!text || !activeChatId) return;
+    let msgRef = db.ref('chats/' + activeChatId + '/messages').push();
+    let payload = {
+      sender: currentUser.uid,
+      senderName: currentUser.name,
+      text: text,
+      createdAt: firebase.database.ServerValue.TIMESTAMP
+    };
+    let updates = {};
+    updates['chats/' + activeChatId + '/messages/' + msgRef.key] = payload;
+    updates['chats/' + activeChatId + '/lastMessage'] = text.length > 60 ? text.slice(0,60) + '…' : text;
+    updates['chats/' + activeChatId + '/lastMessageAt'] = firebase.database.ServerValue.TIMESTAMP;
+    db.ref().update(updates);
+    msgInput.value = '';
+    autoGrow();
+  }
+
+  btnSendMsg.addEventListener('click', sendMessage);
+  msgInput.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && !e.shiftKey){
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+  function autoGrow(){
+    msgInput.style.height = 'auto';
+    msgInput.style.height = Math.min(msgInput.scrollHeight, 120) + 'px';
+  }
+  msgInput.addEventListener('input', autoGrow);
+
+})();
+</script>
+</body>
+</html>
