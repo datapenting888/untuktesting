@@ -2141,30 +2141,38 @@
     cursor:pointer;
   }
 
-  /* ===== HITUNGAN TOTO SINGAPORE (tidak diubah) ===== */
+  /* ===== HITUNGAN TOTO SINGAPORE ===== */
   .hasil-scope .toto-wrap {
     background-color: var(--panel);
     font-family: Arial, sans-serif;
-    font-size: 14px;
+    font-size: clamp(8px, 1vw, 14px);
     color: var(--text-uniform);
-    padding: 20px;
+    padding: clamp(8px, 1.6vw, 20px);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
   }
   .hasil-scope .toto-wrap table {
     border-collapse: collapse;
     background-color: var(--panel);
-    width: auto;
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
   }
   .hasil-scope .toto-wrap td {
     border: 1px dashed var(--line);
     text-align: center;
-    padding: 3px 10px;
-    height: 20px;
+    padding: clamp(1px, 0.45vw, 3px) clamp(2px, 0.9vw, 10px);
+    height: clamp(15px, 2vw, 20px);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .hasil-scope .toto-wrap .header-main {
     background-color: var(--panel-2);
     color: var(--gold-bright);
     font-weight: normal;
-    font-size: 16px;
+    font-size: clamp(9px, 1.15vw, 16px);
     text-align: center;
     letter-spacing: 1px;
   }
@@ -2172,14 +2180,14 @@
     background-color: var(--panel-2);
     color: var(--gold-bright);
     font-weight: normal;
-    width: 70px;
+    width: 16%;
     white-space: nowrap;
   }
   .hasil-scope .toto-wrap .bola-num {
     background-color: transparent;
     color: var(--text-uniform);
     font-weight: normal;
-    width: 50px;
+    width: 11%;
   }
   .hasil-scope .toto-wrap .tempel {
     background-color: transparent;
@@ -2187,12 +2195,12 @@
     font-weight: normal;
   }
   .hasil-scope .toto-wrap .tempel input {
-    width: 45px;
+    width: 100%;
     background-color: transparent;
     border: none;
     text-align: center;
     font-weight: normal;
-    font-size: 14px;
+    font-size: clamp(8px, 1vw, 14px);
     color: var(--text-uniform);
     outline: none;
     -moz-appearance: textfield;
@@ -2207,6 +2215,7 @@
     background-color: var(--panel-2);
     color: var(--gold-bright);
     font-weight: normal;
+    width: 16%;
   }
   .hasil-scope .toto-wrap .add-val {
     background-color: transparent;
@@ -2214,12 +2223,12 @@
     font-weight: normal;
   }
   .hasil-scope .toto-wrap .add-val input {
-    width: 45px;
+    width: 100%;
     background-color: transparent;
     border: none;
     text-align: center;
     font-weight: normal;
-    font-size: 14px;
+    font-size: clamp(8px, 1vw, 14px);
     color: var(--text-uniform);
     outline: none;
     -moz-appearance: textfield;
@@ -2234,39 +2243,39 @@
     background-color: transparent;
     color: var(--text-uniform);
     font-weight: normal;
-    width: 75px;
+    width: 18%;
   }
   .hasil-scope .toto-wrap .col-right-2 {
     background-color: transparent;
     color: var(--text-uniform);
     font-weight: normal;
-    width: 75px;
+    width: 18%;
   }
   .hasil-scope .toto-wrap .col-right-3 {
     background-color: transparent;
     color: var(--text-uniform);
     font-weight: normal;
-    width: 75px;
+    width: 18%;
   }
   .hasil-scope .toto-wrap .col-right-4 {
     background-color: transparent;
     color: var(--text-uniform);
     font-weight: normal;
-    width: 75px;
+    width: 18%;
   }
   .hasil-scope .toto-wrap .result-label {
     background-color: var(--panel-2);
     color: var(--gold-bright);
     font-weight: normal;
     text-align: center;
-    width: 70px;
+    width: 16%;
   }
   .hasil-scope .toto-wrap .result-val {
     background-color: transparent;
     color: var(--gold-bright);
     font-weight: normal;
-    width: 50px;
-    font-size: 15px;
+    width: 11%;
+    font-size: clamp(9px, 1.1vw, 15px);
   }
   .hasil-scope .toto-wrap .dark-row {
     background-color: var(--void);
