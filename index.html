@@ -1161,6 +1161,19 @@
     font-family: 'Inter', sans-serif;
     transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
+.ds-scope select {
+    /* Hilangkan ikon panah bawaan browser pada dropdown JENIS */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: none;
+}
+.ds-scope select option {
+    /* Beri warna latar gelap & teks terang supaya nama-nama bank pada
+       daftar pilihan tetap terbaca jelas (bukan putih di atas putih). */
+    background-color: var(--ds-surface-alt);
+    color: var(--ds-text-primary);
+}
 .ds-scope input[type="text"]:focus, .ds-scope select:focus {
     outline: none;
     border-color: var(--ds-gold);
@@ -3476,7 +3489,6 @@ setInterval(() => {
   <div class="panel" style="padding:0; background:transparent;">
     <div class="ds-scope">
       <div class="container">
-        <span class="eyebrow">LAPAK GOLAN</span>
         <h2>DATA REKENING &amp; BUKTI SCREENSHOT</h2>
 
         <div class="controls">
@@ -3735,6 +3747,23 @@ setInterval(() => {
         const modal = document.getElementById('dsImgModal');
         if (event.target == modal) {
             modal.style.display = 'none';
+        }
+
+        // Klik pada kolom TAUTAN yang sudah terkunci (readonly): langsung
+        // seleksi seluruh teksnya supaya Ctrl+C bisa langsung dipakai, dan
+        // sekaligus salin otomatis ke clipboard sebagai kemudahan tambahan.
+        const linkInput = event.target.closest && event.target.closest('.ds-row-link[readonly]');
+        if (linkInput) {
+            linkInput.focus();
+            linkInput.select();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(linkInput.value).then(() => {
+                    dsShowToast('✓ Tautan disalin ke clipboard. Tekan Ctrl+C jika ingin menyalin ulang.', 3000);
+                }).catch(() => {
+                    // Clipboard API gagal (mis. browser tidak mendukung), teks
+                    // tetap sudah terseleksi sehingga Ctrl+C manual tetap bisa.
+                });
+            }
         }
     });
 
