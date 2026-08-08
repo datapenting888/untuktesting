@@ -552,6 +552,80 @@
     .prediksi-row{ flex:none; }
     .prediksi-card{ flex:none; }
   }
+
+  /* ---------------- Peringatan Perubahan Zona Waktu (DST) ----------------
+     Muncul di atas SEMUA menu (di luar .main-content, posisi fixed) setiap
+     tanggal 1 November, sampai ditutup (x) atau sampai Jam Tutup & Result
+     seluruh pasaran terkait sudah dimutakhirkan pada menu RESULT & JADWAL
+     PASARAN (lihat dstJadwalSudahDiubah() di script). */
+  .dst-warning-banner{
+    position:fixed;
+    top:16px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:9999;
+    width:calc(100% - 40px);
+    max-width:640px;
+    background:linear-gradient(135deg,#3a3115,#4a3d24);
+    border:1px solid var(--accent-emas);
+    border-radius:14px;
+    padding:16px 42px 16px 18px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
+    font-family:'Work Sans', Arial, sans-serif;
+  }
+  .dst-warning-banner.hidden{ display:none; }
+  .dst-warning-banner .dst-title{
+    margin:0 0 6px;
+    font-weight:700;
+    font-size:15px;
+    color:var(--accent-emas);
+  }
+  .dst-warning-banner .dst-desc{
+    margin:0 0 10px;
+    font-size:13px;
+    line-height:1.55;
+    color:#f2ead9;
+  }
+  .dst-warning-banner .dst-markets{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .dst-warning-banner .dst-market-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.3px;
+    color:var(--accent-emas);
+    background:rgba(219,195,110,0.15);
+    border:1px solid rgba(219,195,110,0.4);
+    border-radius:20px;
+    padding:3px 9px;
+  }
+  .dst-warning-banner .dst-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    width:26px;
+    height:26px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:transparent;
+    border:none;
+    color:#f2ead9;
+    font-size:18px;
+    line-height:1;
+    cursor:pointer;
+    border-radius:6px;
+  }
+  .dst-warning-banner .dst-close:hover{
+    color:var(--accent-emas);
+    background:rgba(255,255,255,0.08);
+  }
+  @media (max-width:760px){
+    .dst-warning-banner{ top:8px; width:calc(100% - 20px); padding:14px 38px 14px 14px; }
+  }
 </style>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -1345,6 +1419,39 @@
 
 </head>
 <body>
+
+<!--
+  Peringatan Perubahan Zona Waktu (DST) — muncul otomatis setiap tanggal
+  1 November di SEMUA menu (elemen ini sengaja diletakkan di luar
+  .sidebar/.main-content, posisi fixed, supaya tidak ikut disembunyikan
+  saat pindah menu). Logika tampil/sembunyi & isi daftar pasaran ada di
+  script bagian "PERINGATAN PERUBAHAN ZONA WAKTU (DST)".
+-->
+<div class="dst-warning-banner hidden" id="dstWarningBanner">
+  <button type="button" class="dst-close" id="dstWarningClose" title="Tutup peringatan" aria-label="Tutup peringatan">&times;</button>
+  <p class="dst-title">Perubahan Zona Waktu &mdash; musim dingin dimulai</p>
+  <p class="dst-desc">
+    Sedang beralih ke UTC -5 / Eastern Standard Time (EST).<br>
+    Waktu akan diatur mundur satu jam untuk pasaran:.
+  </p>
+  <div class="dst-markets" id="dstWarningMarkets"></div>
+</div>
+
+<!--
+  Peringatan Perubahan Zona Waktu (DST) untuk 1 Maret (kembali ke musim
+  panas/EDT) — pasangan dari #dstWarningBanner di atas, dengan logika
+  tampil/sembunyi & isi daftar pasaran yang sama (lihat script bagian
+  "PERINGATAN PERUBAHAN ZONA WAKTU (DST)").
+-->
+<div class="dst-warning-banner hidden" id="dstWarningBannerMaret">
+  <button type="button" class="dst-close" id="dstWarningMaretClose" title="Tutup peringatan" aria-label="Tutup peringatan">&times;</button>
+  <p class="dst-title">Perubahan Zona Waktu &mdash; musim dingin dimulai</p>
+  <p class="dst-desc">
+    Telah beralih ke UTC -4 / Eastern Daylight Time (EDT).<br>
+    Waktu diset maju satu jam untuk pasaran:
+  </p>
+  <div class="dst-markets" id="dstWarningMarketsMaret"></div>
+</div>
 
 <div class="sidebar">
   <div class="brand"><span class="uy">UY</span> <span class="lab">LAB</span> <span class="brand-tag">By GOLAN</span></div>
@@ -2498,9 +2605,9 @@
             <td class="col-right-1" id="out1">-</td>
         </tr>
 
-        <!-- Baris 3: TEMPEL -->
+        <!-- Baris 3: ISI -->
         <tr>
-            <td class="header-bola">TEMPEL &gt;&gt;</td>
+            <td class="header-bola">ISI &gt;&gt;</td>
             <td class="tempel"><input type="number" id="t1" value="" oninput="hitung()"></td>
             <td class="tempel"><input type="number" id="t2" value="" oninput="hitung()"></td>
             <td class="tempel"><input type="number" id="t3" value="" oninput="hitung()"></td>
@@ -2826,8 +2933,17 @@ function recalc(){
 }
 
 // Samakan nama pasaran walau beda spasi/huruf besar-kecil (mis. "TOTOMACAU PAGI" = "totomacau pagi" = "Totomacau  Pagi")
+// serta beda singkatan/istilah panjang yang umum dipakai saat input nomor,
+// supaya tetap dikenali sebagai pasaran yang sama dengan yang ada di Jadwal
+// Pasaran. Contoh: "FLORIDA EVENING" = "FLORIDAEVE", "NEW YORK MIDDAY" =
+// "NEWYORKMID", "KENTUCKY EVENING" = "KENTUCKYEVE", "NORTH CAROLINA DAY" =
+// "CAROLINADAY".
 function normalisasiNama(str){
-  return (str || '').toString().toLowerCase().replace(/\s+/g,'').trim();
+  let s = (str || '').toString().toLowerCase().replace(/\s+/g,'').trim();
+  s = s.replace(/evening/g, 'eve')
+       .replace(/midday/g, 'mid')
+       .replace(/^north/, '');
+  return s;
 }
 
 // Jika nama pasaran + angka sudah diisi dan namanya cocok dengan salah satu baris Jadwal Pasaran,
@@ -3129,6 +3245,130 @@ if (jadwalDayChanged && jadwalSaved.some((r) => r && r.checked)) {
   });
 }
 
+// ===== PERINGATAN PERUBAHAN ZONA WAKTU (DST) =====
+// Tampil otomatis setiap tanggal 1 November (mulai musim dingin/EST) dan
+// setiap tanggal 1 Maret (kembali musim panas/EDT) di semua menu (lihat
+// #dstWarningBanner & #dstWarningBannerMaret yang diletakkan di luar
+// .main-content pada <body>).
+// - Bisa ditutup lewat tombol (x): tidak muncul lagi untuk sisa hari itu.
+// - Otomatis tidak muncul lagi (permanen) begitu Jam Tutup & Result SEMUA
+//   pasaran di bawah ini sudah dimutakhirkan pada menu RESULT & JADWAL
+//   PASARAN: peringatan November hilang begitu semuanya sudah DIUBAH dari
+//   nilai default (mundur 1 jam ke EST), peringatan Maret hilang begitu
+//   semuanya sudah KEMBALI ke nilai default (maju 1 jam lagi ke EDT).
+const DST_MARKETS = [
+  "KENTUCKYMID","FLORIDAMID","NEWYORKMID","CAROLINADAY","OREGON03","OREGON06",
+  "CALIFORNIA","FLORIDAEVE","OREGON09","NEWYORKEVE","KENTUCKYEVE","CAROLINAEVE","OREGON12"
+];
+const DST_WARNING_CLOSED_DATE_KEY = 'dstWarningClosedDate';
+const DST_WARNING_MARET_CLOSED_DATE_KEY = 'dstWarningMaretClosedDate';
+
+// Cocokkan tiap nama pasaran DST di atas ke baris & nilai default (tutup/result)
+// pada dataJadwal, supaya bisa dideteksi kalau sudah diubah.
+const dstMarketRows = DST_MARKETS.map((nama) => {
+  const idx = dataJadwal.findIndex((row) => row[0] === nama);
+  return idx === -1 ? null : { nama: nama, idx: idx, defaultTutup: dataJadwal[idx][1], defaultResult: dataJadwal[idx][2] };
+}).filter(Boolean);
+
+const dstBanner = document.getElementById('dstWarningBanner');
+const dstMarketsEl = document.getElementById('dstWarningMarkets');
+if (dstMarketsEl) {
+  dstMarketsEl.innerHTML = DST_MARKETS.map((m) => '<span class="dst-market-tag">' + m + '</span>').join('');
+}
+
+const dstBannerMaret = document.getElementById('dstWarningBannerMaret');
+const dstMarketsMaretEl = document.getElementById('dstWarningMarketsMaret');
+if (dstMarketsMaretEl) {
+  dstMarketsMaretEl.innerHTML = DST_MARKETS.map((m) => '<span class="dst-market-tag">' + m + '</span>').join('');
+}
+
+function isTanggalDstWarning() {
+  const now = new Date();
+  return now.getMonth() === 10 && now.getDate() === 1; // November = index 10
+}
+
+function isTanggalDstWarningMaret() {
+  const now = new Date();
+  return now.getMonth() === 2 && now.getDate() === 1; // Maret = index 2
+}
+
+// Apakah satu baris pasaran DST sudah diubah (Jam Tutup ATAU Result beda
+// dari nilai default)?
+function dstRowSudahDiubah(m, rows) {
+  const tr = rows[m.idx];
+  if (!tr) return false;
+  const editable = tr.querySelectorAll('.jadwal-editable');
+  const tutupNow = editable[0] ? editable[0].textContent.trim() : '';
+  const resultNow = editable[1] ? editable[1].textContent.trim() : '';
+  return tutupNow !== m.defaultTutup || resultNow !== m.defaultResult;
+}
+
+// true jika Jam Tutup & Result SEMUA pasaran DST di atas sudah diubah
+// dari nilai default (artinya jadwal sudah dimutakhirkan ke waktu musim dingin/EST)
+function dstJadwalSudahDiubah() {
+  const rows = jadwalBody.querySelectorAll('tr');
+  return dstMarketRows.every(function (m) { return dstRowSudahDiubah(m, rows); });
+}
+
+// true jika Jam Tutup & Result SEMUA pasaran DST di atas sudah KEMBALI ke
+// nilai default (artinya jadwal sudah dimutakhirkan lagi ke waktu musim panas/EDT)
+function dstJadwalSudahKembaliKeDefault() {
+  const rows = jadwalBody.querySelectorAll('tr');
+  return dstMarketRows.every(function (m) { return !dstRowSudahDiubah(m, rows); });
+}
+
+function updateDstWarningVisibility() {
+  if (!dstBanner) return;
+
+  if (dstJadwalSudahDiubah()) {
+    dstBanner.classList.add('hidden');
+    return;
+  }
+
+  const sudahDitutupHariIni = localStorage.getItem(DST_WARNING_CLOSED_DATE_KEY) === getTodayStr();
+  if (isTanggalDstWarning() && !sudahDitutupHariIni) {
+    dstBanner.classList.remove('hidden');
+  } else {
+    dstBanner.classList.add('hidden');
+  }
+}
+
+function updateDstWarningMaretVisibility() {
+  if (!dstBannerMaret) return;
+
+  if (dstJadwalSudahKembaliKeDefault()) {
+    dstBannerMaret.classList.add('hidden');
+    return;
+  }
+
+  const sudahDitutupHariIni = localStorage.getItem(DST_WARNING_MARET_CLOSED_DATE_KEY) === getTodayStr();
+  if (isTanggalDstWarningMaret() && !sudahDitutupHariIni) {
+    dstBannerMaret.classList.remove('hidden');
+  } else {
+    dstBannerMaret.classList.add('hidden');
+  }
+}
+
+const dstWarningCloseBtn = document.getElementById('dstWarningClose');
+if (dstWarningCloseBtn) {
+  dstWarningCloseBtn.addEventListener('click', () => {
+    localStorage.setItem(DST_WARNING_CLOSED_DATE_KEY, getTodayStr());
+    dstBanner.classList.add('hidden');
+  });
+}
+
+const dstWarningMaretCloseBtn = document.getElementById('dstWarningMaretClose');
+if (dstWarningMaretCloseBtn) {
+  dstWarningMaretCloseBtn.addEventListener('click', () => {
+    localStorage.setItem(DST_WARNING_MARET_CLOSED_DATE_KEY, getTodayStr());
+    dstBannerMaret.classList.add('hidden');
+  });
+}
+
+// Cek kondisi awal saat halaman dimuat
+updateDstWarningVisibility();
+updateDstWarningMaretVisibility();
+
 jadwalBody.addEventListener('change', (e) => {
   if (e.target.type === 'checkbox') {
     const tr = e.target.closest('tr');
@@ -3154,6 +3394,10 @@ let jadwalEditableSyncTimer = null;
 jadwalBody.addEventListener('input', (e) => {
   if (e.target.classList.contains('jadwal-editable')) {
     simpanJadwalData();
+    // Cek ulang apakah Jam Tutup & Result pasaran DST sudah dimutakhirkan,
+    // supaya peringatan langsung hilang begitu semuanya sudah diubah.
+    updateDstWarningVisibility();
+    updateDstWarningMaretVisibility();
     // Kirim ke Firebase dengan sedikit jeda (debounce) agar tidak spam
     // request saat user sedang mengetik, tapi tetap tersinkron otomatis.
     clearTimeout(jadwalEditableSyncTimer);
@@ -3228,6 +3472,8 @@ if (hasilDB) {
       applyJadwalData(data);
       localStorage.setItem(JADWAL_STORAGE_KEY, JSON.stringify(data));
       localStorage.setItem(JADWAL_DATE_KEY, getTodayStr());
+      updateDstWarningVisibility();
+      updateDstWarningMaretVisibility();
     }
   });
   hasilDB.ref('resultJadwalPasaran/shio').on('value', (snapshot) => {
