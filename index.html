@@ -3699,6 +3699,14 @@ setInterval(() => {
             }
         }
         dsEnsureDraftRow();
+
+        // PENTING: baris yang baru dibuat/diperbarui dari Firebase belum
+        // dicocokkan dengan filter tanggal/pencarian yang sedang aktif
+        // (style.display bawaannya selalu tampil). Tanpa baris ini, data
+        // tanggal lain tetap muncul walau kolom "cari tanggal" sudah
+        // diarahkan ke hari ini. Jalankan ulang filter supaya baris ini
+        // langsung disembunyikan/ditampilkan sesuai tanggal yang dipilih.
+        dsFilterTable();
     }
 
     // Hapus baris tabel sesuai key yang sudah dihapus dari Firebase
