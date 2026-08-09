@@ -388,12 +388,20 @@
   .icon-btn.danger{ color:var(--danger); border-color:rgba(224,82,82,0.4); }
   .icon-btn.danger:hover{ background:rgba(224,82,82,0.12); }
 
-  /* ---------- Toggle mode terang/gelap (tombol bulat, di paling bawah layar) ---------- */
-  .theme-toggle-fab{
+  /* ---------- Footer panel: toggle mode (kiri) + copyright (kanan) ---------- */
+  .panel-footer{
     position:absolute;
-    left:50%;
+    left:0;
+    right:0;
     bottom:calc(12px + env(safe-area-inset-bottom, 0px));
-    transform:translateX(-50%);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 14px;
+    z-index:8;
+  }
+  .theme-toggle-fab{
+    flex-shrink:0;
     width:46px; height:46px;
     border-radius:50%;
     background:var(--sidebar-2);
@@ -401,17 +409,25 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    z-index:8;
     box-shadow:0 4px 14px rgba(0,0,0,0.35);
     transition:background-color .2s ease, border-color .2s ease, transform .1s ease;
   }
   .theme-toggle-fab:hover{ background:#26263a; }
-  .theme-toggle-fab:active{ transform:translateX(-50%) scale(0.93); }
+  .theme-toggle-fab:active{ transform:scale(0.93); }
   .theme-toggle-fab svg{ width:22px; height:22px; }
   .theme-toggle-fab .icon-sun{ color:var(--accent-emas); display:block; }
   .theme-toggle-fab .icon-moon{ color:var(--accent-emas); display:none; }
   html.light-theme .theme-toggle-fab .icon-sun{ display:none; }
   html.light-theme .theme-toggle-fab .icon-moon{ display:block; }
+  .panel-copyright{
+    text-align:right;
+    font-size:10px;
+    line-height:1.4;
+    color:var(--text-dim);
+    letter-spacing:0.2px;
+    white-space:nowrap;
+  }
+  .panel-copyright .cr-line1{ font-weight:600; color:var(--text-light); }
 
   /* ---------- Search bar (cari user / grup) ---------- */
   .search-bar{ padding:10px 10px 0; }
@@ -811,6 +827,11 @@
     .add-friend-box input{ padding:7px 9px; font-size:16px; }
     .add-friend-box{ gap:5px; }
 
+    .panel-footer{ padding:0 10px; }
+    .theme-toggle-fab{ width:40px; height:40px; }
+    .theme-toggle-fab svg{ width:19px; height:19px; }
+    .panel-copyright{ font-size:9px; }
+
     .list-row{ padding:6px 6px; gap:8px; margin-bottom:2px; }
     .avatar{ width:30px; height:30px; font-size:16px; }
     .row-title{ font-size:16.5px; }
@@ -952,11 +973,17 @@
         <div id="chatListWrap"><div class="empty-hint">Belum ada percakapan. Tambahkan teman lewat menu Pengaturan Akun (ikon gear).</div></div>
       </div>
 
-      <!-- Tombol ganti mode terang/gelap, di paling bawah panel daftar -->
-      <button type="button" class="theme-toggle-fab" id="themeToggleBtn" aria-label="Ganti mode terang/gelap" title="Ganti mode terang/gelap">
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.4M12 19.1v2.4M4.6 4.6l1.7 1.7M17.7 17.7l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.6 19.4l1.7-1.7M17.7 6.3l1.7-1.7"/></svg>
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></svg>
-      </button>
+      <!-- Footer panel: tombol ganti mode terang/gelap (kiri) + copyright (kanan) -->
+      <div class="panel-footer">
+        <button type="button" class="theme-toggle-fab" id="themeToggleBtn" aria-label="Ganti mode terang/gelap" title="Ganti mode terang/gelap">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.4M12 19.1v2.4M4.6 4.6l1.7 1.7M17.7 17.7l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.6 19.4l1.7-1.7M17.7 6.3l1.7-1.7"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></svg>
+        </button>
+        <div class="panel-copyright">
+          <div class="cr-line1">© 2026 RIKI GOLAN</div>
+          <div class="cr-line2">All Rights Reserved</div>
+        </div>
+      </div>
     </div>
 
     <div class="chat-panel" id="chatPanel">
