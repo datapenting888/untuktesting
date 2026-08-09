@@ -1363,18 +1363,26 @@
 
   // ---------------------------------------------------------------
   // Indikator status koneksi (dot logo DATA PENTING)
-  // Hijau = online (terhubung ke Firebase), Putih = offline.
+  // Hijau + "Online" hanya kalau user SUDAH login DAN benar-benar
+  // terhubung ke Firebase. Kalau belum login (masih di layar Login/
+  // Daftar) atau koneksi putus, selalu merah + "Offline" — supaya
+  // tidak salah menampilkan "Online" padahal belum masuk akun.
   // ---------------------------------------------------------------
   const connDot = document.getElementById('connDot');
   const connLabel = document.getElementById('connLabel');
-  db.ref('.info/connected').on('value', function(snap){
-    let isOnline = snap.val() === true;
+  let firebaseConnected = false;
+  function updateConnIndicator(){
+    let isOnline = firebaseConnected && !!currentUser;
     if (connDot) connDot.classList.toggle('online', isOnline);
     if (connLabel) connLabel.textContent = isOnline ? 'Online' : 'Offline';
+  }
+  db.ref('.info/connected').on('value', function(snap){
+    firebaseConnected = snap.val() === true;
+    updateConnIndicator();
   });
   window.addEventListener('offline', function(){
-    if (connDot) connDot.classList.remove('online');
-    if (connLabel) connLabel.textContent = 'Offline';
+    firebaseConnected = false;
+    updateConnIndicator();
   });
 
   // ---------------------------------------------------------------
@@ -1445,6 +1453,35 @@
   let incomingRequests = {};   // { fromUid: {fromName,fromEmail} }
   let chatsIndex = {};         // { chatId: {type,name,members,lastMessage,lastMessageAt} }
   let activeChatId = null;
+
+  // -------------------------------------------------------------
+  // Ingat posisi chat terakhir (chat + grup yang sedang dibuka, dan
+  // apakah di mobile sedang di layar daftar atau layar obrolan) supaya
+  // saat halaman di-refresh (F5), tampilan langsung kembali ke posisi
+  // yang sama, bukan kembali ke daftar percakapan.
+  // -------------------------------------------------------------
+  const LS_ACTIVE_CHAT_ID = 'dp_lastActiveChatId';
+  const LS_ACTIVE_CHAT_NAME = 'dp_lastActiveChatName';
+  const LS_MOBILE_VIEW = 'dp_lastMobileView';
+  let restoredActiveChatOnLoad = false;
+  function saveActiveChatState(chatId, name){
+    try{
+      if (chatId){
+        localStorage.setItem(LS_ACTIVE_CHAT_ID, chatId);
+        if (name) localStorage.setItem(LS_ACTIVE_CHAT_NAME, name);
+      } else {
+        localStorage.removeItem(LS_ACTIVE_CHAT_ID);
+        localStorage.removeItem(LS_ACTIVE_CHAT_NAME);
+      }
+    } catch(e){}
+  }
+  function saveMobileViewState(viewMode){
+    try{ localStorage.setItem(LS_MOBILE_VIEW, viewMode); } catch(e){}
+  }
+  function clearSavedActiveChat(){
+    saveActiveChatState(null, null);
+    saveMobileViewState('list');
+  }
   let messagesListenerRef = null;
   let isRegisterMode = false;
 
@@ -1720,6 +1757,8 @@
         verifyScreen.style.display = 'flex';
         document.getElementById('verifyEmailTarget').textContent = user.email;
         document.getElementById('topbarWho').style.display = 'none';
+        currentUser = null;
+        updateConnIndicator();
         return;
       }
       verifyScreen.style.display = 'none';
@@ -1742,6 +1781,7 @@
         initFriendsListeners();
         initChatsListener();
         startInactivityWatcher();
+        updateConnIndicator();
       });
     } else {
       currentUser = null;
@@ -1752,10 +1792,11 @@
       resetAppState();
       stopInactivityWatcher();
       clearAuthFormFields();
-      // Saat logout (manual atau otomatis karena tidak aktif), dot logo
-      // dikembalikan ke merah dan label ke "Offline" (status belum/tidak terhubung).
-      if (connDot) connDot.classList.remove('online');
-      if (connLabel) connLabel.textContent = 'Offline';
+      // Saat logout (manual atau otomatis karena tidak aktif) atau saat
+      // masih di layar Login/Daftar (belum ada user), dot logo & label
+      // selalu dikembalikan ke merah/"Offline" — status "Online" hanya
+      // berlaku setelah berhasil login.
+      updateConnIndicator();
       if (pendingAutoLogoutNotice){
         pendingAutoLogoutNotice = false;
       }
@@ -1903,6 +1944,8 @@
     incomingRequests = {};
     chatsIndex = {};
     activeChatId = null;
+    restoredActiveChatOnLoad = false;
+    clearSavedActiveChat();
     document.getElementById('chatListWrap').innerHTML = '<div class="empty-hint">Belum ada percakapan. Mulai chat dari tab TEMAN.</div>';
     document.getElementById('friendsListWrap').innerHTML = '<div class="empty-hint">Belum ada teman. Tambahkan lewat email di atas.</div>';
     document.getElementById('incomingRequestsWrap').innerHTML = '<div class="empty-hint">Tidak ada permintaan masuk.</div>';
@@ -2160,6 +2203,7 @@
     track(db.ref('userChats/' + currentUser.uid), 'value', function(snap){
       let chatIds = Object.keys(snap.val() || {});
       chatsIndex = {};
+      maybeRestoreActiveChat(chatIds);
       if (chatIds.length === 0){
         renderChatList();
         return;
@@ -2188,11 +2232,29 @@
               chatEmptyState.style.display = 'flex';
               mobileViewMode = 'list';
               updateMobileView();
+              clearSavedActiveChat();
             }
           }
         });
       });
     });
+  }
+
+  // Setelah refresh (F5), buka kembali chat/grup yang terakhir kali
+  // dibuka (disimpan di localStorage) supaya posisi tidak kembali ke
+  // daftar percakapan. Hanya dijalankan sekali per sesi login.
+  function maybeRestoreActiveChat(chatIds){
+    if (restoredActiveChatOnLoad) return;
+    restoredActiveChatOnLoad = true;
+    let savedId = null, savedName = '', savedView = 'list';
+    try{
+      savedId = localStorage.getItem(LS_ACTIVE_CHAT_ID);
+      savedName = localStorage.getItem(LS_ACTIVE_CHAT_NAME) || '';
+      savedView = localStorage.getItem(LS_MOBILE_VIEW) || 'list';
+    } catch(e){}
+    if (savedId && savedView === 'chat' && chatIds.indexOf(savedId) !== -1){
+      openChat(savedId, savedName);
+    }
   }
 
   function chatDisplayName(chat){
@@ -2255,39 +2317,24 @@
     let chat = chatsIndex[chatId];
     let isPrivate = chat && chat.type === 'private';
     let msg = isPrivate
-      ? 'Hapus obrolan dengan "' + name + '" dari daftar kamu? Semua pesan akan hilang. Kalau kamu cari dan chat lagi nanti, percakapan akan mulai dari awal (kosong).'
-      : 'Hapus obrolan dengan "' + name + '" dari daftar kamu?';
+      ? 'Hapus semua pesan obrolan dengan "' + name + '"? Nama/teman ini akan tetap ada di daftar chat kamu, hanya riwayat pesannya saja yang dihapus.'
+      : 'Hapus semua pesan obrolan grup "' + name + '"? Grup dan anggotanya akan tetap ada seperti biasa, hanya riwayat pesannya saja yang dihapus untuk semua anggota.';
     if (!confirm(msg)) return;
 
+    // Baik chat privat maupun grup: yang dihapus HANYA riwayat
+    // pesan/obrolannya saja. Chat/grup itu sendiri (data chat, nama
+    // teman/grup, keanggotaan) tetap ada dan tetap muncul di daftar
+    // chat semua pihak — cuma kosong tanpa pesan. Untuk menghapus
+    // grup sepenuhnya (bukan cuma pesannya), pakai "Hapus grup" di
+    // Pengaturan Grup.
     let updates = {};
-    if (isPrivate){
-      // Percakapan privat dihapus TOTAL (data pesan + indeks di kedua
-      // user), bukan cuma disembunyikan dari satu sisi. Dengan begitu,
-      // saat salah satu user mencari nama teman ini lagi dan membuka
-      // chat-nya, openPrivateChat() akan membuat percakapan baru yang
-      // benar-benar fresh/kosong dengan chatId yang sama (deterministik
-      // dari pasangan uid), bukannya "menghilang" tanpa bisa dibuka lagi.
-      let members = Object.keys((chat && chat.members) || {});
-      updates['chats/' + chatId] = null;
-      members.forEach(function(uid){
-        updates['userChats/' + uid + '/' + chatId] = null;
-      });
-    } else {
-      // Grup: hapus hanya dari daftar user ini (bukan untuk semua
-      // anggota). Untuk menghapus grup sepenuhnya, pakai "Hapus grup"
-      // di Pengaturan Grup.
-      updates['userChats/' + currentUser.uid + '/' + chatId] = null;
-    }
-
-    db.ref().update(updates).then(function(){
-      if (activeChatId === chatId){
-        activeChatId = null;
-        chatActiveWrap.style.display = 'none';
-        chatEmptyState.style.display = 'flex';
-        mobileViewMode = 'list';
-        updateMobileView();
-      }
-    });
+    updates['chats/' + chatId + '/messages'] = null;
+    updates['chats/' + chatId + '/lastMessage'] = '';
+    updates['chats/' + chatId + '/lastMessageAt'] = null;
+    db.ref().update(updates);
+    // Chat/grup tetap terbuka & tetap ada di daftar; pesan-pesannya
+    // akan otomatis hilang dari layar lewat listener child_removed
+    // kalau chat ini sedang dibuka.
   }
 
   function openPrivateChat(friendUid, friendName){
@@ -2532,6 +2579,7 @@
         chatEmptyState.style.display = 'flex';
         mobileViewMode = 'list';
         updateMobileView();
+        clearSavedActiveChat();
       }
     });
   });
@@ -2578,6 +2626,7 @@
   document.getElementById('btnBackMobile').addEventListener('click', function(){
     mobileViewMode = 'list';
     updateMobileView();
+    saveMobileViewState('list');
   });
 
   function updateChatHeader(fallbackName){
@@ -2630,6 +2679,8 @@
     updateChatHeader(fallbackName);
     mobileViewMode = 'chat';
     updateMobileView();
+    saveActiveChatState(chatId, fallbackName);
+    saveMobileViewState('chat');
 
     detachMessagesListener();
     let msgsRef = db.ref('chats/' + chatId + '/messages').limitToLast(200);
