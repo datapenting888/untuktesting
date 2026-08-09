@@ -667,7 +667,7 @@
     gap:4px;
   }
   .msg-row:last-child{ margin-bottom:6px; }
-  .msg-row{ display:flex; cursor:pointer; user-select:none; -webkit-user-select:none; }
+  .msg-row{ display:flex; cursor:pointer; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
   .msg-row.me{ justify-content:flex-end; }
   .msg-row.selected{ background:rgba(124,92,255,0.14); border-radius:10px; }
   .bubble{
@@ -791,6 +791,9 @@
     margin-bottom:4px;
     cursor:pointer;
     object-fit:cover;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    user-select:none;
   }
   .img-viewer-modal{
     position:fixed;
@@ -916,7 +919,7 @@
     .bubble .sender{ font-size:14px; margin-bottom:1px; }
     .bubble .time{ font-size:13px; margin-top:2px; }
 
-    .chat-input-row{ padding:8px 10px calc(14px + max(22px, env(safe-area-inset-bottom, 0px))); gap:6px; }
+    .chat-input-row{ padding:8px 10px calc(8px + max(22px, env(safe-area-inset-bottom, 0px))); gap:6px; }
     .chat-input-row textarea{ padding:14px 16px; font-size:16.5px; min-height:46px; }
     .send-btn-round{ width:38px; height:38px; }
     .attach-btn-round{ width:38px; height:38px; }
@@ -2733,24 +2736,39 @@
   function attachRowSelectionHandlers(row, msgId){
     let pressTimer = null;
     let longPressFired = false;
-    function startPress(){
+    let startX = 0, startY = 0;
+    const MOVE_TOLERANCE = 12; // px toleransi geser jari sebelum long-press dibatalkan
+    function startPress(e){
       longPressFired = false;
+      let pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
+      startX = pt.clientX;
+      startY = pt.clientY;
       clearTimeout(pressTimer);
       pressTimer = setTimeout(function(){
         longPressFired = true;
+        if (navigator.vibrate) { try { navigator.vibrate(15); } catch(e){} }
         enterSelectionMode();
         toggleSelectMessage(msgId);
-      }, 450);
+      }, 420);
     }
     function cancelPress(){
       clearTimeout(pressTimer);
+    }
+    function movePress(e){
+      let pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
+      let dx = Math.abs(pt.clientX - startX);
+      let dy = Math.abs(pt.clientY - startY);
+      if (dx > MOVE_TOLERANCE || dy > MOVE_TOLERANCE){
+        clearTimeout(pressTimer);
+      }
     }
     row.addEventListener('mousedown', startPress);
     row.addEventListener('mouseup', cancelPress);
     row.addEventListener('mouseleave', cancelPress);
     row.addEventListener('touchstart', startPress, { passive: true });
     row.addEventListener('touchend', cancelPress);
-    row.addEventListener('touchmove', cancelPress);
+    row.addEventListener('touchcancel', cancelPress);
+    row.addEventListener('touchmove', movePress, { passive: true });
     row.addEventListener('click', function(){
       if (longPressFired){ longPressFired = false; return; }
       if (selectionMode) toggleSelectMessage(msgId);
