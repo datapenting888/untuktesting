@@ -313,6 +313,40 @@
   .who-id .who-name{ font-size:13px; font-weight:600; color:var(--text-light); }
   .who-status{ display:flex; align-items:center; gap:5px; font-size:11px; color:#7fe08f; }
   .who-status .dot{ width:7px; height:7px; border-radius:50%; background:#3ddc5b; box-shadow:0 0 5px #3ddc5b; flex-shrink:0; }
+
+  .avatar-menu-wrap{ position:relative; }
+  .avatar-dropdown{
+    display:none;
+    position:absolute;
+    top:calc(100% + 8px);
+    left:0;
+    min-width:150px;
+    background:var(--bg-card);
+    border:1px solid var(--border-soft);
+    border-radius:12px;
+    padding:6px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.45);
+    z-index:60;
+  }
+  .avatar-dropdown.show{ display:block; }
+  .avatar-dropdown-item{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    background:none;
+    border:none;
+    color:var(--text-light);
+    padding:9px 10px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:600;
+    text-align:left;
+  }
+  .avatar-dropdown-item svg{ width:16px; height:16px; flex-shrink:0; }
+  .avatar-dropdown-item:hover{ background:var(--sidebar-2); }
+  .avatar-dropdown-item.danger{ color:var(--danger); }
+  .avatar-dropdown-item.danger:hover{ background:rgba(224,82,82,0.12); }
   .icon-btn{
     width:34px; height:34px;
     border-radius:50%;
@@ -351,6 +385,7 @@
     display:flex; align-items:center; justify-content:center; flex-shrink:0;
   }
   .settings-close:hover{ color:var(--text-light); }
+  .settings-body{ max-height:64vh; overflow-y:auto; padding-right:2px; }
   .settings-avatar-row{ display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
   .settings-avatar-wrap{
     position:relative;
@@ -397,6 +432,71 @@
     color:#fff;
   }
   .btn.save-wa:hover{ filter:brightness(1.06); }
+
+  /* ---------- Pengaturan Grup ---------- */
+  .gs-modal{ max-width:440px; padding:0; overflow:hidden; }
+  .gs-head{
+    display:flex; align-items:center; gap:12px;
+    padding:18px 20px 14px;
+  }
+  .gs-head-icon{
+    width:34px; height:34px; border-radius:50%;
+    background:rgba(91,124,255,0.16);
+    color:#7c9bff;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .gs-head-icon svg{ width:18px; height:18px; }
+  .gs-head-text{ flex:1; min-width:0; }
+  .gs-head-text h2{ margin:0; font-size:16px; }
+  .gs-head-text .gs-sub{ font-size:12px; color:var(--text-dim); margin-top:2px; text-transform:uppercase; letter-spacing:0.5px; }
+  .gs-tabs{ display:flex; gap:0; padding:0 10px; border-bottom:1px solid var(--border-soft); }
+  .gs-tab{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
+    padding:11px 6px; font-size:12.5px; font-weight:700;
+    color:var(--text-dim); background:transparent; border:none;
+    border-bottom:2px solid transparent;
+  }
+  .gs-tab svg{ width:15px; height:15px; }
+  .gs-tab.active{ color:#7c9bff; border-bottom-color:#7c9bff; }
+  .gs-body{ max-height:60vh; overflow-y:auto; padding:18px 20px 20px; }
+  .gs-panel{ display:none; }
+  .gs-panel.active{ display:block; }
+  .gs-photo-row{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+  .gs-photo-row .avatar{ width:64px; height:64px; font-size:22px; flex-shrink:0; }
+  .gs-photo-info{ flex:1; }
+  .gs-photo-info .gs-photo-label{ font-size:13px; color:var(--text-light); margin-bottom:2px; }
+  .gs-photo-info .gs-photo-hint{ font-size:11px; color:var(--text-dim); margin-bottom:8px; }
+  .btn.gs-change-photo{ background:linear-gradient(90deg,#5b7cff,#7c5cff); border:none; padding:8px 12px; font-size:12.5px; display:inline-flex; align-items:center; gap:6px; }
+  .btn.gs-change-photo svg{ width:14px; height:14px; }
+  .gs-name-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
+  .gs-name-value{ font-size:15px; font-weight:700; color:var(--text-light); }
+  .gs-name-edit-btn{
+    width:28px; height:28px; border-radius:8px; flex-shrink:0;
+    border:1px solid var(--border-soft); background:var(--sidebar-2); color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .gs-name-edit-btn:hover{ color:var(--text-light); }
+  .gs-name-edit-btn svg{ width:13px; height:13px; }
+  .gs-name-edit-row{ display:none; gap:8px; margin-top:8px; }
+  .gs-name-edit-row.show{ display:flex; }
+  .gs-name-edit-row input{
+    flex:1; background:#0f0f1a; border:1px solid var(--border-soft); color:var(--text-light);
+    padding:8px 10px; border-radius:9px; font-size:13.5px; outline:none;
+  }
+  .gs-name-edit-row input:focus{ border-color:var(--accent-emas); }
+  .gs-delete-row{ margin-top:26px; padding-top:16px; border-top:1px solid var(--border-soft); }
+  .btn.gs-delete{
+    width:100%; padding:10px; font-size:13px; font-weight:700;
+    background:rgba(224,82,82,0.14); border:1px solid rgba(224,82,82,0.4); color:#ff8080;
+  }
+  .btn.gs-delete:hover{ background:rgba(224,82,82,0.24); }
+  .gs-delete-note{ font-size:11.5px; color:var(--text-dim); margin-top:16px; }
+  .gs-member-row{ display:flex; align-items:center; gap:10px; padding:8px 4px; }
+  .gs-member-row .avatar{ width:36px; height:36px; font-size:14px; }
+  .gs-member-tag{ font-size:11px; color:var(--text-dim); }
+  .gs-add-row{ display:flex; align-items:center; gap:10px; padding:8px 4px; }
+  .gs-add-row .avatar{ width:36px; height:36px; font-size:14px; }
   .row-main{ flex:1; min-width:0; }
   .row-title{
     font-size:13.5px;
@@ -644,16 +744,20 @@
 <div class="topbar">
   <div class="brand"><span class="dot"></span> DATA PRIVASI</div>
   <div class="who" id="topbarWho" style="display:none;">
-    <div class="avatar" id="myAvatarBtn">?</div>
+    <div class="avatar-menu-wrap" id="avatarMenuWrap">
+      <div class="avatar" id="myAvatarBtn">?</div>
+      <div class="avatar-dropdown" id="avatarDropdown">
+        <button class="avatar-dropdown-item danger" id="btnLogout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Keluar</span>
+        </button>
+      </div>
+    </div>
     <div class="who-id who-text">
       <span class="who-name" id="whoName">-</span>
-      <span class="who-status"><span class="dot"></span><span id="whoStatus">Online</span></span>
     </div>
     <button class="icon-btn" id="btnSettings" aria-label="Pengaturan" title="Pengaturan Akun">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </button>
-    <button class="icon-btn danger" id="btnLogout" aria-label="Keluar" title="Keluar">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
     </button>
   </div>
 </div>
@@ -742,36 +846,15 @@
       <div class="search-bar">
         <input type="text" id="searchBox" placeholder="Cari user atau grup...">
       </div>
-      <div class="tabs-row">
-        <button class="tab-btn active" id="tabChats">PERCAKAPAN</button>
-        <button class="tab-btn" id="tabFriends">TEMAN</button>
-      </div>
 
-      <!-- Tab: daftar percakapan -->
       <div class="panel-scroll" id="viewChats">
         <div class="fab-newgroup" id="btnNewGroup">+ Buat Grup Baru</div>
-        <div id="chatListWrap"><div class="empty-hint">Belum ada percakapan. Mulai chat dari tab TEMAN.</div></div>
-      </div>
-
-      <!-- Tab: teman -->
-      <div class="panel-scroll" id="viewFriends" style="display:none;">
-        <div class="panel-section-title">Tambah Teman (via email)</div>
-        <div class="add-friend-box">
-          <input type="email" id="inputAddFriend" placeholder="email@teman.com">
-          <button class="btn small primary" id="btnSendRequest">Kirim</button>
-        </div>
-        <div class="add-friend-msg" id="addFriendMsg"></div>
-
-        <div class="panel-section-title">Permintaan Masuk</div>
-        <div id="incomingRequestsWrap"><div class="empty-hint">Tidak ada permintaan masuk.</div></div>
-
-        <div class="panel-section-title">Daftar Teman</div>
-        <div id="friendsListWrap"><div class="empty-hint">Belum ada teman. Tambahkan lewat email di atas.</div></div>
+        <div id="chatListWrap"><div class="empty-hint">Belum ada percakapan. Tambahkan teman lewat menu Pengaturan Akun (ikon gear).</div></div>
       </div>
     </div>
 
     <div class="chat-panel" id="chatPanel">
-      <div class="chat-empty" id="chatEmptyState">Pilih percakapan di sebelah kiri, atau tambahkan teman dulu di tab TEMAN.</div>
+      <div class="chat-empty" id="chatEmptyState">Pilih percakapan di sebelah kiri, atau tambahkan teman dulu lewat Pengaturan Akun.</div>
 
       <div id="chatActiveWrap" style="display:none; flex:1; display:none; flex-direction:column; min-height:0;">
         <div class="chat-header">
@@ -781,6 +864,9 @@
             <div class="row-title" id="chatHeaderTitle">-</div>
             <div class="row-sub" id="chatHeaderSub"></div>
           </div>
+          <button class="icon-btn" id="btnGroupSettings" aria-label="Pengaturan Grup" title="Pengaturan Grup" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
         </div>
         <div class="messages" id="messagesWrap"></div>
         <div class="chat-input-row">
@@ -824,41 +910,131 @@
       </button>
     </div>
 
-    <div class="settings-avatar-row">
-      <div class="settings-avatar-wrap" id="settingsAvatarWrap">
-        <div class="avatar" id="settingsAvatarPreview">?</div>
-        <div class="camera-overlay">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    <div class="settings-body">
+      <div class="settings-avatar-row">
+        <div class="settings-avatar-wrap" id="settingsAvatarWrap">
+          <div class="avatar" id="settingsAvatarPreview">?</div>
+          <div class="camera-overlay">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
         </div>
+        <input type="file" id="settingsAvatarInput" accept="image/*" style="display:none;">
+        <div class="settings-avatar-hint">Klik gambar untuk mengganti</div>
       </div>
-      <input type="file" id="settingsAvatarInput" accept="image/*" style="display:none;">
-      <div class="settings-avatar-hint">Klik gambar untuk mengganti</div>
+
+      <div class="field">
+        <label>Nama Tampilan</label>
+        <input type="text" id="settingsNameInput" placeholder="Nama yang dilihat teman kamu">
+      </div>
+
+      <div class="field">
+        <label>Status</label>
+        <input type="text" id="settingsStatusInput" placeholder="Tulis status kamu..." maxlength="70">
+      </div>
+      <div class="status-field-hint">Contoh: "Sibuk", "Tersedia untuk chat", dsb.</div>
+
+      <div class="settings-divider"></div>
+
+      <div class="panel-section-title" style="margin:0 0 8px;">Tambah Pertemanan</div>
+      <div class="settings-friend-box">
+        <input type="email" id="settingsAddFriendEmail" placeholder="email@teman.com">
+        <button class="btn small primary" id="settingsAddFriendBtn">Kirim</button>
+      </div>
+      <div class="add-friend-msg" id="settingsAddFriendMsg"></div>
+
+      <div class="panel-section-title" style="margin:16px 0 6px;">Permintaan Masuk</div>
+      <div id="incomingRequestsWrap"><div class="empty-hint">Tidak ada permintaan masuk.</div></div>
+
+      <div class="panel-section-title" style="margin:16px 0 6px;">Daftar Teman</div>
+      <div id="friendsListWrap"><div class="empty-hint">Belum ada teman. Tambahkan lewat email di atas.</div></div>
+
+      <div class="settings-divider"></div>
     </div>
-
-    <div class="field">
-      <label>Nama Tampilan</label>
-      <input type="text" id="settingsNameInput" placeholder="Nama yang dilihat teman kamu">
-    </div>
-
-    <div class="field">
-      <label>Status</label>
-      <input type="text" id="settingsStatusInput" placeholder="Tulis status kamu..." maxlength="70">
-    </div>
-    <div class="status-field-hint">Contoh: "Sibuk", "Tersedia untuk chat", dsb.</div>
-
-    <div class="settings-divider"></div>
-
-    <div class="panel-section-title" style="margin:0 0 8px;">Tambah Pertemanan</div>
-    <div class="settings-friend-box">
-      <input type="email" id="settingsAddFriendEmail" placeholder="email@teman.com">
-      <button class="btn small primary" id="settingsAddFriendBtn">Kirim</button>
-    </div>
-    <div class="add-friend-msg" id="settingsAddFriendMsg"></div>
-
-    <div class="settings-divider"></div>
 
     <div class="modal-actions" style="justify-content:stretch;">
       <button class="btn save-wa" id="btnSaveSettings">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: Pengaturan Grup ============ -->
+<div class="modal-overlay" id="modalGroupSettings">
+  <div class="modal gs-modal">
+    <div class="gs-head">
+      <div class="gs-head-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <div class="gs-head-text">
+        <h2>Pengaturan Grup</h2>
+        <div class="gs-sub" id="gsGroupNameSub">-</div>
+      </div>
+      <button class="settings-close" id="btnCloseGroupSettings" aria-label="Tutup">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="gs-tabs">
+      <button class="gs-tab active" id="gsTabSettings" data-tab="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Pengaturan</span>
+      </button>
+      <button class="gs-tab" id="gsTabMembers" data-tab="members">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span id="gsMembersTabLabel">Anggota</span>
+      </button>
+      <button class="gs-tab" id="gsTabAdd" data-tab="add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/></svg>
+        <span>Tambah</span>
+      </button>
+    </div>
+
+    <div class="gs-body">
+      <!-- Tab: Pengaturan -->
+      <div class="gs-panel active" id="gsPanelSettings">
+        <div class="panel-section-title" style="margin:0 0 10px;">Gambar Profil Grup</div>
+        <div class="gs-photo-row">
+          <div class="avatar grp" id="gsPhotoPreview">?</div>
+          <div class="gs-photo-info">
+            <div class="gs-photo-label">Gambar profil saat ini</div>
+            <div class="gs-photo-hint">Semua anggota grup dapat mengubah gambar profil</div>
+            <button class="btn small gs-change-photo" id="btnGsChangePhoto">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              Ubah Gambar
+            </button>
+            <input type="file" id="gsPhotoInput" accept="image/*" style="display:none;">
+          </div>
+        </div>
+
+        <div class="panel-section-title" style="margin:0 0 8px;">Informasi Grup</div>
+        <div>
+          <div style="font-size:11.5px; color:var(--text-dim); margin-bottom:3px;">Nama Grup</div>
+          <div class="gs-name-row">
+            <div class="gs-name-value" id="gsNameValue">-</div>
+            <button class="gs-name-edit-btn" id="btnGsEditName" aria-label="Ubah nama">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+          </div>
+          <div class="gs-name-edit-row" id="gsNameEditRow">
+            <input type="text" id="gsNameInput" placeholder="Nama grup" maxlength="60">
+            <button class="btn small primary" id="btnGsSaveName">Simpan</button>
+          </div>
+        </div>
+
+        <div class="gs-delete-row" id="gsDeleteRow">
+          <button class="btn gs-delete" id="btnGsDeleteGroup">Hapus Grup</button>
+          <div class="gs-delete-note">Hanya pembuat grup yang dapat menghapus grup ini.</div>
+        </div>
+      </div>
+
+      <!-- Tab: Anggota -->
+      <div class="gs-panel" id="gsPanelMembers">
+        <div id="gsMembersWrap"></div>
+      </div>
+
+      <!-- Tab: Tambah -->
+      <div class="gs-panel" id="gsPanelAdd">
+        <div id="gsAddWrap"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -1120,7 +1296,18 @@
     modalSettings.classList.add('show');
   }
   document.getElementById('btnSettings').addEventListener('click', openSettingsModal);
-  document.getElementById('myAvatarBtn').addEventListener('click', openSettingsModal);
+
+  // Klik avatar -> tampilkan pilihan (dropdown) berisi tombol Keluar
+  const avatarDropdown = document.getElementById('avatarDropdown');
+  document.getElementById('myAvatarBtn').addEventListener('click', function(e){
+    e.stopPropagation();
+    avatarDropdown.classList.toggle('show');
+  });
+  document.addEventListener('click', function(e){
+    if (!avatarDropdown.contains(e.target)){
+      avatarDropdown.classList.remove('show');
+    }
+  });
   document.getElementById('btnCloseSettings').addEventListener('click', function(){
     modalSettings.classList.remove('show');
   });
@@ -1160,7 +1347,6 @@
       currentUser.status = updates.status;
       if (pendingPhotoData) currentUser.photoURL = pendingPhotoData;
       document.getElementById('whoName').textContent = currentUser.name;
-      document.getElementById('whoStatus').textContent = currentUser.status;
       updateMyAvatarEls();
       pendingPhotoData = null;
       modalSettings.classList.remove('show');
@@ -1260,7 +1446,6 @@
           photoURL: profile.photoURL || ''
         };
         document.getElementById('whoName').textContent = currentUser.name;
-        document.getElementById('whoStatus').textContent = currentUser.status;
         updateMyAvatarEls();
         document.getElementById('topbarWho').style.display = 'flex';
         authScreen.style.display = 'none';
@@ -1449,26 +1634,14 @@
   }
 
   // ===================================================================
-  // TABS
+  // DAFTAR PERCAKAPAN & PENCARIAN
   // ===================================================================
-  const tabChats = document.getElementById('tabChats');
-  const tabFriends = document.getElementById('tabFriends');
   const viewChats = document.getElementById('viewChats');
-  const viewFriends = document.getElementById('viewFriends');
-  tabChats.addEventListener('click', function(){
-    tabChats.classList.add('active'); tabFriends.classList.remove('active');
-    viewChats.style.display = 'block'; viewFriends.style.display = 'none';
-  });
-  tabFriends.addEventListener('click', function(){
-    tabFriends.classList.add('active'); tabChats.classList.remove('active');
-    viewFriends.style.display = 'block'; viewChats.style.display = 'none';
-  });
 
-  // Cari user / grup: filter baris daftar percakapan & teman yang sedang tampil
+  // Cari user / grup: filter baris daftar percakapan
   document.getElementById('searchBox').addEventListener('input', function(){
     let q = this.value.trim().toLowerCase();
-    let activeView = viewChats.style.display !== 'none' ? viewChats : viewFriends;
-    let rows = activeView.querySelectorAll('.list-row');
+    let rows = viewChats.querySelectorAll('.list-row');
     rows.forEach(function(row){
       let titleEl = row.querySelector('.row-title');
       let title = titleEl ? titleEl.textContent.toLowerCase() : '';
@@ -1477,16 +1650,8 @@
   });
 
   // ===================================================================
-  // FRIENDS: kirim permintaan, terima/tolak, daftar teman
+  // FRIENDS: kirim permintaan, terima/tolak, daftar teman (dikelola dari Pengaturan Akun)
   // ===================================================================
-  const inputAddFriend = document.getElementById('inputAddFriend');
-  const addFriendMsg = document.getElementById('addFriendMsg');
-  const btnSendRequest = document.getElementById('btnSendRequest');
-
-  btnSendRequest.addEventListener('click', function(){
-    sendFriendRequestTo(inputAddFriend.value.trim(), addFriendMsg, inputAddFriend, btnSendRequest);
-  });
-
   function renderIncomingRequests(){
     let wrap = document.getElementById('incomingRequestsWrap');
     let uids = Object.keys(incomingRequests);
@@ -1614,7 +1779,9 @@
       let chat = chatsIndex[chatId];
       let name = chatDisplayName(chat);
       let photo = '';
-      if (chat.type !== 'group'){
+      if (chat.type === 'group'){
+        photo = chat.photoURL || '';
+      } else {
         let members = chat.members || {};
         let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
         if (otherUid && friendsData[otherUid]) photo = friendsData[otherUid].photoURL || '';
@@ -1649,7 +1816,7 @@
         return db.ref().update(updates);
       }
     }).then(function(){
-      tabChats.click();
+      modalSettings.classList.remove('show');
       openChat(chatId);
     });
   }
@@ -1719,6 +1886,161 @@
   });
 
   // ===================================================================
+  // PENGATURAN GRUP (foto, nama, anggota, tambah anggota, hapus grup)
+  // ===================================================================
+  const groupSettingsModal = document.getElementById('modalGroupSettings');
+  let groupSettingsChatId = null;
+  let gsPendingPhoto = null;
+
+  function openGroupSettings(chatId){
+    let chat = chatsIndex[chatId];
+    if (!chat || chat.type !== 'group') return;
+    groupSettingsChatId = chatId;
+    gsPendingPhoto = null;
+    setGsTab('settings');
+    populateGroupSettings();
+    groupSettingsModal.classList.add('show');
+  }
+  document.getElementById('btnGroupSettings').addEventListener('click', function(){
+    if (activeChatId) openGroupSettings(activeChatId);
+  });
+  document.getElementById('btnCloseGroupSettings').addEventListener('click', function(){
+    groupSettingsModal.classList.remove('show');
+  });
+
+  function setGsTab(tab){
+    ['settings','members','add'].forEach(function(t){
+      document.getElementById('gsTab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+      document.getElementById('gsPanel' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+    });
+  }
+  document.querySelectorAll('.gs-tab').forEach(function(btn){
+    btn.addEventListener('click', function(){ setGsTab(btn.getAttribute('data-tab')); });
+  });
+
+  function populateGroupSettings(){
+    let chat = chatsIndex[groupSettingsChatId];
+    if (!chat) return;
+    let name = chat.name || 'Grup';
+    document.getElementById('gsGroupNameSub').textContent = name;
+    document.getElementById('gsNameValue').textContent = name;
+    document.getElementById('gsNameInput').value = name;
+    document.getElementById('gsNameEditRow').classList.remove('show');
+
+    let photoHtml = gsPendingPhoto || chat.photoURL
+      ? ('<img class="avatar-img" src="' + (gsPendingPhoto || chat.photoURL) + '" alt="">')
+      : initials(name);
+    document.getElementById('gsPhotoPreview').innerHTML = photoHtml;
+
+    let memberCount = Object.keys(chat.members || {}).length;
+    document.getElementById('gsMembersTabLabel').textContent = 'Anggota (' + memberCount + ')';
+
+    document.getElementById('gsDeleteRow').style.display = (chat.createdBy === currentUser.uid) ? 'block' : 'none';
+
+    renderGsMembers(chat);
+    renderGsAdd(chat);
+  }
+
+  function personInfo(uid){
+    if (uid === currentUser.uid) return { name: currentUser.name, email: currentUser.email, photoURL: currentUser.photoURL };
+    if (friendsData[uid]) return friendsData[uid];
+    return { name: 'Pengguna', email: '' };
+  }
+
+  function renderGsMembers(chat){
+    let wrap = document.getElementById('gsMembersWrap');
+    let uids = Object.keys(chat.members || {});
+    wrap.innerHTML = '';
+    uids.forEach(function(uid){
+      let p = personInfo(uid);
+      let row = document.createElement('div');
+      row.className = 'gs-member-row';
+      row.innerHTML =
+        avatarHtml(p.name, p.photoURL) +
+        '<div class="row-main"><div class="row-title">' + escapeHtml(p.name) +
+        (uid === currentUser.uid ? ' <span class="gs-member-tag">(Anda)</span>' : '') + '</div>' +
+        '<div class="row-sub">' + escapeHtml(p.email || '') + '</div></div>' +
+        (uid === chat.createdBy ? '<span class="gs-member-tag">Pembuat</span>' : '');
+      wrap.appendChild(row);
+    });
+  }
+
+  function renderGsAdd(chat){
+    let wrap = document.getElementById('gsAddWrap');
+    let members = chat.members || {};
+    let candidates = Object.keys(friendsData).filter(function(uid){ return !members[uid]; });
+    if (candidates.length === 0){
+      wrap.innerHTML = '<div class="empty-hint">Semua teman kamu sudah ada di grup ini.</div>';
+      return;
+    }
+    wrap.innerHTML = '';
+    candidates.forEach(function(uid){
+      let f = friendsData[uid];
+      let row = document.createElement('div');
+      row.className = 'gs-add-row';
+      row.innerHTML =
+        avatarHtml(f.name, f.photoURL) +
+        '<div class="row-main"><div class="row-title">' + escapeHtml(f.name) + '</div></div>' +
+        '<button class="btn small primary">Tambah</button>';
+      row.querySelector('button').addEventListener('click', function(){
+        let updates = {};
+        updates['chats/' + groupSettingsChatId + '/members/' + uid] = true;
+        updates['userChats/' + uid + '/' + groupSettingsChatId] = true;
+        db.ref().update(updates);
+      });
+      wrap.appendChild(row);
+    });
+  }
+
+  document.getElementById('btnGsChangePhoto').addEventListener('click', function(){
+    document.getElementById('gsPhotoInput').click();
+  });
+  document.getElementById('gsPhotoInput').addEventListener('change', function(){
+    let file = this.files && this.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')){ alert('File harus berupa gambar.'); return; }
+    resizeImageToDataUrl(file, 240, function(dataUrl){
+      if (!dataUrl){ alert('Gagal memuat gambar.'); return; }
+      gsPendingPhoto = dataUrl;
+      document.getElementById('gsPhotoPreview').innerHTML = '<img class="avatar-img" src="' + dataUrl + '" alt="">';
+      db.ref('chats/' + groupSettingsChatId + '/photoURL').set(dataUrl);
+    });
+  });
+
+  document.getElementById('btnGsEditName').addEventListener('click', function(){
+    document.getElementById('gsNameEditRow').classList.add('show');
+    document.getElementById('gsNameInput').focus();
+  });
+  document.getElementById('btnGsSaveName').addEventListener('click', function(){
+    let newName = document.getElementById('gsNameInput').value.trim();
+    if (!newName){ alert('Nama grup wajib diisi.'); return; }
+    db.ref('chats/' + groupSettingsChatId + '/name').set(newName).then(function(){
+      document.getElementById('gsNameEditRow').classList.remove('show');
+    });
+  });
+
+  document.getElementById('btnGsDeleteGroup').addEventListener('click', function(){
+    let chat = chatsIndex[groupSettingsChatId];
+    if (!chat) return;
+    if (!confirm('Hapus grup "' + (chat.name || 'Grup') + '"? Semua pesan akan hilang untuk semua anggota.')) return;
+    let chatId = groupSettingsChatId;
+    let uids = Object.keys(chat.members || {});
+    let updates = {};
+    updates['chats/' + chatId] = null;
+    uids.forEach(function(uid){ updates['userChats/' + uid + '/' + chatId] = null; });
+    db.ref().update(updates).then(function(){
+      groupSettingsModal.classList.remove('show');
+      if (activeChatId === chatId){
+        activeChatId = null;
+        chatActiveWrap.style.display = 'none';
+        chatEmptyState.style.display = 'flex';
+        mobileViewMode = 'list';
+        updateMobileView();
+      }
+    });
+  });
+
+  // ===================================================================
   // CHAT AKTIF: header, pesan, kirim
   // ===================================================================
   const chatEmptyState = document.getElementById('chatEmptyState');
@@ -1760,7 +2082,9 @@
     if (!chat) return;
     let name = chatDisplayName(chat);
     let photo = '';
-    if (chat.type !== 'group'){
+    if (chat.type === 'group'){
+      photo = chat.photoURL || '';
+    } else {
       let members = chat.members || {};
       let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
       if (otherUid && friendsData[otherUid]) photo = friendsData[otherUid].photoURL || '';
@@ -1772,6 +2096,10 @@
     document.getElementById('chatHeaderSub').textContent = chat.type === 'group'
       ? (Object.keys(chat.members || {}).length + ' anggota')
       : 'Percakapan privat';
+    document.getElementById('btnGroupSettings').style.display = chat.type === 'group' ? 'flex' : 'none';
+    if (chat.type === 'group' && groupSettingsModal.classList.contains('show') && groupSettingsChatId === activeChatId){
+      populateGroupSettings();
+    }
   }
 
   function openChat(chatId){
