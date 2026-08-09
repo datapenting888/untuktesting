@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Data Privasi — Chat</title>
+<title>Data Penting — Chat</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Fraunces:ital,wght@0,400;0,600;0,700;1,500;1,600;1,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -795,11 +795,12 @@
     .back-btn-mobile{ display:inline-flex !important; }
 
     /* Perkecil elemen-elemen supaya lebih rapi & jelas di layar sempit */
-    .topbar{ height:44px; padding:0 10px; }
-    .topbar .brand{ font-size:19px; gap:6px; }
-    .topbar .brand .dot{ width:7px; height:7px; }
-    .topbar .who{ font-size:15px; gap:8px; flex-shrink:0; }
+    .topbar{ height:38px; padding:0 8px; }
+    .topbar .brand{ font-size:17px; gap:5px; }
+    .topbar .brand .dot{ width:6px; height:6px; }
+    .topbar .who{ font-size:14px; gap:6px; flex-shrink:0; }
     .topbar .who-text{ display:none; }
+    .topbar .btn{ padding:5px 9px; font-size:12px; }
 
     .tabs-row{ padding:6px 6px 0; gap:4px; }
     .tab-btn{ padding:6px 6px; font-size:15px; }
@@ -826,7 +827,7 @@
     .bubble .sender{ font-size:14px; margin-bottom:1px; }
     .bubble .time{ font-size:13px; margin-top:2px; }
 
-    .chat-input-row{ padding:8px 10px calc(8px + max(16px, env(safe-area-inset-bottom, 0px))); gap:6px; }
+    .chat-input-row{ padding:8px 10px calc(14px + max(22px, env(safe-area-inset-bottom, 0px))); gap:6px; }
     .chat-input-row textarea{ padding:8px 14px; font-size:16.5px; }
     .send-btn-round{ width:38px; height:38px; }
 
@@ -840,7 +841,7 @@
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="dot"></span> DATA PRIVASI</div>
+  <div class="brand"><span class="dot"></span> DATA PENTING</div>
   <div class="who" id="topbarWho" style="display:none;">
     <div class="avatar-menu-wrap" id="avatarMenuWrap">
       <div class="avatar" id="myAvatarBtn">?</div>
@@ -1325,7 +1326,7 @@
     if (on){
       fieldName.style.display = 'block';
       authTitle.textContent = 'Daftar Akun';
-      authSub.textContent = 'Buat akun baru untuk mulai chat privasi.';
+      authSub.textContent = 'Buat akun baru untuk mulai chat penting.';
       btnAuthSubmit.textContent = 'Daftar';
       authToggleText.innerHTML = 'Sudah punya akun? <span id="authToggleLink">Masuk di sini</span>';
     } else {
@@ -1377,7 +1378,7 @@
           return db.ref('users/' + uid).set({
             name: name,
             email: email,
-            status: 'Halo, saya menggunakan Data Privasi Chat',
+            status: 'Halo, saya menggunakan Data Penting Chat',
             photoURL: '',
             createdAt: firebase.database.ServerValue.TIMESTAMP
           }).then(function(){
@@ -1477,7 +1478,7 @@
     }
     let btn = document.getElementById('btnSaveSettings');
     btn.disabled = true;
-    let updates = { name: newName, status: newStatus || 'Halo, saya menggunakan Data Privasi Chat' };
+    let updates = { name: newName, status: newStatus || 'Halo, saya menggunakan Data Penting Chat' };
     if (pendingPhotoData) updates.photoURL = pendingPhotoData;
 
     db.ref('users/' + currentUser.uid).update(updates).then(function(){
@@ -1574,7 +1575,7 @@
           uid: user.uid,
           name: profile.name,
           email: profile.email || user.email,
-          status: profile.status || 'Halo, saya menggunakan Data Privasi Chat',
+          status: profile.status || 'Halo, saya menggunakan Data Penting Chat',
           photoURL: profile.photoURL || ''
         };
         document.getElementById('whoName').textContent = currentUser.name;
