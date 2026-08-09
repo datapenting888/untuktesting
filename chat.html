@@ -282,6 +282,8 @@
     border-radius:11px;
     cursor:pointer;
     margin-bottom:4px;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color: rgba(124,92,255,0.25);
   }
   .list-row:hover{ background:var(--sidebar-2); }
   .list-row.active{ background:rgba(124,92,255,0.18); border:1px solid rgba(124,92,255,0.5); }
@@ -469,11 +471,15 @@
   .friend-pick-row:hover{ background:var(--sidebar-2); }
   .modal-actions{ display:flex; gap:10px; justify-content:flex-end; }
 
+  .back-btn-mobile{ display:none; flex-shrink:0; }
+
   @media (max-width:760px){
-    .left-panel{ width:100%; position:absolute; inset:56px 0 0 0; z-index:5; }
+    .left-panel{ width:100%; position:absolute; inset:0; z-index:5; }
     .left-panel.hide-mobile{ display:none; }
+    .chat-panel{ position:absolute; inset:0; z-index:6; width:100%; }
     .chat-panel.hide-mobile{ display:none; }
     .app-body{ position:relative; }
+    .back-btn-mobile{ display:inline-flex !important; }
   }
 </style>
 </head>
@@ -601,6 +607,7 @@
 
       <div id="chatActiveWrap" style="display:none; flex:1; display:none; flex-direction:column; min-height:0;">
         <div class="chat-header">
+          <button class="btn small back-btn-mobile" id="btnBackMobile" aria-label="Kembali">←</button>
           <div class="avatar" id="chatHeaderAvatar">?</div>
           <div class="row-main">
             <div class="row-title" id="chatHeaderTitle">-</div>
@@ -725,6 +732,7 @@
   function showAuthError(msg){
     authError.textContent = msg;
     authError.style.display = 'block';
+    document.getElementById('authSuccess').style.display = 'none';
   }
   function clearAuthError(){
     authError.style.display = 'none';
@@ -846,8 +854,11 @@
         document.getElementById('topbarWho').style.display = 'flex';
         authScreen.style.display = 'none';
         appScreen.style.display = 'flex';
+        mobileViewMode = 'list';
+        updateMobileView();
         initFriendsListeners();
         initChatsListener();
+        startInactivityWatcher();
       });
     } else {
       currentUser = null;
@@ -856,7 +867,68 @@
       authScreen.style.display = 'flex';
       appScreen.style.display = 'none';
       resetAppState();
+      stopInactivityWatcher();
+      clearAuthFormFields();
+      if (pendingAutoLogoutNotice){
+        pendingAutoLogoutNotice = false;
+        let el = document.getElementById('authSuccess');
+        el.textContent = 'Kamu otomatis keluar karena tidak ada aktivitas selama 5 menit.';
+        el.style.display = 'block';
+      }
     }
+  });
+
+  function clearAuthFormFields(){
+    inputEmail.value = '';
+    inputPassword.value = '';
+    inputName.value = '';
+  }
+
+  // ---------------------------------------------------------------
+  // Auto-logout karena tidak ada aktivitas (HANYA untuk desktop/PC).
+  // Versi mobile (lebar layar sempit) sengaja TIDAK auto-logout,
+  // hanya keluar kalau user menekan tombol Keluar/Logout sendiri.
+  // ---------------------------------------------------------------
+  const INACTIVITY_LIMIT_MS = 5 * 60 * 1000; // 5 menit
+  let inactivityTimer = null;
+  let pendingAutoLogoutNotice = false;
+
+  function isDesktopView(){
+    return window.matchMedia('(min-width: 761px)').matches;
+  }
+
+  function handleInactivityTimeout(){
+    if (!currentUser) return;
+    if (!isDesktopView()) return; // jaga-jaga kalau resize terjadi tepat saat timeout
+    pendingAutoLogoutNotice = true;
+    auth.signOut();
+  }
+
+  function resetInactivityTimer(){
+    if (!currentUser) return;
+    if (!isDesktopView()){
+      clearTimeout(inactivityTimer);
+      return;
+    }
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(handleInactivityTimeout, INACTIVITY_LIMIT_MS);
+  }
+
+  function startInactivityWatcher(){
+    resetInactivityTimer();
+  }
+  function stopInactivityWatcher(){
+    clearTimeout(inactivityTimer);
+    inactivityTimer = null;
+  }
+
+  ['mousemove','mousedown','keydown','scroll','touchstart','click'].forEach(function(evt){
+    document.addEventListener(evt, function(){
+      if (currentUser) resetInactivityTimer();
+    }, { passive: true });
+  });
+  window.addEventListener('resize', function(){
+    if (currentUser) resetInactivityTimer();
   });
 
   // ---------------------------------------------------------------
@@ -1261,6 +1333,34 @@
   const messagesWrap = document.getElementById('messagesWrap');
   const msgInput = document.getElementById('msgInput');
   const btnSendMsg = document.getElementById('btnSendMsg');
+  const leftPanelEl = document.getElementById('leftPanel');
+  const chatPanelEl = document.getElementById('chatPanel');
+
+  // Di mobile (layar sempit), hanya salah satu dari panel daftar / panel
+  // chat yang tampil sekaligus. mobileViewMode menyimpan mana yang aktif;
+  // di desktop, updateMobileView selalu menampilkan keduanya.
+  let mobileViewMode = 'list'; // 'list' | 'chat'
+
+  function updateMobileView(){
+    if (isDesktopView()){
+      leftPanelEl.classList.remove('hide-mobile');
+      chatPanelEl.classList.remove('hide-mobile');
+      return;
+    }
+    if (mobileViewMode === 'chat'){
+      leftPanelEl.classList.add('hide-mobile');
+      chatPanelEl.classList.remove('hide-mobile');
+    } else {
+      leftPanelEl.classList.remove('hide-mobile');
+      chatPanelEl.classList.add('hide-mobile');
+    }
+  }
+  window.addEventListener('resize', updateMobileView);
+
+  document.getElementById('btnBackMobile').addEventListener('click', function(){
+    mobileViewMode = 'list';
+    updateMobileView();
+  });
 
   function updateChatHeader(){
     let chat = chatsIndex[activeChatId];
@@ -1281,6 +1381,8 @@
     messagesWrap.innerHTML = '';
     renderChatList();
     updateChatHeader();
+    mobileViewMode = 'chat';
+    updateMobileView();
 
     if (messagesListenerRef){
       messagesListenerRef.ref.off('child_added', messagesListenerRef.cb);
