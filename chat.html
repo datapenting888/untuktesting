@@ -758,6 +758,60 @@
   }
   .send-btn-round:hover{ filter:brightness(1.12); }
   .send-btn-round svg{ width:18px; height:18px; margin-left:1px; }
+  .attach-btn-round{
+    flex-shrink:0;
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    border:1px solid var(--border-soft);
+    background:#0f0f1a;
+    color:var(--text-light);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+  }
+  .attach-btn-round:hover{ background:#26263a; }
+  .attach-btn-round svg{ width:20px; height:20px; }
+  .bubble .img-msg{
+    display:block;
+    max-width:100%;
+    max-height:280px;
+    border-radius:10px;
+    margin-bottom:4px;
+    cursor:pointer;
+    object-fit:cover;
+  }
+  .img-viewer-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.9);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+    padding:20px;
+  }
+  .img-viewer-modal.open{ display:flex; }
+  .img-viewer-modal img{
+    max-width:100%;
+    max-height:100%;
+    border-radius:8px;
+  }
+  .img-viewer-close{
+    position:absolute;
+    top:16px;
+    right:16px;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    border:none;
+    background:rgba(255,255,255,0.15);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
 
   /* ---------- Modal ---------- */
   .modal-overlay{
@@ -852,6 +906,7 @@
     .chat-input-row{ padding:8px 10px calc(18px + max(22px, env(safe-area-inset-bottom, 0px))); gap:6px; }
     .chat-input-row textarea{ padding:14px 16px; font-size:16.5px; min-height:46px; }
     .send-btn-round{ width:38px; height:38px; }
+    .attach-btn-round{ width:38px; height:38px; }
 
     .modal{ padding:16px; max-width:340px; }
     .modal h2{ font-size:20px; }
@@ -1022,6 +1077,10 @@
           </button>
         </div>
         <div class="chat-input-row">
+          <button class="attach-btn-round" id="btnAttachPhoto" aria-label="Tambah foto" title="Kirim foto">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <input type="file" id="chatPhotoInput" accept="image/*" style="display:none;">
           <textarea id="msgInput" rows="1" placeholder="Tulis pesan..."></textarea>
           <button class="send-btn-round" id="btnSendMsg" aria-label="Kirim">
             <svg viewBox="0 0 24 24" fill="none">
@@ -2667,13 +2726,20 @@
     let showSender = chat && chat.type === 'group' && !isMe;
     if (showSender) ensureUserProfileSynced(m.sender);
     let senderDisplayName = showSender ? personInfo(m.sender).name || m.senderName || '' : '';
+    let isImage = m.type === 'image' && m.imageData;
     row.innerHTML =
       '<div class="bubble">' +
         (showSender ? '<span class="sender">' + escapeHtml(senderDisplayName) + '</span>' : '') +
+        (isImage ? '<img class="img-msg" src="' + m.imageData + '" alt="Foto">' : '') +
         '<span class="text"></span>' +
         '<span class="time">' + fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + '</span>' +
       '</div>';
-    row.querySelector('.text').textContent = m.text || '';
+    row.querySelector('.text').textContent = isImage ? '' : (m.text || '');
+    if (isImage){
+      row.querySelector('.img-msg').addEventListener('click', function(){
+        openImageViewer(m.imageData);
+      });
+    }
     messagesWrap.appendChild(row);
     messagesWrap.scrollTop = messagesWrap.scrollHeight;
     messageEls[msgId] = { row: row, data: m };
@@ -2684,7 +2750,8 @@
     let el = messageEls[msgId];
     if (!el || !m) return;
     el.data = m;
-    el.row.querySelector('.text').textContent = m.text || '';
+    let isImage = m.type === 'image' && m.imageData;
+    el.row.querySelector('.text').textContent = isImage ? '' : (m.text || '');
     el.row.querySelector('.time').innerHTML = fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '');
     if (editingMessageId === msgId){
       editBannerPreview.textContent = m.text || '';
@@ -2702,6 +2769,56 @@
     el.row.remove();
     delete messageEls[msgId];
   }
+
+  const btnAttachPhoto = document.getElementById('btnAttachPhoto');
+  const chatPhotoInput = document.getElementById('chatPhotoInput');
+  const imgViewerModal = document.getElementById('imgViewerModal');
+  const imgViewerImg = document.getElementById('imgViewerImg');
+  const imgViewerClose = document.getElementById('imgViewerClose');
+
+  btnAttachPhoto.addEventListener('click', function(){
+    if (!activeChatId) return;
+    chatPhotoInput.click();
+  });
+  chatPhotoInput.addEventListener('change', function(){
+    let file = chatPhotoInput.files && chatPhotoInput.files[0];
+    chatPhotoInput.value = '';
+    if (!file || !activeChatId) return;
+    resizeImageToDataUrl(file, 1000, function(dataUrl){
+      if (!dataUrl) return;
+      sendImageMessage(dataUrl);
+    });
+  });
+  function sendImageMessage(dataUrl){
+    let msgRef = db.ref('chats/' + activeChatId + '/messages').push();
+    let payload = {
+      sender: currentUser.uid,
+      senderName: currentUser.name,
+      type: 'image',
+      imageData: dataUrl,
+      text: '',
+      createdAt: firebase.database.ServerValue.TIMESTAMP
+    };
+    let updates = {};
+    updates['chats/' + activeChatId + '/messages/' + msgRef.key] = payload;
+    updates['chats/' + activeChatId + '/lastMessage'] = '📷 Foto';
+    updates['chats/' + activeChatId + '/lastMessageAt'] = firebase.database.ServerValue.TIMESTAMP;
+    db.ref().update(updates);
+  }
+  function openImageViewer(src){
+    imgViewerImg.src = src;
+    imgViewerModal.classList.add('open');
+  }
+  imgViewerClose.addEventListener('click', function(){
+    imgViewerModal.classList.remove('open');
+    imgViewerImg.src = '';
+  });
+  imgViewerModal.addEventListener('click', function(e){
+    if (e.target === imgViewerModal){
+      imgViewerModal.classList.remove('open');
+      imgViewerImg.src = '';
+    }
+  });
 
   function sendMessage(){
     let text = msgInput.value.trim();
@@ -2755,5 +2872,11 @@
 
 })();
 </script>
+  <div class="img-viewer-modal" id="imgViewerModal">
+    <button class="img-viewer-close" id="imgViewerClose" aria-label="Tutup">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <img id="imgViewerImg" src="" alt="">
+  </div>
 </body>
 </html>
