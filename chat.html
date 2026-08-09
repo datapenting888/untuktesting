@@ -878,6 +878,7 @@
     .chat-panel.hide-mobile{ display:none; }
     .app-body{ position:relative; }
     .back-btn-mobile{ display:inline-flex !important; }
+    .topbar.hide-mobile{ display:none; }
 
     /* Perkecil elemen-elemen supaya lebih rapi & jelas di layar sempit */
     .topbar{ height:calc(38px + env(safe-area-inset-top, 0px)); padding:0 8px; padding-top:env(safe-area-inset-top, 0px); }
@@ -907,7 +908,7 @@
     .row-sub{ font-size:15px; }
     .btn.small{ padding:4px 8px; font-size:15px; }
 
-    .chat-header{ height:44px; padding:0 10px; gap:6px; }
+    .chat-header{ height:calc(44px + env(safe-area-inset-top, 0px)); padding:0 10px; padding-top:env(safe-area-inset-top, 0px); gap:6px; }
     .chat-header .row-title{ font-size:17.5px; }
     .chat-header .row-sub{ font-size:14.5px; }
     .back-btn-mobile{ padding:6px 10px; }
@@ -2510,6 +2511,7 @@
   const btnSendMsg = document.getElementById('btnSendMsg');
   const leftPanelEl = document.getElementById('leftPanel');
   const chatPanelEl = document.getElementById('chatPanel');
+  const mainTopbarEl = document.querySelector('.topbar');
 
   // Di mobile (layar sempit), hanya salah satu dari panel daftar / panel
   // chat yang tampil sekaligus. mobileViewMode menyimpan mana yang aktif;
@@ -2520,14 +2522,20 @@
     if (isDesktopView()){
       leftPanelEl.classList.remove('hide-mobile');
       chatPanelEl.classList.remove('hide-mobile');
+      if (mainTopbarEl) mainTopbarEl.classList.remove('hide-mobile');
       return;
     }
     if (mobileViewMode === 'chat'){
       leftPanelEl.classList.add('hide-mobile');
       chatPanelEl.classList.remove('hide-mobile');
+      // Saat sedang di dalam obrolan (grup/privat) di versi mobile,
+      // topbar "DATA PENTING" disembunyikan; header nama chat yang
+      // sedang dibuka mengambil posisi paling atas layar.
+      if (mainTopbarEl) mainTopbarEl.classList.add('hide-mobile');
     } else {
       leftPanelEl.classList.remove('hide-mobile');
       chatPanelEl.classList.add('hide-mobile');
+      if (mainTopbarEl) mainTopbarEl.classList.remove('hide-mobile');
     }
   }
   window.addEventListener('resize', updateMobileView);
