@@ -30,7 +30,7 @@
   }
   *{ box-sizing:border-box; }
   html,body{ height:100%; height:100dvh; margin:0; }
-  body{ padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right); padding-bottom:env(safe-area-inset-bottom); }
+  body{ padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right); padding-bottom:env(safe-area-inset-bottom); padding-top:env(safe-area-inset-top); }
   body{
     font-family:'Work Sans', Arial, sans-serif;
     background:var(--bg-app);
@@ -304,6 +304,99 @@
     text-transform:uppercase;
   }
   .avatar.grp{ background:linear-gradient(135deg,var(--accent-emas),#c99a3a); color:#1a1400; }
+  .avatar img.avatar-img{ width:100%; height:100%; border-radius:50%; object-fit:cover; }
+
+  /* ---------- Identity bar (topbar kanan: avatar, nama, status, aksi) ---------- */
+  .who{ display:flex; align-items:center; gap:10px; }
+  .who .avatar{ width:34px; height:34px; font-size:13px; cursor:pointer; }
+  .who-id{ display:flex; flex-direction:column; line-height:1.25; }
+  .who-id .who-name{ font-size:13px; font-weight:600; color:var(--text-light); }
+  .who-status{ display:flex; align-items:center; gap:5px; font-size:11px; color:#7fe08f; }
+  .who-status .dot{ width:7px; height:7px; border-radius:50%; background:#3ddc5b; box-shadow:0 0 5px #3ddc5b; flex-shrink:0; }
+  .icon-btn{
+    width:34px; height:34px;
+    border-radius:50%;
+    border:1px solid var(--border-soft);
+    background:var(--sidebar-2);
+    color:var(--text-light);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+    transition:background .15s ease;
+  }
+  .icon-btn:hover{ background:#26263a; }
+  .icon-btn svg{ width:16px; height:16px; }
+  .icon-btn.danger{ color:var(--danger); border-color:rgba(224,82,82,0.4); }
+  .icon-btn.danger:hover{ background:rgba(224,82,82,0.12); }
+
+  /* ---------- Search bar (cari user / grup) ---------- */
+  .search-bar{ padding:10px 10px 0; }
+  .search-bar input{
+    width:100%;
+    background:#0f0f1a;
+    border:1px solid var(--border-soft);
+    color:var(--text-light);
+    padding:9px 12px;
+    border-radius:10px;
+    font-size:13px;
+    outline:none;
+  }
+  .search-bar input:focus{ border-color:var(--accent-emas); }
+
+  /* ---------- Settings modal (Pengaturan Akun) ---------- */
+  .settings-modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .settings-modal-head h2{ margin:0; }
+  .settings-close{
+    width:30px; height:30px; border-radius:50%;
+    border:1px solid var(--border-soft); background:var(--sidebar-2); color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .settings-close:hover{ color:var(--text-light); }
+  .settings-avatar-row{ display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
+  .settings-avatar-wrap{
+    position:relative;
+    width:96px; height:96px;
+    border-radius:50%;
+    cursor:pointer;
+  }
+  .settings-avatar-wrap .avatar{
+    width:96px; height:96px; font-size:32px;
+  }
+  .settings-avatar-wrap .camera-overlay{
+    position:absolute; inset:0;
+    border-radius:50%;
+    background:rgba(0,0,0,0.38);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; transition:opacity .15s ease;
+  }
+  .settings-avatar-wrap:hover .camera-overlay{ opacity:1; }
+  .settings-avatar-wrap .camera-overlay svg{ width:26px; height:26px; }
+  .settings-avatar-hint{ margin-top:8px; font-size:11.5px; color:var(--text-dim); }
+  .status-field-hint{ font-size:11px; color:var(--text-dim); margin-top:-8px; margin-bottom:14px; }
+  .settings-friend-box{
+    display:flex; gap:8px; margin-bottom:6px;
+  }
+  .settings-friend-box input{
+    flex:1;
+    background:#0f0f1a;
+    border:1px solid var(--border-soft);
+    color:var(--text-light);
+    padding:9px 10px;
+    border-radius:10px;
+    font-size:13px;
+    outline:none;
+  }
+  .settings-friend-box input:focus{ border-color:var(--accent-emas); }
+  .settings-divider{ height:1px; background:var(--border-soft); margin:18px 0; }
+  .btn.save-wa{
+    width:100%;
+    padding:12px;
+    font-size:14px;
+    border-radius:12px;
+    background:linear-gradient(90deg,#25d366,#128c7e);
+    border:none;
+    color:#fff;
+  }
+  .btn.save-wa:hover{ filter:brightness(1.06); }
   .row-main{ flex:1; min-width:0; }
   .row-title{
     font-size:13.5px;
@@ -551,8 +644,17 @@
 <div class="topbar">
   <div class="brand"><span class="dot"></span> DATA PRIVASI</div>
   <div class="who" id="topbarWho" style="display:none;">
-    <span class="who-text">Masuk sebagai <b id="whoName">-</b></span>
-    <button class="btn small danger" id="btnLogout">Keluar</button>
+    <div class="avatar" id="myAvatarBtn">?</div>
+    <div class="who-id who-text">
+      <span class="who-name" id="whoName">-</span>
+      <span class="who-status"><span class="dot"></span><span id="whoStatus">Online</span></span>
+    </div>
+    <button class="icon-btn" id="btnSettings" aria-label="Pengaturan" title="Pengaturan Akun">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+    <button class="icon-btn danger" id="btnLogout" aria-label="Keluar" title="Keluar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
   </div>
 </div>
 
@@ -637,6 +739,9 @@
   <div class="app-body">
 
     <div class="left-panel" id="leftPanel">
+      <div class="search-bar">
+        <input type="text" id="searchBox" placeholder="Cari user atau grup...">
+      </div>
       <div class="tabs-row">
         <button class="tab-btn active" id="tabChats">PERCAKAPAN</button>
         <button class="tab-btn" id="tabFriends">TEMAN</button>
@@ -709,6 +814,55 @@
   </div>
 </div>
 
+<!-- ============ MODAL: Pengaturan Akun ============ -->
+<div class="modal-overlay" id="modalSettings">
+  <div class="modal">
+    <div class="settings-modal-head">
+      <h2>Pengaturan Akun</h2>
+      <button class="settings-close" id="btnCloseSettings" aria-label="Tutup">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="settings-avatar-row">
+      <div class="settings-avatar-wrap" id="settingsAvatarWrap">
+        <div class="avatar" id="settingsAvatarPreview">?</div>
+        <div class="camera-overlay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+      </div>
+      <input type="file" id="settingsAvatarInput" accept="image/*" style="display:none;">
+      <div class="settings-avatar-hint">Klik gambar untuk mengganti</div>
+    </div>
+
+    <div class="field">
+      <label>Nama Tampilan</label>
+      <input type="text" id="settingsNameInput" placeholder="Nama yang dilihat teman kamu">
+    </div>
+
+    <div class="field">
+      <label>Status</label>
+      <input type="text" id="settingsStatusInput" placeholder="Tulis status kamu..." maxlength="70">
+    </div>
+    <div class="status-field-hint">Contoh: "Sibuk", "Tersedia untuk chat", dsb.</div>
+
+    <div class="settings-divider"></div>
+
+    <div class="panel-section-title" style="margin:0 0 8px;">Tambah Pertemanan</div>
+    <div class="settings-friend-box">
+      <input type="email" id="settingsAddFriendEmail" placeholder="email@teman.com">
+      <button class="btn small primary" id="settingsAddFriendBtn">Kirim</button>
+    </div>
+    <div class="add-friend-msg" id="settingsAddFriendMsg"></div>
+
+    <div class="settings-divider"></div>
+
+    <div class="modal-actions" style="justify-content:stretch;">
+      <button class="btn save-wa" id="btnSaveSettings">Simpan</button>
+    </div>
+  </div>
+</div>
+
 <!-- Firebase (config sama dengan menu Result & Jadwal Pasaran / Data Screenshot di index.html) -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
@@ -770,6 +924,32 @@
     let s = parts[0][0] || '';
     if (parts.length > 1) s += parts[parts.length-1][0] || '';
     return s.toUpperCase();
+  }
+  function avatarHtml(name, photoURL, extraClass){
+    let cls = 'avatar' + (extraClass ? ' ' + extraClass : '');
+    if (photoURL){
+      return '<div class="' + cls + '"><img class="avatar-img" src="' + photoURL + '" alt=""></div>';
+    }
+    return '<div class="' + cls + '">' + initials(name) + '</div>';
+  }
+  function resizeImageToDataUrl(file, maxSize, callback){
+    let reader = new FileReader();
+    reader.onload = function(e){
+      let img = new Image();
+      img.onload = function(){
+        let w = img.width, h = img.height;
+        if (w > h){ if (w > maxSize){ h = Math.round(h * maxSize / w); w = maxSize; } }
+        else { if (h > maxSize){ w = Math.round(w * maxSize / h); h = maxSize; } }
+        let canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        callback(canvas.toDataURL('image/jpeg', 0.82));
+      };
+      img.onerror = function(){ callback(null); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function(){ callback(null); };
+    reader.readAsDataURL(file);
   }
   function escapeHtml(str){
     return (str || '').replace(/[&<>"']/g, function(c){
@@ -881,6 +1061,8 @@
           return db.ref('users/' + uid).set({
             name: name,
             email: email,
+            status: 'Halo, saya menggunakan Data Privasi Chat',
+            photoURL: '',
             createdAt: firebase.database.ServerValue.TIMESTAMP
           }).then(function(){
             return db.ref('userIndex/' + emailKey(email)).set(uid);
@@ -903,6 +1085,142 @@
 
   document.getElementById('btnLogout').addEventListener('click', function(){
     auth.signOut();
+  });
+
+  function updateMyAvatarEls(){
+    if (!currentUser) return;
+    let html = currentUser.photoURL
+      ? '<img class="avatar-img" src="' + currentUser.photoURL + '" alt="">'
+      : initials(currentUser.name);
+    let a1 = document.getElementById('myAvatarBtn');
+    if (a1) a1.innerHTML = html;
+    let a2 = document.getElementById('settingsAvatarPreview');
+    if (a2) a2.innerHTML = html;
+  }
+
+  // ===================================================================
+  // PENGATURAN AKUN (nama, status, foto, tambah teman)
+  // ===================================================================
+  const modalSettings = document.getElementById('modalSettings');
+  const settingsNameInput = document.getElementById('settingsNameInput');
+  const settingsStatusInput = document.getElementById('settingsStatusInput');
+  const settingsAvatarInput = document.getElementById('settingsAvatarInput');
+  const settingsAvatarWrap = document.getElementById('settingsAvatarWrap');
+  let pendingPhotoData = null; // hasil upload foto baru, null = tidak diganti
+
+  function openSettingsModal(){
+    if (!currentUser) return;
+    pendingPhotoData = null;
+    settingsNameInput.value = currentUser.name || '';
+    settingsStatusInput.value = currentUser.status || '';
+    document.getElementById('settingsAddFriendEmail').value = '';
+    document.getElementById('settingsAddFriendMsg').textContent = '';
+    document.getElementById('settingsAddFriendMsg').className = 'add-friend-msg';
+    updateMyAvatarEls();
+    modalSettings.classList.add('show');
+  }
+  document.getElementById('btnSettings').addEventListener('click', openSettingsModal);
+  document.getElementById('myAvatarBtn').addEventListener('click', openSettingsModal);
+  document.getElementById('btnCloseSettings').addEventListener('click', function(){
+    modalSettings.classList.remove('show');
+  });
+
+  settingsAvatarWrap.addEventListener('click', function(){
+    settingsAvatarInput.click();
+  });
+  settingsAvatarInput.addEventListener('change', function(){
+    let file = settingsAvatarInput.files && settingsAvatarInput.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')){
+      alert('File harus berupa gambar.');
+      return;
+    }
+    resizeImageToDataUrl(file, 240, function(dataUrl){
+      if (!dataUrl){ alert('Gagal memuat gambar.'); return; }
+      pendingPhotoData = dataUrl;
+      document.getElementById('settingsAvatarPreview').innerHTML = '<img class="avatar-img" src="' + dataUrl + '" alt="">';
+    });
+  });
+
+  document.getElementById('btnSaveSettings').addEventListener('click', function(){
+    if (!currentUser) return;
+    let newName = settingsNameInput.value.trim();
+    let newStatus = settingsStatusInput.value.trim();
+    if (!newName){
+      alert('Nama tampilan wajib diisi.');
+      return;
+    }
+    let btn = document.getElementById('btnSaveSettings');
+    btn.disabled = true;
+    let updates = { name: newName, status: newStatus || 'Halo, saya menggunakan Data Privasi Chat' };
+    if (pendingPhotoData) updates.photoURL = pendingPhotoData;
+
+    db.ref('users/' + currentUser.uid).update(updates).then(function(){
+      currentUser.name = newName;
+      currentUser.status = updates.status;
+      if (pendingPhotoData) currentUser.photoURL = pendingPhotoData;
+      document.getElementById('whoName').textContent = currentUser.name;
+      document.getElementById('whoStatus').textContent = currentUser.status;
+      updateMyAvatarEls();
+      pendingPhotoData = null;
+      modalSettings.classList.remove('show');
+    }).catch(function(err){
+      alert('Gagal menyimpan: ' + err.message);
+    }).finally(function(){
+      btn.disabled = false;
+    });
+  });
+
+  // Kirim permintaan pertemanan (dipakai dari tab Teman & dari Pengaturan Akun)
+  function sendFriendRequestTo(targetEmail, msgEl, inputEl, btnEl){
+    msgEl.className = 'add-friend-msg';
+    msgEl.textContent = '';
+    if (!targetEmail) return;
+    if (targetEmail.toLowerCase() === (currentUser.email || '').toLowerCase()){
+      msgEl.className = 'add-friend-msg err';
+      msgEl.textContent = 'Tidak bisa menambahkan diri sendiri.';
+      return;
+    }
+    if (btnEl) btnEl.disabled = true;
+    db.ref('userIndex/' + emailKey(targetEmail)).once('value').then(function(snap){
+      let targetUid = snap.val();
+      if (!targetUid){
+        msgEl.className = 'add-friend-msg err';
+        msgEl.textContent = 'Email tidak ditemukan. Pastikan teman kamu sudah punya akun.';
+        return;
+      }
+      if (targetUid === currentUser.uid){
+        msgEl.className = 'add-friend-msg err';
+        msgEl.textContent = 'Tidak bisa menambahkan diri sendiri.';
+        return;
+      }
+      if (friendsData[targetUid]){
+        msgEl.className = 'add-friend-msg err';
+        msgEl.textContent = 'Kalian sudah berteman.';
+        return;
+      }
+      return db.ref('friendRequests/' + targetUid + '/' + currentUser.uid).set({
+        fromName: currentUser.name,
+        fromEmail: currentUser.email,
+        fromPhoto: currentUser.photoURL || '',
+        createdAt: firebase.database.ServerValue.TIMESTAMP
+      }).then(function(){
+        msgEl.className = 'add-friend-msg ok';
+        msgEl.textContent = 'Permintaan pertemanan terkirim.';
+        if (inputEl) inputEl.value = '';
+      });
+    }).catch(function(err){
+      msgEl.className = 'add-friend-msg err';
+      msgEl.textContent = 'Gagal mengirim: ' + err.message;
+    }).finally(function(){
+      if (btnEl) btnEl.disabled = false;
+    });
+  }
+
+  document.getElementById('settingsAddFriendBtn').addEventListener('click', function(){
+    let input = document.getElementById('settingsAddFriendEmail');
+    let msgEl = document.getElementById('settingsAddFriendMsg');
+    sendFriendRequestTo(input.value.trim(), msgEl, input, document.getElementById('settingsAddFriendBtn'));
   });
 
   // Enter untuk submit form login/daftar langsung dari kolom manapun
@@ -934,8 +1252,16 @@
       verifyScreen.style.display = 'none';
       db.ref('users/' + user.uid).once('value').then(function(snap){
         let profile = snap.val() || { name: user.email, email: user.email };
-        currentUser = { uid: user.uid, name: profile.name, email: profile.email || user.email };
+        currentUser = {
+          uid: user.uid,
+          name: profile.name,
+          email: profile.email || user.email,
+          status: profile.status || 'Halo, saya menggunakan Data Privasi Chat',
+          photoURL: profile.photoURL || ''
+        };
         document.getElementById('whoName').textContent = currentUser.name;
+        document.getElementById('whoStatus').textContent = currentUser.status;
+        updateMyAvatarEls();
         document.getElementById('topbarWho').style.display = 'flex';
         authScreen.style.display = 'none';
         appScreen.style.display = 'flex';
@@ -1138,6 +1464,18 @@
     viewFriends.style.display = 'block'; viewChats.style.display = 'none';
   });
 
+  // Cari user / grup: filter baris daftar percakapan & teman yang sedang tampil
+  document.getElementById('searchBox').addEventListener('input', function(){
+    let q = this.value.trim().toLowerCase();
+    let activeView = viewChats.style.display !== 'none' ? viewChats : viewFriends;
+    let rows = activeView.querySelectorAll('.list-row');
+    rows.forEach(function(row){
+      let titleEl = row.querySelector('.row-title');
+      let title = titleEl ? titleEl.textContent.toLowerCase() : '';
+      row.style.display = (!q || title.indexOf(q) !== -1) ? 'flex' : 'none';
+    });
+  });
+
   // ===================================================================
   // FRIENDS: kirim permintaan, terima/tolak, daftar teman
   // ===================================================================
@@ -1146,43 +1484,7 @@
   const btnSendRequest = document.getElementById('btnSendRequest');
 
   btnSendRequest.addEventListener('click', function(){
-    let targetEmail = inputAddFriend.value.trim();
-    addFriendMsg.className = 'add-friend-msg';
-    addFriendMsg.textContent = '';
-    if (!targetEmail){ return; }
-    if (targetEmail.toLowerCase() === (currentUser.email || '').toLowerCase()){
-      addFriendMsg.className = 'add-friend-msg err';
-      addFriendMsg.textContent = 'Tidak bisa menambahkan diri sendiri.';
-      return;
-    }
-    btnSendRequest.disabled = true;
-    db.ref('userIndex/' + emailKey(targetEmail)).once('value').then(function(snap){
-      let targetUid = snap.val();
-      if (!targetUid){
-        addFriendMsg.className = 'add-friend-msg err';
-        addFriendMsg.textContent = 'Email tidak ditemukan. Pastikan teman kamu sudah punya akun.';
-        return;
-      }
-      if (friendsData[targetUid]){
-        addFriendMsg.className = 'add-friend-msg err';
-        addFriendMsg.textContent = 'Kalian sudah berteman.';
-        return;
-      }
-      return db.ref('friendRequests/' + targetUid + '/' + currentUser.uid).set({
-        fromName: currentUser.name,
-        fromEmail: currentUser.email,
-        createdAt: firebase.database.ServerValue.TIMESTAMP
-      }).then(function(){
-        addFriendMsg.className = 'add-friend-msg ok';
-        addFriendMsg.textContent = 'Permintaan pertemanan terkirim.';
-        inputAddFriend.value = '';
-      });
-    }).catch(function(err){
-      addFriendMsg.className = 'add-friend-msg err';
-      addFriendMsg.textContent = 'Gagal mengirim: ' + err.message;
-    }).finally(function(){
-      btnSendRequest.disabled = false;
-    });
+    sendFriendRequestTo(inputAddFriend.value.trim(), addFriendMsg, inputAddFriend, btnSendRequest);
   });
 
   function renderIncomingRequests(){
@@ -1198,7 +1500,7 @@
       let row = document.createElement('div');
       row.className = 'list-row';
       row.innerHTML =
-        '<div class="avatar">' + initials(req.fromName) + '</div>' +
+        avatarHtml(req.fromName, req.fromPhoto) +
         '<div class="row-main"><div class="row-title">' + escapeHtml(req.fromName) + '</div>' +
         '<div class="row-sub">' + escapeHtml(req.fromEmail || '') + '</div></div>' +
         '<div class="row-actions">' +
@@ -1219,8 +1521,8 @@
 
   function acceptRequest(fromUid, req){
     let updates = {};
-    updates['friends/' + currentUser.uid + '/' + fromUid] = { name: req.fromName, email: req.fromEmail };
-    updates['friends/' + fromUid + '/' + currentUser.uid] = { name: currentUser.name, email: currentUser.email };
+    updates['friends/' + currentUser.uid + '/' + fromUid] = { name: req.fromName, email: req.fromEmail, photoURL: req.fromPhoto || '' };
+    updates['friends/' + fromUid + '/' + currentUser.uid] = { name: currentUser.name, email: currentUser.email, photoURL: currentUser.photoURL || '' };
     updates['friendRequests/' + currentUser.uid + '/' + fromUid] = null;
     db.ref().update(updates);
   }
@@ -1238,7 +1540,7 @@
       let row = document.createElement('div');
       row.className = 'list-row';
       row.innerHTML =
-        '<div class="avatar">' + initials(f.name) + '</div>' +
+        avatarHtml(f.name, f.photoURL) +
         '<div class="row-main"><div class="row-title">' + escapeHtml(f.name) + '</div>' +
         '<div class="row-sub">' + escapeHtml(f.email || '') + '</div></div>' +
         '<div class="row-actions"><button class="btn small">Chat</button></div>';
@@ -1311,10 +1613,16 @@
     ids.forEach(function(chatId){
       let chat = chatsIndex[chatId];
       let name = chatDisplayName(chat);
+      let photo = '';
+      if (chat.type !== 'group'){
+        let members = chat.members || {};
+        let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
+        if (otherUid && friendsData[otherUid]) photo = friendsData[otherUid].photoURL || '';
+      }
       let row = document.createElement('div');
       row.className = 'list-row' + (chatId === activeChatId ? ' active' : '');
       row.innerHTML =
-        '<div class="avatar' + (chat.type === 'group' ? ' grp' : '') + '">' + initials(name) + '</div>' +
+        avatarHtml(name, photo, chat.type === 'group' ? 'grp' : '') +
         '<div class="row-main"><div class="row-title">' + escapeHtml(name) + '</div>' +
         '<div class="row-sub">' + escapeHtml(chat.lastMessage || 'Belum ada pesan') + '</div></div>';
       row.addEventListener('click', function(){ openChat(chatId); });
@@ -1375,7 +1683,7 @@
       row.className = 'friend-pick-row';
       row.innerHTML =
         '<input type="checkbox" value="' + uid + '" class="grpChk">' +
-        '<div class="avatar">' + initials(f.name) + '</div>' +
+        avatarHtml(f.name, f.photoURL) +
         '<div class="row-main"><div class="row-title">' + escapeHtml(f.name) + '</div></div>';
       groupFriendPick.appendChild(row);
     });
@@ -1451,8 +1759,15 @@
     let chat = chatsIndex[activeChatId];
     if (!chat) return;
     let name = chatDisplayName(chat);
-    document.getElementById('chatHeaderAvatar').textContent = initials(name);
-    document.getElementById('chatHeaderAvatar').className = 'avatar' + (chat.type === 'group' ? ' grp' : '');
+    let photo = '';
+    if (chat.type !== 'group'){
+      let members = chat.members || {};
+      let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
+      if (otherUid && friendsData[otherUid]) photo = friendsData[otherUid].photoURL || '';
+    }
+    let headerAvatarEl = document.getElementById('chatHeaderAvatar');
+    headerAvatarEl.className = 'avatar' + (chat.type === 'group' ? ' grp' : '');
+    headerAvatarEl.innerHTML = photo ? ('<img class="avatar-img" src="' + photo + '" alt="">') : initials(name);
     document.getElementById('chatHeaderTitle').textContent = name;
     document.getElementById('chatHeaderSub').textContent = chat.type === 'group'
       ? (Object.keys(chat.members || {}).length + ' anggota')
