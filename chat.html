@@ -142,6 +142,7 @@
     outline:none;
   }
   .field input:focus{ border-color:var(--accent-emas); }
+  .field input:disabled{ opacity:0.65; cursor:not-allowed; }
   .auth-actions{ margin-top:18px; }
   .auth-actions .btn{ width:100%; padding:11px; font-size:14px; }
   .auth-toggle{
@@ -744,7 +745,7 @@
     .bubble .sender{ font-size:14px; margin-bottom:1px; }
     .bubble .time{ font-size:13px; margin-top:2px; }
 
-    .chat-input-row{ padding:8px 10px; gap:6px; }
+    .chat-input-row{ padding:8px 10px calc(8px + max(16px, env(safe-area-inset-bottom, 0px))); gap:6px; }
     .chat-input-row textarea{ padding:8px 14px; font-size:16.5px; }
     .send-btn-round{ width:38px; height:38px; }
 
@@ -865,6 +866,7 @@
 
       <div class="panel-scroll" id="viewChats">
         <div class="fab-newgroup" id="btnNewGroup">+ Buat Grup Baru</div>
+        <div id="searchResultsWrap" style="display:none;"></div>
         <div id="chatListWrap"><div class="empty-hint">Belum ada percakapan. Tambahkan teman lewat menu Pengaturan Akun (ikon gear).</div></div>
       </div>
     </div>
@@ -944,19 +946,18 @@
       </div>
 
       <div class="field">
+        <label>Email Akun Kamu</label>
+        <input type="text" id="settingsMyEmail" readonly disabled>
+      </div>
+      <div class="status-field-hint" style="margin:-10px 0 14px;">Ini email akun yang sedang login.</div>
+
+      <div class="field">
         <label>Status</label>
         <input type="text" id="settingsStatusInput" placeholder="Tulis status kamu..." maxlength="70">
       </div>
       <div class="status-field-hint">Contoh: "Sibuk", "Tersedia untuk chat", dsb.</div>
 
       <div class="settings-divider"></div>
-
-      <div class="panel-section-title" style="margin:0 0 8px;">Tambah Pertemanan</div>
-      <div class="settings-friend-box">
-        <input type="email" id="settingsAddFriendEmail" placeholder="email@teman.com">
-        <button class="btn small primary" id="settingsAddFriendBtn">Kirim</button>
-      </div>
-      <div class="add-friend-msg" id="settingsAddFriendMsg"></div>
 
       <div class="panel-section-title" style="margin:16px 0 6px;">Permintaan Masuk</div>
       <div id="incomingRequestsWrap"><div class="empty-hint">Tidak ada permintaan masuk.</div></div>
@@ -1305,9 +1306,7 @@
     pendingPhotoData = null;
     settingsNameInput.value = currentUser.name || '';
     settingsStatusInput.value = currentUser.status || '';
-    document.getElementById('settingsAddFriendEmail').value = '';
-    document.getElementById('settingsAddFriendMsg').textContent = '';
-    document.getElementById('settingsAddFriendMsg').className = 'add-friend-msg';
+    document.getElementById('settingsMyEmail').value = currentUser.email || '';
     updateMyAvatarEls();
     modalSettings.classList.add('show');
   }
@@ -1418,12 +1417,6 @@
       if (btnEl) btnEl.disabled = false;
     });
   }
-
-  document.getElementById('settingsAddFriendBtn').addEventListener('click', function(){
-    let input = document.getElementById('settingsAddFriendEmail');
-    let msgEl = document.getElementById('settingsAddFriendMsg');
-    sendFriendRequestTo(input.value.trim(), msgEl, input, document.getElementById('settingsAddFriendBtn'));
-  });
 
   // Enter untuk submit form login/daftar langsung dari kolom manapun
   [inputName, inputEmail, inputPassword].forEach(function(el){
@@ -1651,14 +1644,68 @@
   // ===================================================================
   const viewChats = document.getElementById('viewChats');
 
-  // Cari user / grup: filter baris daftar percakapan
+  // Cari user / grup: filter percakapan yang sudah ada, DAN tampilkan
+  // teman yang sudah ditambahkan sebelumnya walau belum pernah chat.
+  const searchResultsWrap = document.getElementById('searchResultsWrap');
   document.getElementById('searchBox').addEventListener('input', function(){
     let q = this.value.trim().toLowerCase();
-    let rows = viewChats.querySelectorAll('.list-row');
+
+    // Filter baris percakapan yang sudah ada.
+    let rows = viewChats.querySelectorAll('#chatListWrap .list-row');
     rows.forEach(function(row){
       let titleEl = row.querySelector('.row-title');
       let title = titleEl ? titleEl.textContent.toLowerCase() : '';
       row.style.display = (!q || title.indexOf(q) !== -1) ? 'flex' : 'none';
+    });
+
+    if (!q){
+      searchResultsWrap.style.display = 'none';
+      searchResultsWrap.innerHTML = '';
+      return;
+    }
+
+    // Cari di antara teman yang sudah ditambahkan tapi belum punya
+    // percakapan aktif, supaya tetap muncul walau belum pernah chat.
+    let existingChatUids = {};
+    Object.keys(chatsIndex).forEach(function(chatId){
+      let chat = chatsIndex[chatId];
+      if (chat.type !== 'private') return;
+      let members = chat.members || {};
+      let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
+      if (otherUid) existingChatUids[otherUid] = true;
+    });
+
+    let matchedFriends = Object.keys(friendsData).filter(function(uid){
+      if (existingChatUids[uid]) return false;
+      let f = friendsData[uid];
+      let name = (f && f.name ? f.name : '').toLowerCase();
+      let email = (f && f.email ? f.email : '').toLowerCase();
+      return name.indexOf(q) !== -1 || email.indexOf(q) !== -1;
+    });
+
+    if (matchedFriends.length === 0){
+      searchResultsWrap.style.display = 'none';
+      searchResultsWrap.innerHTML = '';
+      return;
+    }
+
+    searchResultsWrap.style.display = 'block';
+    searchResultsWrap.innerHTML = '<div class="panel-section-title" style="margin:4px 0 6px;">Teman</div>';
+    matchedFriends.forEach(function(uid){
+      let f = friendsData[uid];
+      let row = document.createElement('div');
+      row.className = 'list-row';
+      row.innerHTML =
+        avatarHtml(f.name, f.photoURL) +
+        '<div class="row-main"><div class="row-title">' + escapeHtml(f.name) + '</div>' +
+        '<div class="row-sub">' + escapeHtml(f.email || '') + '</div></div>';
+      row.addEventListener('click', function(){
+        document.getElementById('searchBox').value = '';
+        searchResultsWrap.style.display = 'none';
+        searchResultsWrap.innerHTML = '';
+        openPrivateChat(uid, f.name);
+      });
+      searchResultsWrap.appendChild(row);
     });
   });
 
