@@ -396,7 +396,8 @@
     bottom:calc(12px + env(safe-area-inset-bottom, 0px));
     display:flex;
     align-items:center;
-    justify-content:space-between;
+    justify-content:flex-start;
+    gap:10px;
     padding:0 14px;
     z-index:8;
   }
@@ -420,11 +421,11 @@
   html.light-theme .theme-toggle-fab .icon-sun{ display:none; }
   html.light-theme .theme-toggle-fab .icon-moon{ display:block; }
   .panel-copyright{
-    text-align:right;
-    font-size:10px;
-    line-height:1.4;
+    text-align:left;
+    font-size:9px;
+    line-height:1.35;
     color:var(--text-dim);
-    letter-spacing:0.2px;
+    letter-spacing:0.15px;
     white-space:nowrap;
   }
   .panel-copyright .cr-line1{ font-weight:600; color:var(--text-light); }
@@ -827,10 +828,10 @@
     .add-friend-box input{ padding:7px 9px; font-size:16px; }
     .add-friend-box{ gap:5px; }
 
-    .panel-footer{ padding:0 10px; }
+    .panel-footer{ padding:0 10px; gap:8px; }
     .theme-toggle-fab{ width:40px; height:40px; }
     .theme-toggle-fab svg{ width:19px; height:19px; }
-    .panel-copyright{ font-size:9px; }
+    .panel-copyright{ font-size:8.5px; }
 
     .list-row{ padding:6px 6px; gap:8px; margin-bottom:2px; }
     .avatar{ width:30px; height:30px; font-size:16px; }
