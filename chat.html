@@ -28,6 +28,29 @@
     --bubble-them-text: #f0f0f0;
     --danger: #e05252;
   }
+  html.light-theme{
+    --bg-app: #f4f3ee;
+    --bg-panel: #ffffff;
+    --bg-card: #ffffff;
+    --sidebar: #ffffff;
+    --sidebar-2: #ece9e0;
+    --accent-emas: #b8892f;
+    --pink: #e91e63;
+    --pink-dark: #c2185b;
+    --blue: #1c7fb8;
+    --white: #2a2a1e;
+    --border-soft: rgba(0,0,0,0.12);
+    --text-light: #1c1c1c;
+    --text-dim: #63636b;
+    --bubble-me: #d9fdd3;
+    --bubble-me-text: #0b3d2e;
+    --bubble-them: #ffffff;
+    --bubble-them-text: #1c1c1c;
+    --danger: #c53030;
+  }
+  html.light-theme .bubble{ box-shadow:0 1px 2px rgba(0,0,0,0.08); }
+  body{ transition:background-color .2s ease, color .2s ease; }
+  .list-row, .modal, .icon-btn, .btn, .chat-input-row textarea{ transition:background-color .2s ease, color .2s ease, border-color .2s ease; }
   *{ box-sizing:border-box; }
   html,body{ height:100%; height:100dvh; margin:0; }
   body{ padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right); padding-bottom:env(safe-area-inset-bottom); padding-top:env(safe-area-inset-top); }
@@ -217,6 +240,7 @@
     display:flex;
     flex-direction:column;
     min-height:0;
+    position:relative;
   }
   .tabs-row{
     display:flex;
@@ -244,6 +268,7 @@
     flex:1;
     overflow-y:auto;
     padding:10px;
+    padding-bottom:66px;
   }
   .panel-section-title{
     font-size:11px;
@@ -362,6 +387,31 @@
   .icon-btn svg{ width:16px; height:16px; }
   .icon-btn.danger{ color:var(--danger); border-color:rgba(224,82,82,0.4); }
   .icon-btn.danger:hover{ background:rgba(224,82,82,0.12); }
+
+  /* ---------- Toggle mode terang/gelap (tombol bulat, di paling bawah layar) ---------- */
+  .theme-toggle-fab{
+    position:absolute;
+    left:50%;
+    bottom:calc(12px + env(safe-area-inset-bottom, 0px));
+    transform:translateX(-50%);
+    width:46px; height:46px;
+    border-radius:50%;
+    background:var(--sidebar-2);
+    border:1px solid var(--border-soft);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:8;
+    box-shadow:0 4px 14px rgba(0,0,0,0.35);
+    transition:background-color .2s ease, border-color .2s ease, transform .1s ease;
+  }
+  .theme-toggle-fab:hover{ background:#26263a; }
+  .theme-toggle-fab:active{ transform:translateX(-50%) scale(0.93); }
+  .theme-toggle-fab svg{ width:22px; height:22px; }
+  .theme-toggle-fab .icon-sun{ color:var(--accent-emas); display:block; }
+  .theme-toggle-fab .icon-moon{ color:var(--accent-emas); display:none; }
+  html.light-theme .theme-toggle-fab .icon-sun{ display:none; }
+  html.light-theme .theme-toggle-fab .icon-moon{ display:block; }
 
   /* ---------- Search bar (cari user / grup) ---------- */
   .search-bar{ padding:10px 10px 0; }
@@ -568,6 +618,8 @@
     background:var(--bg-card);
   }
   .chat-header .row-title{ font-size:15px; }
+  .chat-header-selection{ background:var(--sidebar-2); }
+  .chat-header-selection .row-title{ font-size:14.5px; }
   .chat-empty{
     flex:1;
     display:flex;
@@ -588,8 +640,9 @@
     gap:4px;
   }
   .msg-row:last-child{ margin-bottom:6px; }
-  .msg-row{ display:flex; }
+  .msg-row{ display:flex; cursor:pointer; user-select:none; -webkit-user-select:none; }
   .msg-row.me{ justify-content:flex-end; }
+  .msg-row.selected{ background:rgba(124,92,255,0.14); border-radius:10px; }
   .bubble{
     max-width:62%;
     padding:7px 12px;
@@ -597,6 +650,7 @@
     font-size:13.5px;
     line-height:1.32;
     word-wrap:break-word;
+    position:relative;
   }
   .msg-row.me .bubble{
     background:var(--bubble-me);
@@ -621,6 +675,33 @@
     margin-top:2px;
     display:block;
     text-align:right;
+  }
+  .bubble .edited-tag{
+    font-size:10px;
+    opacity:0.6;
+    font-style:italic;
+    margin-left:4px;
+  }
+  .edit-banner{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:8px 14px;
+    background:var(--sidebar-2);
+    border-top:1px solid var(--border-soft);
+    border-left:3px solid var(--accent-emas);
+  }
+  .edit-banner-text{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .edit-banner-text span:first-child{ font-size:11.5px; font-weight:700; color:var(--accent-emas); }
+  .edit-banner-preview{
+    font-size:12.5px;
+    color:var(--text-dim);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:260px;
   }
   .chat-input-row{
     flex-shrink:0;
@@ -869,13 +950,19 @@
         <div id="searchResultsWrap" style="display:none;"></div>
         <div id="chatListWrap"><div class="empty-hint">Belum ada percakapan. Tambahkan teman lewat menu Pengaturan Akun (ikon gear).</div></div>
       </div>
+
+      <!-- Tombol ganti mode terang/gelap, di paling bawah panel daftar -->
+      <button type="button" class="theme-toggle-fab" id="themeToggleBtn" aria-label="Ganti mode terang/gelap" title="Ganti mode terang/gelap">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.4M12 19.1v2.4M4.6 4.6l1.7 1.7M17.7 17.7l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.6 19.4l1.7-1.7M17.7 6.3l1.7-1.7"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></svg>
+      </button>
     </div>
 
     <div class="chat-panel" id="chatPanel">
       <div class="chat-empty" id="chatEmptyState">Pilih percakapan di sebelah kiri, atau tambahkan teman dulu lewat Pengaturan Akun.</div>
 
       <div id="chatActiveWrap" style="display:none; flex:1; display:none; flex-direction:column; min-height:0;">
-        <div class="chat-header">
+        <div class="chat-header" id="chatHeaderNormal">
           <button class="btn small back-btn-mobile" id="btnBackMobile" aria-label="Kembali">←</button>
           <div class="avatar" id="chatHeaderAvatar">?</div>
           <div class="row-main">
@@ -886,7 +973,25 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           </button>
         </div>
+        <div class="chat-header chat-header-selection" id="chatHeaderSelection" style="display:none;">
+          <button class="icon-btn" id="btnCancelSelection" aria-label="Batal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <div class="row-main"><div class="row-title" id="selectionCount">1 dipilih</div></div>
+          <button class="icon-btn" id="btnEditSelectedMsg" aria-label="Edit pesan" title="Edit pesan" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+          <button class="icon-btn danger" id="btnDeleteSelectedMsg" aria-label="Hapus pesan" title="Hapus pesan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7H20"/><path d="M9 7V4.8C9 4.36 9.36 4 9.8 4H14.2C14.64 4 15 4.36 15 4.8V7"/><path d="M6.5 7L7.2 19.2C7.24 19.9 7.82 20.5 8.53 20.5H15.47C16.18 20.5 16.76 19.9 16.8 19.2L17.5 7"/><path d="M10 11V16.5"/><path d="M14 11V16.5"/></svg>
+          </button>
+        </div>
         <div class="messages" id="messagesWrap"></div>
+        <div class="edit-banner" id="editBanner" style="display:none;">
+          <div class="edit-banner-text"><span>Mengedit pesan</span><span id="editBannerPreview" class="edit-banner-preview"></span></div>
+          <button class="icon-btn" id="btnCancelEditMsg" aria-label="Batal edit">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
         <div class="chat-input-row">
           <textarea id="msgInput" rows="1" placeholder="Tulis pesan..."></textarea>
           <button class="send-btn-round" id="btnSendMsg" aria-label="Kirim">
@@ -1082,6 +1187,22 @@
   }
 
   firebase.initializeApp(firebaseConfig);
+
+  // ---------------------------------------------------------------
+  // Toggle mode terang/gelap
+  // ---------------------------------------------------------------
+  (function initThemeToggle(){
+    let saved = 'dark';
+    try { saved = localStorage.getItem('themeMode') || 'dark'; } catch(e){}
+    if (saved === 'light') document.documentElement.classList.add('light-theme');
+    let btn = document.getElementById('themeToggleBtn');
+    if (btn){
+      btn.addEventListener('click', function(){
+        let nowLight = document.documentElement.classList.toggle('light-theme');
+        try { localStorage.setItem('themeMode', nowLight ? 'light' : 'dark'); } catch(e){}
+      });
+    }
+  })();
 
   // ---------------------------------------------------------------
   // Perbaikan keyboard mobile: saat keyboard muncul, viewport asli
@@ -1632,7 +1753,7 @@
   function detachAllListeners(){
     activeListenerRefs.forEach(function(r){ r.ref.off(r.event, r.cb); });
     activeListenerRefs = [];
-    if (messagesListenerRef){ messagesListenerRef.ref.off('child_added', messagesListenerRef.cb); messagesListenerRef = null; }
+    if (messagesListenerRef){ detachMessagesListener(); }
   }
   function track(ref, event, cb){
     ref.on(event, cb);
@@ -1863,7 +1984,7 @@
             '</svg>' +
           '</button>' +
         '</div>';
-      row.addEventListener('click', function(){ openChat(chatId); });
+      row.addEventListener('click', function(){ openChat(chatId, name); });
       row.querySelector('.btn-delete-chat').addEventListener('click', function(e){
         e.stopPropagation();
         deleteChatFromList(chatId, name);
@@ -1873,8 +1994,34 @@
   }
 
   function deleteChatFromList(chatId, name){
-    if (!confirm('Hapus obrolan dengan "' + name + '" dari daftar kamu?')) return;
-    db.ref('userChats/' + currentUser.uid + '/' + chatId).remove().then(function(){
+    let chat = chatsIndex[chatId];
+    let isPrivate = chat && chat.type === 'private';
+    let msg = isPrivate
+      ? 'Hapus obrolan dengan "' + name + '" dari daftar kamu? Semua pesan akan hilang. Kalau kamu cari dan chat lagi nanti, percakapan akan mulai dari awal (kosong).'
+      : 'Hapus obrolan dengan "' + name + '" dari daftar kamu?';
+    if (!confirm(msg)) return;
+
+    let updates = {};
+    if (isPrivate){
+      // Percakapan privat dihapus TOTAL (data pesan + indeks di kedua
+      // user), bukan cuma disembunyikan dari satu sisi. Dengan begitu,
+      // saat salah satu user mencari nama teman ini lagi dan membuka
+      // chat-nya, openPrivateChat() akan membuat percakapan baru yang
+      // benar-benar fresh/kosong dengan chatId yang sama (deterministik
+      // dari pasangan uid), bukannya "menghilang" tanpa bisa dibuka lagi.
+      let members = Object.keys((chat && chat.members) || {});
+      updates['chats/' + chatId] = null;
+      members.forEach(function(uid){
+        updates['userChats/' + uid + '/' + chatId] = null;
+      });
+    } else {
+      // Grup: hapus hanya dari daftar user ini (bukan untuk semua
+      // anggota). Untuk menghapus grup sepenuhnya, pakai "Hapus grup"
+      // di Pengaturan Grup.
+      updates['userChats/' + currentUser.uid + '/' + chatId] = null;
+    }
+
+    db.ref().update(updates).then(function(){
       if (activeChatId === chatId){
         activeChatId = null;
         chatActiveWrap.style.display = 'none';
@@ -1888,24 +2035,30 @@
   function openPrivateChat(friendUid, friendName){
     let chatId = privateChatId(currentUser.uid, friendUid);
     db.ref('chats/' + chatId).once('value').then(function(snap){
+      let updates = {};
       if (!snap.exists()){
         let members = {};
         members[currentUser.uid] = true;
         members[friendUid] = true;
-        let updates = {};
         updates['chats/' + chatId] = {
           type: 'private',
           members: members,
           createdBy: currentUser.uid,
           createdAt: firebase.database.ServerValue.TIMESTAMP
         };
-        updates['userChats/' + currentUser.uid + '/' + chatId] = true;
-        updates['userChats/' + friendUid + '/' + chatId] = true;
-        return db.ref().update(updates);
       }
+      // Selalu pastikan chat ini tercatat balik di userChats kedua
+      // belah pihak, walau datanya sudah ada sebelumnya. Ini mencegah
+      // percakapan "menghilang" (tidak muncul di daftar/tidak bisa
+      // dibuka) kalau indeksnya sempat tidak sinkron.
+      updates['userChats/' + currentUser.uid + '/' + chatId] = true;
+      updates['userChats/' + friendUid + '/' + chatId] = true;
+      return db.ref().update(updates);
     }).then(function(){
       modalSettings.classList.remove('show');
-      openChat(chatId);
+      // friendName dipakai sebagai fallback supaya nama langsung tampil
+      // di header, tanpa menunggu listener chatsIndex selesai sinkron.
+      openChat(chatId, friendName);
     });
   }
 
@@ -1969,7 +2122,7 @@
     });
     db.ref().update(updates).then(function(){
       modalNewGroup.classList.remove('show');
-      openChat(chatId);
+      openChat(chatId, name);
     });
   });
 
@@ -2165,9 +2318,22 @@
     updateMobileView();
   });
 
-  function updateChatHeader(){
+  function updateChatHeader(fallbackName){
     let chat = chatsIndex[activeChatId];
-    if (!chat) return;
+    if (!chat){
+      // chatsIndex belum sinkron (mis. baru saja buka/buat percakapan).
+      // Tampilkan fallbackName dulu supaya nama tidak kosong/hilang,
+      // nanti otomatis diperbarui saat chatsIndex sudah terisi.
+      if (fallbackName){
+        let headerAvatarElFallback = document.getElementById('chatHeaderAvatar');
+        headerAvatarElFallback.className = 'avatar';
+        headerAvatarElFallback.innerHTML = initials(fallbackName);
+        document.getElementById('chatHeaderTitle').textContent = fallbackName;
+        document.getElementById('chatHeaderSub').textContent = 'Memuat percakapan...';
+        document.getElementById('btnGroupSettings').style.display = 'none';
+      }
+      return;
+    }
     let name = chatDisplayName(chat);
     let photo = '';
     if (chat.type === 'group'){
@@ -2190,49 +2356,241 @@
     }
   }
 
-  function openChat(chatId){
+  function openChat(chatId, fallbackName){
     activeChatId = chatId;
     chatEmptyState.style.display = 'none';
     chatActiveWrap.style.display = 'flex';
     messagesWrap.innerHTML = '';
+    messageEls = {};
+    exitSelectionMode();
+    cancelEditMessage();
     renderChatList();
-    updateChatHeader();
+    updateChatHeader(fallbackName);
     mobileViewMode = 'chat';
     updateMobileView();
 
-    if (messagesListenerRef){
-      messagesListenerRef.ref.off('child_added', messagesListenerRef.cb);
-      messagesListenerRef = null;
-    }
+    detachMessagesListener();
     let msgsRef = db.ref('chats/' + chatId + '/messages').limitToLast(200);
-    let cb = function(snap){
-      appendMessage(snap.val());
-    };
-    msgsRef.on('child_added', cb);
-    messagesListenerRef = { ref: msgsRef, cb: cb };
+    let cbAdded = function(snap){ appendMessage(snap.val(), snap.key); };
+    let cbChanged = function(snap){ updateMessageInDOM(snap.key, snap.val()); };
+    let cbRemoved = function(snap){ removeMessageFromDOM(snap.key); };
+    msgsRef.on('child_added', cbAdded);
+    msgsRef.on('child_changed', cbChanged);
+    msgsRef.on('child_removed', cbRemoved);
+    messagesListenerRef = { ref: msgsRef, handlers: { child_added: cbAdded, child_changed: cbChanged, child_removed: cbRemoved } };
   }
 
-  function appendMessage(m){
-    if (!m) return;
+  function detachMessagesListener(){
+    if (!messagesListenerRef) return;
+    messagesListenerRef.ref.off('child_added', messagesListenerRef.handlers.child_added);
+    messagesListenerRef.ref.off('child_changed', messagesListenerRef.handlers.child_changed);
+    messagesListenerRef.ref.off('child_removed', messagesListenerRef.handlers.child_removed);
+    messagesListenerRef = null;
+  }
+
+  // -------------------------------------------------------------
+  // Pilih pesan (tekan lama untuk mulai, seperti WhatsApp), lalu
+  // hapus atau edit pesan yang dipilih.
+  // -------------------------------------------------------------
+  let messageEls = {};      // msgId -> { row, data }
+  let selectionMode = false;
+  let selectedIds = {};     // msgId -> true
+  let editingMessageId = null;
+
+  const chatHeaderNormal = document.getElementById('chatHeaderNormal');
+  const chatHeaderSelection = document.getElementById('chatHeaderSelection');
+  const selectionCountEl = document.getElementById('selectionCount');
+  const btnEditSelectedMsg = document.getElementById('btnEditSelectedMsg');
+  const btnDeleteSelectedMsg = document.getElementById('btnDeleteSelectedMsg');
+  const btnCancelSelection = document.getElementById('btnCancelSelection');
+  const editBanner = document.getElementById('editBanner');
+  const editBannerPreview = document.getElementById('editBannerPreview');
+  const btnCancelEditMsg = document.getElementById('btnCancelEditMsg');
+
+  function enterSelectionMode(){
+    if (selectionMode) return;
+    selectionMode = true;
+    chatHeaderNormal.style.display = 'none';
+    chatHeaderSelection.style.display = 'flex';
+  }
+  function exitSelectionMode(){
+    selectionMode = false;
+    Object.keys(selectedIds).forEach(function(id){
+      let el = messageEls[id];
+      if (el) el.row.classList.remove('selected');
+    });
+    selectedIds = {};
+    chatHeaderNormal.style.display = 'flex';
+    chatHeaderSelection.style.display = 'none';
+  }
+  function selectedCount(){ return Object.keys(selectedIds).length; }
+  function updateSelectionUI(){
+    let count = selectedCount();
+    if (count === 0){ exitSelectionMode(); return; }
+    selectionCountEl.textContent = count + ' dipilih';
+    let ids = Object.keys(selectedIds);
+    let canEdit = count === 1 && messageEls[ids[0]] && messageEls[ids[0]].data.sender === currentUser.uid;
+    btnEditSelectedMsg.style.display = canEdit ? 'flex' : 'none';
+  }
+  function toggleSelectMessage(msgId){
+    let el = messageEls[msgId];
+    if (!el) return;
+    if (selectedIds[msgId]){
+      delete selectedIds[msgId];
+      el.row.classList.remove('selected');
+    } else {
+      selectedIds[msgId] = true;
+      el.row.classList.add('selected');
+    }
+    updateSelectionUI();
+  }
+
+  btnCancelSelection.addEventListener('click', exitSelectionMode);
+
+  btnDeleteSelectedMsg.addEventListener('click', function(){
+    let ids = Object.keys(selectedIds);
+    if (ids.length === 0 || !activeChatId) return;
+    let msg = ids.length === 1 ? 'Hapus pesan ini?' : 'Hapus ' + ids.length + ' pesan ini?';
+    if (!confirm(msg)) return;
+    let chatId = activeChatId;
+    let updates = {};
+    ids.forEach(function(id){ updates['chats/' + chatId + '/messages/' + id] = null; });
+    if (editingMessageId && selectedIds[editingMessageId]) cancelEditMessage();
+    db.ref().update(updates).then(function(){
+      refreshLastMessagePreview(chatId);
+    });
+    exitSelectionMode();
+  });
+
+  btnEditSelectedMsg.addEventListener('click', function(){
+    let ids = Object.keys(selectedIds);
+    if (ids.length !== 1) return;
+    let id = ids[0];
+    let el = messageEls[id];
+    if (!el) return;
+    editingMessageId = id;
+    msgInput.value = el.data.text || '';
+    autoGrow();
+    msgInput.focus();
+    editBannerPreview.textContent = el.data.text || '';
+    editBanner.style.display = 'flex';
+    exitSelectionMode();
+  });
+
+  btnCancelEditMsg.addEventListener('click', cancelEditMessage);
+
+  function cancelEditMessage(){
+    editingMessageId = null;
+    editBanner.style.display = 'none';
+    msgInput.value = '';
+    autoGrow();
+  }
+
+  function refreshLastMessagePreview(chatId){
+    db.ref('chats/' + chatId + '/messages').limitToLast(1).once('value').then(function(snap){
+      let val = snap.val();
+      let updates = {};
+      if (val){
+        let key = Object.keys(val)[0];
+        let m = val[key];
+        let preview = (m.text || '').length > 60 ? m.text.slice(0,60) + '…' : (m.text || '');
+        updates['chats/' + chatId + '/lastMessage'] = preview;
+        updates['chats/' + chatId + '/lastMessageAt'] = m.createdAt || firebase.database.ServerValue.TIMESTAMP;
+      } else {
+        updates['chats/' + chatId + '/lastMessage'] = '';
+      }
+      db.ref().update(updates);
+    });
+  }
+
+  // Tekan & tahan (atau klik saat sedang dalam mode pilih) untuk
+  // memilih satu pesan; klik pesan lain untuk menambah pilihan.
+  function attachRowSelectionHandlers(row, msgId){
+    let pressTimer = null;
+    let longPressFired = false;
+    function startPress(){
+      longPressFired = false;
+      clearTimeout(pressTimer);
+      pressTimer = setTimeout(function(){
+        longPressFired = true;
+        enterSelectionMode();
+        toggleSelectMessage(msgId);
+      }, 450);
+    }
+    function cancelPress(){
+      clearTimeout(pressTimer);
+    }
+    row.addEventListener('mousedown', startPress);
+    row.addEventListener('mouseup', cancelPress);
+    row.addEventListener('mouseleave', cancelPress);
+    row.addEventListener('touchstart', startPress, { passive: true });
+    row.addEventListener('touchend', cancelPress);
+    row.addEventListener('touchmove', cancelPress);
+    row.addEventListener('click', function(){
+      if (longPressFired){ longPressFired = false; return; }
+      if (selectionMode) toggleSelectMessage(msgId);
+    });
+  }
+
+  function appendMessage(m, msgId){
+    if (!m || !msgId) return;
     let row = document.createElement('div');
     let isMe = m.sender === currentUser.uid;
     row.className = 'msg-row ' + (isMe ? 'me' : 'them');
+    row.dataset.msgId = msgId;
     let chat = chatsIndex[activeChatId];
     let showSender = chat && chat.type === 'group' && !isMe;
     row.innerHTML =
       '<div class="bubble">' +
         (showSender ? '<span class="sender">' + escapeHtml(m.senderName || '') + '</span>' : '') +
         '<span class="text"></span>' +
-        '<span class="time">' + fmtTime(m.createdAt) + '</span>' +
+        '<span class="time">' + fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + '</span>' +
       '</div>';
     row.querySelector('.text').textContent = m.text || '';
     messagesWrap.appendChild(row);
     messagesWrap.scrollTop = messagesWrap.scrollHeight;
+    messageEls[msgId] = { row: row, data: m };
+    attachRowSelectionHandlers(row, msgId);
+  }
+
+  function updateMessageInDOM(msgId, m){
+    let el = messageEls[msgId];
+    if (!el || !m) return;
+    el.data = m;
+    el.row.querySelector('.text').textContent = m.text || '';
+    el.row.querySelector('.time').innerHTML = fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '');
+    if (editingMessageId === msgId){
+      editBannerPreview.textContent = m.text || '';
+    }
+  }
+
+  function removeMessageFromDOM(msgId){
+    let el = messageEls[msgId];
+    if (!el) return;
+    if (selectedIds[msgId]){
+      delete selectedIds[msgId];
+      updateSelectionUI();
+    }
+    if (editingMessageId === msgId) cancelEditMessage();
+    el.row.remove();
+    delete messageEls[msgId];
   }
 
   function sendMessage(){
     let text = msgInput.value.trim();
     if (!text || !activeChatId) return;
+    if (editingMessageId){
+      let chatId = activeChatId;
+      let msgId = editingMessageId;
+      let updates = {};
+      updates['chats/' + chatId + '/messages/' + msgId + '/text'] = text;
+      updates['chats/' + chatId + '/messages/' + msgId + '/edited'] = true;
+      db.ref().update(updates).then(function(){
+        refreshLastMessagePreview(chatId);
+      });
+      cancelEditMessage();
+      return;
+    }
     let msgRef = db.ref('chats/' + activeChatId + '/messages').push();
     let payload = {
       sender: currentUser.uid,
