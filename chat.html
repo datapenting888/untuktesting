@@ -227,6 +227,28 @@
     display:flex; align-items:center; justify-content:center;
     margin:0 auto 16px;
   }
+
+  /* ---------- Layar loading awal (cek status login) ----------
+     Ditampilkan sebentar saat halaman pertama kali dimuat/refresh,
+     selama Firebase masih memeriksa apakah user sudah login atau
+     belum. Ini mencegah layar Login "berkedip" muncul sebentar lalu
+     langsung tertutup lagi begitu ternyata user memang sudah login. */
+  #initialLoadingScreen{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  #initialLoadingScreen .loading-spinner{
+    width:34px; height:34px;
+    border-radius:50%;
+    border:3px solid var(--border-soft);
+    border-top-color:var(--accent-emas);
+    animation:dpSpin .8s linear infinite;
+  }
+  @keyframes dpSpin{ to{ transform:rotate(360deg); } }
+
   .auth-success-msg{
     background:rgba(127,216,143,0.12);
     border:1px solid rgba(127,216,143,0.4);
@@ -968,8 +990,11 @@
   </div>
 </div>
 
+<!-- ============ LOADING AWAL (cek status login) ============ -->
+<div id="initialLoadingScreen"><div class="loading-spinner"></div></div>
+
 <!-- ============ AUTH SCREEN ============ -->
-<div id="authScreen">
+<div id="authScreen" style="display:none;">
   <div class="auth-card">
     <h1 id="authTitle" style="font-family:Arial, Helvetica, sans-serif;">Silahkan Login</h1>
     <p class="sub" id="authSub"></p>
@@ -1747,6 +1772,10 @@
   // AUTH STATE -> tampilkan app
   // ===================================================================
   const verifyScreen = document.getElementById('verifyScreen');
+  const initialLoadingScreen = document.getElementById('initialLoadingScreen');
+  function hideInitialLoadingScreen(){
+    if (initialLoadingScreen) initialLoadingScreen.style.display = 'none';
+  }
 
   auth.onAuthStateChanged(function(user){
     detachAllListeners();
@@ -1755,6 +1784,7 @@
         authScreen.style.display = 'none';
         appScreen.style.display = 'none';
         verifyScreen.style.display = 'flex';
+        hideInitialLoadingScreen();
         document.getElementById('verifyEmailTarget').textContent = user.email;
         document.getElementById('topbarWho').style.display = 'none';
         currentUser = null;
@@ -1776,7 +1806,27 @@
         document.getElementById('topbarWho').style.display = 'flex';
         authScreen.style.display = 'none';
         appScreen.style.display = 'flex';
-        mobileViewMode = 'list';
+        hideInitialLoadingScreen();
+        // Langsung "gambar" posisi chat terakhir (kalau ada) sebelum
+        // data chat selesai dimuat dari Firebase, supaya tidak sempat
+        // kelihatan daftar chat dulu baru lompat ke obrolan (flash).
+        // Detail pesan tetap dimuat ulang lewat openChat() asli begitu
+        // initChatsListener() bawah ini memastikan chat itu masih valid.
+        let quickSavedId = null, quickSavedName = '', quickSavedView = 'list';
+        try{
+          quickSavedId = localStorage.getItem(LS_ACTIVE_CHAT_ID);
+          quickSavedName = localStorage.getItem(LS_ACTIVE_CHAT_NAME) || '';
+          quickSavedView = localStorage.getItem(LS_MOBILE_VIEW) || 'list';
+        } catch(e){}
+        if (quickSavedId && quickSavedView === 'chat'){
+          activeChatId = quickSavedId;
+          chatEmptyState.style.display = 'none';
+          chatActiveWrap.style.display = 'flex';
+          updateChatHeader(quickSavedName);
+          mobileViewMode = 'chat';
+        } else {
+          mobileViewMode = 'list';
+        }
         updateMobileView();
         initFriendsListeners();
         initChatsListener();
@@ -1788,6 +1838,7 @@
       document.getElementById('topbarWho').style.display = 'none';
       verifyScreen.style.display = 'none';
       authScreen.style.display = 'flex';
+      hideInitialLoadingScreen();
       appScreen.style.display = 'none';
       resetAppState();
       stopInactivityWatcher();
@@ -2254,6 +2305,16 @@
     } catch(e){}
     if (savedId && savedView === 'chat' && chatIds.indexOf(savedId) !== -1){
       openChat(savedId, savedName);
+    } else if (savedId && savedView === 'chat'){
+      // Chat/grup yang tersimpan sudah tidak valid lagi (mis. sudah
+      // dihapus atau kamu sudah dikeluarkan dari grup) — batalkan
+      // "gambaran cepat" tadi dan kembali ke tampilan daftar.
+      activeChatId = null;
+      chatActiveWrap.style.display = 'none';
+      chatEmptyState.style.display = 'flex';
+      mobileViewMode = 'list';
+      updateMobileView();
+      clearSavedActiveChat();
     }
   }
 
