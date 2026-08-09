@@ -957,8 +957,8 @@
 <!-- ============ AUTH SCREEN ============ -->
 <div id="authScreen">
   <div class="auth-card">
-    <h1 id="authTitle">Masuk</h1>
-    <p class="sub" id="authSub">Login ke akun data penting kamu.</p>
+    <h1 id="authTitle" style="font-family:Arial, Helvetica, sans-serif;">Silahkan Login</h1>
+    <p class="sub" id="authSub"></p>
 
     <div class="auth-error" id="authError"></div>
     <div class="auth-success-msg" id="authSuccess"></div>
@@ -1460,13 +1460,15 @@
     if (on){
       fieldName.style.display = 'block';
       authTitle.textContent = 'Daftar Akun';
-      authSub.textContent = 'Buat akun baru untuk mulai chat penting.';
+      authTitle.style.fontFamily = "'Bree Serif', serif";
+      authSub.textContent = '';
       btnAuthSubmit.textContent = 'Daftar';
       authToggleText.innerHTML = 'Sudah punya akun? <span id="authToggleLink">Masuk di sini</span>';
     } else {
       fieldName.style.display = 'none';
-      authTitle.textContent = 'Masuk';
-      authSub.textContent = 'Login ke akun data penting kamu.';
+      authTitle.textContent = 'Silahkan Login';
+      authTitle.style.fontFamily = "Arial, Helvetica, sans-serif";
+      authSub.textContent = '';
       btnAuthSubmit.textContent = 'Masuk';
       authToggleText.innerHTML = 'Belum punya akun? <span id="authToggleLink">Daftar di sini</span>';
     }
