@@ -513,6 +513,21 @@
     text-overflow:ellipsis;
   }
   .row-actions{ display:flex; gap:6px; flex-shrink:0; }
+  .btn-delete-chat{
+    width:34px; height:34px;
+    flex-shrink:0;
+    border-radius:9px;
+    background:#ffffff;
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background .15s ease, transform .1s ease;
+  }
+  .btn-delete-chat:hover{ background:#ffe1e1; }
+  .btn-delete-chat:active{ transform:scale(0.94); }
+  .btn-delete-chat svg{ width:17px; height:17px; }
+  .btn-delete-chat svg path, .btn-delete-chat svg rect{ stroke:var(--danger); }
   .empty-hint{
     color:var(--text-dim);
     font-size:12.5px;
@@ -568,6 +583,7 @@
     padding:20px 22px 16px;
     display:flex;
     flex-direction:column;
+    justify-content:flex-end;
     gap:4px;
   }
   .msg-row:last-child{ margin-bottom:6px; }
@@ -1467,9 +1483,6 @@
       clearAuthFormFields();
       if (pendingAutoLogoutNotice){
         pendingAutoLogoutNotice = false;
-        let el = document.getElementById('authSuccess');
-        el.textContent = 'Kamu otomatis keluar karena tidak ada aktivitas selama 5 menit.';
-        el.style.display = 'block';
       }
     }
   });
@@ -1791,9 +1804,37 @@
       row.innerHTML =
         avatarHtml(name, photo, chat.type === 'group' ? 'grp' : '') +
         '<div class="row-main"><div class="row-title">' + escapeHtml(name) + '</div>' +
-        '<div class="row-sub">' + escapeHtml(chat.lastMessage || 'Belum ada pesan') + '</div></div>';
+        '<div class="row-sub">' + escapeHtml(chat.lastMessage || 'Belum ada pesan') + '</div></div>' +
+        '<div class="row-actions">' +
+          '<button type="button" class="btn-delete-chat" title="Hapus obrolan" aria-label="Hapus obrolan">' +
+            '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+              '<path d="M4 7H20" stroke-width="1.8" stroke-linecap="round"/>' +
+              '<path d="M9 7V4.8C9 4.36 9.36 4 9.8 4H14.2C14.64 4 15 4.36 15 4.8V7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
+              '<path d="M6.5 7L7.2 19.2C7.24 19.9 7.82 20.5 8.53 20.5H15.47C16.18 20.5 16.76 19.9 16.8 19.2L17.5 7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
+              '<path d="M10 11V16.5" stroke-width="1.8" stroke-linecap="round"/>' +
+              '<path d="M14 11V16.5" stroke-width="1.8" stroke-linecap="round"/>' +
+            '</svg>' +
+          '</button>' +
+        '</div>';
       row.addEventListener('click', function(){ openChat(chatId); });
+      row.querySelector('.btn-delete-chat').addEventListener('click', function(e){
+        e.stopPropagation();
+        deleteChatFromList(chatId, name);
+      });
       wrap.appendChild(row);
+    });
+  }
+
+  function deleteChatFromList(chatId, name){
+    if (!confirm('Hapus obrolan dengan "' + name + '" dari daftar kamu?')) return;
+    db.ref('userChats/' + currentUser.uid + '/' + chatId).remove().then(function(){
+      if (activeChatId === chatId){
+        activeChatId = null;
+        chatActiveWrap.style.display = 'none';
+        chatEmptyState.style.display = 'flex';
+        mobileViewMode = 'list';
+        updateMobileView();
+      }
     });
   }
 
