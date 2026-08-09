@@ -1286,7 +1286,9 @@
   // State
   // ---------------------------------------------------------------
   let currentUser = null;      // { uid, name, email }
-  let friendsData = {};        // { uid: {name,email} }
+  let friendsData = {};        // { uid: {name,email} } — cache awal, dipakai sebelum profil live sinkron
+  let userProfiles = {};       // { uid: {name,email,photoURL,status} } — live dari users/{uid}
+  let userProfileRefs = {};    // { uid: firebaseRef } — biar listener profil tidak didaftarkan dobel
   let incomingRequests = {};   // { fromUid: {fromName,fromEmail} }
   let chatsIndex = {};         // { chatId: {type,name,members,lastMessage,lastMessageAt} }
   let activeChatId = null;
@@ -1798,7 +1800,7 @@
 
     let matchedFriends = Object.keys(friendsData).filter(function(uid){
       if (existingChatUids[uid]) return false;
-      let f = friendsData[uid];
+      let f = personInfo(uid);
       let name = (f && f.name ? f.name : '').toLowerCase();
       let email = (f && f.email ? f.email : '').toLowerCase();
       return name.indexOf(q) !== -1 || email.indexOf(q) !== -1;
@@ -1813,7 +1815,7 @@
     searchResultsWrap.style.display = 'block';
     searchResultsWrap.innerHTML = '<div class="panel-section-title" style="margin:4px 0 6px;">Teman</div>';
     matchedFriends.forEach(function(uid){
-      let f = friendsData[uid];
+      let f = personInfo(uid);
       let row = document.createElement('div');
       row.className = 'list-row';
       row.innerHTML =
@@ -1831,6 +1833,84 @@
   });
 
   // ===================================================================
+  // PROFIL USER LIVE (real-time)
+  // ---------------------------------------------------------------
+  // Sebelumnya nama/foto teman disimpan sebagai salinan statis di
+  // friends/{uid}/{otherUid} pada saat pertemanan diterima, jadi kalau
+  // orang itu ganti nama panggilan belakangan, salinan itu tidak pernah
+  // ikut berubah — makanya nama lama masih muncul di daftar teman,
+  // daftar obrolan, header chat, dsb.
+  //
+  // Di sini setiap uid yang perlu ditampilkan (teman, lawan chat privat,
+  // anggota grup, pengirim pesan) didengarkan langsung dari users/{uid}
+  // dengan .on('value'), jadi begitu profilnya berubah di database,
+  // semua bagian UI yang menampilkan uid tersebut otomatis ikut
+  // diperbarui saat itu juga — tanpa perlu refresh halaman.
+  // ===================================================================
+  function ensureUserProfileSynced(uid){
+    if (!uid || (currentUser && uid === currentUser.uid) || userProfileRefs[uid]) return;
+    let ref = db.ref('users/' + uid);
+    userProfileRefs[uid] = ref;
+    ref.on('value', function(snap){
+      let val = snap.val();
+      if (val){
+        userProfiles[uid] = {
+          name: val.name || 'Pengguna',
+          email: val.email || '',
+          photoURL: val.photoURL || '',
+          status: val.status || ''
+        };
+      }
+      onUserProfileChanged();
+    });
+  }
+
+  // Dipanggil tiap kali ada profil user (nama/foto) yang berubah secara
+  // real-time, supaya semua tempat yang mungkin menampilkannya langsung
+  // disegarkan — daftar teman, daftar obrolan, header chat aktif, nama
+  // pengirim di bubble pesan grup, dan panel pengaturan grup.
+  function onUserProfileChanged(){
+    renderFriendsList();
+    renderIncomingRequests();
+    renderChatList();
+    if (typeof renderGroupFriendPick === 'function') renderGroupFriendPick();
+    if (activeChatId) updateChatHeader();
+    refreshRenderedSenderNames();
+    if (groupSettingsModal && groupSettingsModal.classList.contains('show')){
+      let chat = chatsIndex[groupSettingsChatId];
+      if (chat) populateGroupSettings();
+    }
+  }
+
+  // Info tampilan (nama/email/foto) untuk sebuah uid. Selalu memicu
+  // sinkronisasi live untuk uid tersebut, dan mengutamakan data live
+  // (userProfiles) di atas salinan lama (friendsData) kalau sudah ada.
+  function personInfo(uid){
+    ensureUserProfileSynced(uid);
+    if (currentUser && uid === currentUser.uid){
+      return { name: currentUser.name, email: currentUser.email, photoURL: currentUser.photoURL };
+    }
+    if (userProfiles[uid]) return userProfiles[uid];
+    if (friendsData[uid]) return friendsData[uid];
+    return { name: 'Pengguna', email: '' };
+  }
+
+  // Perbarui label nama pengirim yang sedang tampil di bubble pesan grup
+  // (kalau ada) begitu profil pengirim tersebut berubah, jadi tidak perlu
+  // buka-tutup chat untuk lihat nama terbaru.
+  function refreshRenderedSenderNames(){
+    Object.keys(messageEls).forEach(function(msgId){
+      let el = messageEls[msgId];
+      if (!el || !el.row) return;
+      let senderEl = el.row.querySelector('.sender');
+      if (!senderEl) return;
+      let uid = el.data && el.data.sender;
+      let liveName = (userProfiles[uid] && userProfiles[uid].name) || (el.data && el.data.senderName) || '';
+      senderEl.textContent = liveName;
+    });
+  }
+
+  // ===================================================================
   // FRIENDS: kirim permintaan, terima/tolak, daftar teman (dikelola dari Pengaturan Akun)
   // ===================================================================
   function renderIncomingRequests(){
@@ -1843,12 +1923,16 @@
     wrap.innerHTML = '';
     uids.forEach(function(fromUid){
       let req = incomingRequests[fromUid];
+      let live = personInfo(fromUid);
+      let showName = (live && live.name && live.name !== 'Pengguna') ? live.name : req.fromName;
+      let showPhoto = (live && live.photoURL) ? live.photoURL : req.fromPhoto;
+      let showEmail = (live && live.email) ? live.email : req.fromEmail;
       let row = document.createElement('div');
       row.className = 'list-row';
       row.innerHTML =
-        avatarHtml(req.fromName, req.fromPhoto) +
-        '<div class="row-main"><div class="row-title">' + escapeHtml(req.fromName) + '</div>' +
-        '<div class="row-sub">' + escapeHtml(req.fromEmail || '') + '</div></div>' +
+        avatarHtml(showName, showPhoto) +
+        '<div class="row-main"><div class="row-title">' + escapeHtml(showName) + '</div>' +
+        '<div class="row-sub">' + escapeHtml(showEmail || '') + '</div></div>' +
         '<div class="row-actions">' +
           '<button class="btn small primary" data-act="accept">Terima</button>' +
           '<button class="btn small danger" data-act="reject">Tolak</button>' +
@@ -1882,7 +1966,7 @@
     }
     wrap.innerHTML = '';
     uids.forEach(function(uid){
-      let f = friendsData[uid];
+      let f = personInfo(uid);
       let row = document.createElement('div');
       row.className = 'list-row';
       row.innerHTML =
@@ -1931,7 +2015,22 @@
             delete chatsIndex[chatId];
           }
           renderChatList();
-          if (activeChatId === chatId) updateChatHeader();
+          if (activeChatId === chatId){
+            if (val){
+              updateChatHeader();
+            } else {
+              // Chat yang sedang dibuka baru saja dihapus (mis. oleh
+              // lawan bicara di sisi lain). Tutup tampilan chat aktif
+              // ini juga secara real-time, jangan biarkan pesan/​header
+              // lama masih menggantung di layar.
+              detachMessagesListener();
+              activeChatId = null;
+              chatActiveWrap.style.display = 'none';
+              chatEmptyState.style.display = 'flex';
+              mobileViewMode = 'list';
+              updateMobileView();
+            }
+          }
         });
       });
     });
@@ -1941,7 +2040,7 @@
     if (chat.type === 'group') return chat.name || 'Grup';
     let members = chat.members || {};
     let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
-    if (otherUid && friendsData[otherUid]) return friendsData[otherUid].name;
+    if (otherUid) return personInfo(otherUid).name;
     return 'Percakapan Privat';
   }
 
@@ -1965,7 +2064,7 @@
       } else {
         let members = chat.members || {};
         let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
-        if (otherUid && friendsData[otherUid]) photo = friendsData[otherUid].photoURL || '';
+        if (otherUid) photo = personInfo(otherUid).photoURL || '';
       }
       let row = document.createElement('div');
       row.className = 'list-row' + (chatId === activeChatId ? ' active' : '');
@@ -2086,7 +2185,7 @@
     }
     groupFriendPick.innerHTML = '';
     uids.forEach(function(uid){
-      let f = friendsData[uid];
+      let f = personInfo(uid);
       let row = document.createElement('label');
       row.className = 'friend-pick-row';
       row.innerHTML =
@@ -2182,11 +2281,8 @@
     renderGsAdd(chat);
   }
 
-  function personInfo(uid){
-    if (uid === currentUser.uid) return { name: currentUser.name, email: currentUser.email, photoURL: currentUser.photoURL };
-    if (friendsData[uid]) return friendsData[uid];
-    return { name: 'Pengguna', email: '' };
-  }
+  // personInfo(uid) sudah didefinisikan di bagian "PROFIL USER LIVE" di
+  // atas (mengutamakan data live users/{uid} lewat userProfiles).
 
   function renderGsMembers(chat){
     let wrap = document.getElementById('gsMembersWrap');
@@ -2216,7 +2312,7 @@
     }
     wrap.innerHTML = '';
     candidates.forEach(function(uid){
-      let f = friendsData[uid];
+      let f = personInfo(uid);
       let row = document.createElement('div');
       row.className = 'gs-add-row';
       row.innerHTML =
@@ -2341,7 +2437,7 @@
     } else {
       let members = chat.members || {};
       let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
-      if (otherUid && friendsData[otherUid]) photo = friendsData[otherUid].photoURL || '';
+      if (otherUid) photo = personInfo(otherUid).photoURL || '';
     }
     let headerAvatarEl = document.getElementById('chatHeaderAvatar');
     headerAvatarEl.className = 'avatar' + (chat.type === 'group' ? ' grp' : '');
@@ -2540,9 +2636,11 @@
     row.dataset.msgId = msgId;
     let chat = chatsIndex[activeChatId];
     let showSender = chat && chat.type === 'group' && !isMe;
+    if (showSender) ensureUserProfileSynced(m.sender);
+    let senderDisplayName = showSender ? personInfo(m.sender).name || m.senderName || '' : '';
     row.innerHTML =
       '<div class="bubble">' +
-        (showSender ? '<span class="sender">' + escapeHtml(m.senderName || '') + '</span>' : '') +
+        (showSender ? '<span class="sender">' + escapeHtml(senderDisplayName) + '</span>' : '') +
         '<span class="text"></span>' +
         '<span class="time">' + fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + '</span>' +
       '</div>';
