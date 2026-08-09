@@ -1721,6 +1721,9 @@
       resetAppState();
       stopInactivityWatcher();
       clearAuthFormFields();
+      // Saat logout (manual atau otomatis karena tidak aktif), dot logo
+      // "DATA PENTING" dikembalikan ke putih (status belum/tidak terhubung).
+      if (connDot) connDot.classList.remove('online');
       if (pendingAutoLogoutNotice){
         pendingAutoLogoutNotice = false;
       }
