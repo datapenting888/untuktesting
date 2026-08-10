@@ -2,9 +2,6 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Data Penting — Chat</title>
@@ -385,7 +382,8 @@
     display:none;
     position:absolute;
     top:calc(100% + 8px);
-    left:0;
+    right:0;
+    left:auto;
     min-width:150px;
     background:var(--bg-card);
     border:1px solid var(--border-soft);
@@ -955,8 +953,9 @@
     .topbar{ height:calc(38px + env(safe-area-inset-top, 0px)); padding:0 8px; padding-top:env(safe-area-inset-top, 0px); }
     .topbar .brand{ font-size:17px; gap:5px; }
     .topbar .brand .dot{ width:6px; height:6px; }
-    .topbar .who{ font-size:14px; gap:6px; flex-shrink:0; }
-    .topbar .who-text{ display:none; }
+    .topbar .who{ font-size:14px; gap:6px; flex-shrink:0; max-width:60%; }
+    .topbar .who-text{ display:flex; min-width:0; }
+    .topbar .who-name{ max-width:100px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; }
     .topbar .btn{ padding:5px 9px; font-size:12px; }
 
     .tabs-row{ padding:6px 6px 0; gap:4px; }
