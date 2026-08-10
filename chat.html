@@ -1512,6 +1512,7 @@
   let userProfileRefs = {};    // { uid: firebaseRef } — biar listener profil tidak didaftarkan dobel
   let incomingRequests = {};   // { fromUid: {fromName,fromEmail} }
   let chatsIndex = {};         // { chatId: {type,name,members,lastMessage,lastMessageAt} }
+  let allUsersData = {};       // { uid: {name,email,photoURL} } — semua akun terdaftar, dipakai untuk pencarian pengguna baru
   let activeChatId = null;
 
   // -------------------------------------------------------------
@@ -1857,6 +1858,7 @@
         updateMobileView();
         initFriendsListeners();
         initChatsListener();
+        initAllUsersListener();
         startInactivityWatcher();
         updateConnIndicator();
       });
@@ -2021,6 +2023,7 @@
     friendsData = {};
     incomingRequests = {};
     chatsIndex = {};
+    allUsersData = {};
     activeChatId = null;
     restoredActiveChatOnLoad = false;
     clearSavedActiveChat();
@@ -2086,30 +2089,76 @@
       return name.indexOf(q) !== -1 || email.indexOf(q) !== -1;
     });
 
-    if (matchedFriends.length === 0){
+    // Cari juga di antara SEMUA akun terdaftar (bukan cuma teman),
+    // supaya user yang baru daftar tetap ketemu lewat pencarian ini
+    // meskipun belum pernah ditambahkan sebagai teman.
+    let matchedOthers = Object.keys(allUsersData).filter(function(uid){
+      if (uid === currentUser.uid) return false;
+      if (friendsData[uid]) return false;
+      let u = allUsersData[uid] || {};
+      let name = (u.name || '').toLowerCase();
+      let email = (u.email || '').toLowerCase();
+      return name.indexOf(q) !== -1 || email.indexOf(q) !== -1;
+    });
+
+    if (matchedFriends.length === 0 && matchedOthers.length === 0){
       searchResultsWrap.style.display = 'none';
       searchResultsWrap.innerHTML = '';
       return;
     }
 
     searchResultsWrap.style.display = 'block';
-    searchResultsWrap.innerHTML = '<div class="panel-section-title" style="margin:4px 0 6px;">Teman</div>';
-    matchedFriends.forEach(function(uid){
-      let f = personInfo(uid);
-      let row = document.createElement('div');
-      row.className = 'list-row';
-      row.innerHTML =
-        avatarHtml(f.name, f.photoURL) +
-        '<div class="row-main"><div class="row-title">' + escapeHtml(f.name) + '</div>' +
-        '<div class="row-sub">' + escapeHtml(f.email || '') + '</div></div>';
-      row.addEventListener('click', function(){
-        document.getElementById('searchBox').value = '';
-        searchResultsWrap.style.display = 'none';
-        searchResultsWrap.innerHTML = '';
-        openPrivateChat(uid, f.name);
+    searchResultsWrap.innerHTML = '';
+
+    if (matchedFriends.length > 0){
+      let titleEl = document.createElement('div');
+      titleEl.className = 'panel-section-title';
+      titleEl.style.margin = '4px 0 6px';
+      titleEl.textContent = 'Teman';
+      searchResultsWrap.appendChild(titleEl);
+      matchedFriends.forEach(function(uid){
+        let f = personInfo(uid);
+        let row = document.createElement('div');
+        row.className = 'list-row';
+        row.innerHTML =
+          avatarHtml(f.name, f.photoURL) +
+          '<div class="row-main"><div class="row-title">' + escapeHtml(f.name) + '</div>' +
+          '<div class="row-sub">' + escapeHtml(f.email || '') + '</div></div>';
+        row.addEventListener('click', function(){
+          document.getElementById('searchBox').value = '';
+          searchResultsWrap.style.display = 'none';
+          searchResultsWrap.innerHTML = '';
+          openPrivateChat(uid, f.name);
+        });
+        searchResultsWrap.appendChild(row);
       });
-      searchResultsWrap.appendChild(row);
-    });
+    }
+
+    if (matchedOthers.length > 0){
+      let titleEl2 = document.createElement('div');
+      titleEl2.className = 'panel-section-title';
+      titleEl2.style.margin = '14px 0 6px';
+      titleEl2.textContent = 'Pengguna Lain';
+      searchResultsWrap.appendChild(titleEl2);
+      matchedOthers.forEach(function(uid){
+        let u = allUsersData[uid] || {};
+        let name = u.name || 'Pengguna';
+        let row = document.createElement('div');
+        row.className = 'list-row';
+        row.innerHTML =
+          avatarHtml(name, u.photoURL) +
+          '<div class="row-main"><div class="row-title">' + escapeHtml(name) + '</div>' +
+          '<div class="row-sub" id="searchOtherMsg-' + uid + '">' + escapeHtml(u.email || '') + '</div></div>' +
+          '<button type="button" class="btn small primary" id="searchOtherBtn-' + uid + '">Tambah</button>';
+        row.querySelector('button').addEventListener('click', function(e){
+          e.stopPropagation();
+          let btnEl = this;
+          let msgEl = document.getElementById('searchOtherMsg-' + uid);
+          sendFriendRequestTo(u.email || '', msgEl, null, btnEl);
+        });
+        searchResultsWrap.appendChild(row);
+      });
+    }
   });
 
   // ===================================================================
@@ -2271,6 +2320,15 @@
       friendsData = snap.val() || {};
       renderFriendsList();
       renderGroupFriendPick();
+    });
+  }
+
+  // Semua akun terdaftar di aplikasi (bukan cuma yang sudah berteman),
+  // supaya kolom pencarian di atas daftar obrolan bisa nemuin teman
+  // baru yang barusan daftar juga, bukan cuma yang sudah ditambahkan.
+  function initAllUsersListener(){
+    track(db.ref('users'), 'value', function(snap){
+      allUsersData = snap.val() || {};
     });
   }
 
