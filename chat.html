@@ -597,6 +597,13 @@
   .gs-member-row{ display:flex; align-items:center; gap:10px; padding:8px 4px; }
   .gs-member-row .avatar{ width:36px; height:36px; font-size:14px; }
   .gs-member-tag{ font-size:11px; color:var(--text-dim); }
+  .gs-remove-member{
+    background:rgba(224,82,82,0.12);
+    color:#ff9a9a;
+    border:1px solid rgba(224,82,82,0.3);
+    flex-shrink:0;
+  }
+  .gs-remove-member:hover{ background:rgba(224,82,82,0.24); }
   .gs-add-row{ display:flex; align-items:center; gap:10px; padding:8px 4px; }
   .gs-add-row .avatar{ width:36px; height:36px; font-size:14px; }
   .row-main{ flex:1; min-width:0; }
@@ -979,14 +986,15 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
           <span>Keluar</span>
         </button>
+        <button class="avatar-dropdown-item" id="btnSettings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Pengaturan</span>
+        </button>
       </div>
     </div>
     <div class="who-id who-text">
       <span class="who-name" id="whoName">-</span>
     </div>
-    <button class="icon-btn" id="btnSettings" aria-label="Pengaturan" title="Pengaturan Akun">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </button>
   </div>
 </div>
 
@@ -1658,9 +1666,12 @@
     updateMyAvatarEls();
     modalSettings.classList.add('show');
   }
-  document.getElementById('btnSettings').addEventListener('click', openSettingsModal);
+  document.getElementById('btnSettings').addEventListener('click', function(){
+    avatarDropdown.classList.remove('show');
+    openSettingsModal();
+  });
 
-  // Klik avatar -> tampilkan pilihan (dropdown) berisi tombol Keluar
+  // Klik avatar -> tampilkan pilihan (dropdown) berisi tombol Keluar & Pengaturan
   const avatarDropdown = document.getElementById('avatarDropdown');
   document.getElementById('myAvatarBtn').addEventListener('click', function(e){
     e.stopPropagation();
@@ -2576,8 +2587,21 @@
         '<div class="row-main"><div class="row-title">' + escapeHtml(p.name) +
         (uid === currentUser.uid ? ' <span class="gs-member-tag">(Anda)</span>' : '') + '</div>' +
         '<div class="row-sub">' + escapeHtml(p.email || '') + '</div></div>' +
-        (uid === chat.createdBy ? '<span class="gs-member-tag">Pembuat</span>' : '');
+        (uid === chat.createdBy ? '<span class="gs-member-tag">Pembuat</span>' : '') +
+        (uid !== currentUser.uid ? '<button class="btn small gs-remove-member" data-uid="' + uid + '">Keluarkan</button>' : '');
       wrap.appendChild(row);
+    });
+    wrap.querySelectorAll('.gs-remove-member').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        let uid = this.getAttribute('data-uid');
+        let p = personInfo(uid);
+        if (!confirm('Keluarkan "' + p.name + '" dari grup ini?')) return;
+        let chatId = groupSettingsChatId;
+        let updates = {};
+        updates['chats/' + chatId + '/members/' + uid] = null;
+        updates['userChats/' + uid + '/' + chatId] = null;
+        db.ref().update(updates);
+      });
     });
   }
 
