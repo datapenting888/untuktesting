@@ -622,21 +622,40 @@
     text-overflow:ellipsis;
   }
   .row-actions{ display:flex; gap:6px; flex-shrink:0; }
-  .btn-delete-chat{
-    width:34px; height:34px;
-    flex-shrink:0;
-    border-radius:9px;
-    background:#ffffff;
-    border:none;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transition:background .15s ease, transform .1s ease;
+
+  /* ---------- Swipe-to-delete pada daftar obrolan ---------- */
+  .chat-row-wrap{
+    position:relative;
+    border-radius:11px;
+    overflow:hidden;
+    margin-bottom:4px;
   }
-  .btn-delete-chat:hover{ background:#ffe1e1; }
-  .btn-delete-chat:active{ transform:scale(0.94); }
-  .btn-delete-chat svg{ width:17px; height:17px; }
-  .btn-delete-chat svg path, .btn-delete-chat svg rect{ stroke:var(--danger); }
+  .chat-row-delete-bg{
+    position:absolute;
+    top:0; right:0; bottom:0;
+    width:86px;
+    display:flex;
+  }
+  .chat-row-delete-btn{
+    flex:1;
+    border:none;
+    background:var(--danger);
+    color:#fff;
+    font-size:13.5px;
+    font-weight:700;
+    letter-spacing:.2px;
+    cursor:pointer;
+  }
+  .chat-row-delete-btn:active{ filter:brightness(0.9); }
+  .chat-swipe-row{
+    position:relative;
+    background:var(--sidebar);
+    touch-action:pan-y;
+    transition:transform .22s ease;
+    margin-bottom:0 !important;
+    user-select:none;
+  }
+  .chat-swipe-row.dragging{ transition:none; }
   .empty-hint{
     color:var(--text-dim);
     font-size:12.5px;
@@ -2046,11 +2065,11 @@
     let q = this.value.trim().toLowerCase();
 
     // Filter baris percakapan yang sudah ada.
-    let rows = viewChats.querySelectorAll('#chatListWrap .list-row');
+    let rows = viewChats.querySelectorAll('#chatListWrap .chat-row-wrap');
     rows.forEach(function(row){
       let titleEl = row.querySelector('.row-title');
       let title = titleEl ? titleEl.textContent.toLowerCase() : '';
-      row.style.display = (!q || title.indexOf(q) !== -1) ? 'flex' : 'none';
+      row.style.display = (!q || title.indexOf(q) !== -1) ? 'block' : 'none';
     });
 
     if (!q){
@@ -2356,6 +2375,7 @@
       return (chatsIndex[b].lastMessageAt || 0) - (chatsIndex[a].lastMessageAt || 0);
     });
     wrap.innerHTML = '';
+    openSwipeRowEl = null;
     ids.forEach(function(chatId){
       let chat = chatsIndex[chatId];
       let name = chatDisplayName(chat);
@@ -2368,30 +2388,94 @@
         if (otherUid) photo = personInfo(otherUid).photoURL || '';
       }
       let row = document.createElement('div');
-      row.className = 'list-row' + (chatId === activeChatId ? ' active' : '');
+      row.className = 'chat-row-wrap';
       row.innerHTML =
-        avatarHtml(name, photo, chat.type === 'group' ? 'grp' : '') +
-        '<div class="row-main"><div class="row-title">' + escapeHtml(name) + '</div>' +
-        '<div class="row-sub">' + escapeHtml(chat.lastMessage || 'Belum ada pesan') + '</div></div>' +
-        '<div class="row-actions">' +
-          '<button type="button" class="btn-delete-chat" title="Hapus obrolan" aria-label="Hapus obrolan">' +
-            '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-              '<path d="M4 7H20" stroke-width="1.8" stroke-linecap="round"/>' +
-              '<path d="M9 7V4.8C9 4.36 9.36 4 9.8 4H14.2C14.64 4 15 4.36 15 4.8V7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
-              '<path d="M6.5 7L7.2 19.2C7.24 19.9 7.82 20.5 8.53 20.5H15.47C16.18 20.5 16.76 19.9 16.8 19.2L17.5 7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
-              '<path d="M10 11V16.5" stroke-width="1.8" stroke-linecap="round"/>' +
-              '<path d="M14 11V16.5" stroke-width="1.8" stroke-linecap="round"/>' +
-            '</svg>' +
-          '</button>' +
+        '<div class="chat-row-delete-bg"><button type="button" class="chat-row-delete-btn">Hapus</button></div>' +
+        '<div class="list-row chat-swipe-row' + (chatId === activeChatId ? ' active' : '') + '">' +
+          avatarHtml(name, photo, chat.type === 'group' ? 'grp' : '') +
+          '<div class="row-main"><div class="row-title">' + escapeHtml(name) + '</div>' +
+          '<div class="row-sub">' + escapeHtml(chat.lastMessage || 'Belum ada pesan') + '</div></div>' +
         '</div>';
-      row.addEventListener('click', function(){ openChat(chatId, name); });
-      row.querySelector('.btn-delete-chat').addEventListener('click', function(e){
+      let swipeRow = row.querySelector('.chat-swipe-row');
+      enableChatRowSwipe(row, swipeRow, function(){ openChat(chatId, name); });
+      row.querySelector('.chat-row-delete-btn').addEventListener('click', function(e){
         e.stopPropagation();
+        closeOpenSwipeRow();
         deleteChatFromList(chatId, name);
       });
       wrap.appendChild(row);
     });
   }
+
+  // ---- Swipe-to-reveal "Hapus" pada tiap baris obrolan (gaya WhatsApp) ----
+  let openSwipeRowEl = null;
+  const SWIPE_OPEN_X = -86;
+  function closeOpenSwipeRow(){
+    if (openSwipeRowEl){
+      openSwipeRowEl.style.transform = 'translateX(0)';
+      openSwipeRowEl = null;
+    }
+  }
+  function enableChatRowSwipe(wrapEl, rowEl, onTapOpen){
+    let startX = 0, startY = 0, currentX = 0, dragging = false, decided = false, isHorizontal = false;
+    rowEl.addEventListener('pointerdown', function(e){
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      startX = e.clientX; startY = e.clientY;
+      currentX = openSwipeRowEl === rowEl ? SWIPE_OPEN_X : 0;
+      dragging = true; decided = false; isHorizontal = false;
+      rowEl.classList.add('dragging');
+    });
+    rowEl.addEventListener('pointermove', function(e){
+      if (!dragging) return;
+      let dx = e.clientX - startX;
+      let dy = e.clientY - startY;
+      if (!decided){
+        if (Math.abs(dx) > 6 || Math.abs(dy) > 6){
+          decided = true;
+          isHorizontal = Math.abs(dx) > Math.abs(dy);
+          if (isHorizontal) rowEl.setPointerCapture(e.pointerId);
+        } else {
+          return;
+        }
+      }
+      if (!isHorizontal) return;
+      e.preventDefault();
+      let base = openSwipeRowEl === rowEl ? SWIPE_OPEN_X : 0;
+      let x = base + dx;
+      if (x > 0) x = 0;
+      if (x < SWIPE_OPEN_X) x = SWIPE_OPEN_X - (Math.abs(x - SWIPE_OPEN_X) * 0.25);
+      currentX = x;
+      rowEl.style.transform = 'translateX(' + x + 'px)';
+    });
+    function endDrag(e){
+      if (!dragging) return;
+      dragging = false;
+      rowEl.classList.remove('dragging');
+      if (!isHorizontal){
+        if (!decided && onTapOpen){
+          if (openSwipeRowEl === rowEl){ closeOpenSwipeRow(); return; }
+          if (openSwipeRowEl && openSwipeRowEl !== rowEl){ closeOpenSwipeRow(); return; }
+          onTapOpen();
+        }
+        return;
+      }
+      if (currentX < SWIPE_OPEN_X / 2){
+        rowEl.style.transform = 'translateX(' + SWIPE_OPEN_X + 'px)';
+        if (openSwipeRowEl && openSwipeRowEl !== rowEl) openSwipeRowEl.style.transform = 'translateX(0)';
+        openSwipeRowEl = rowEl;
+      } else {
+        rowEl.style.transform = 'translateX(0)';
+        if (openSwipeRowEl === rowEl) openSwipeRowEl = null;
+      }
+    }
+    rowEl.addEventListener('pointerup', endDrag);
+    rowEl.addEventListener('pointercancel', endDrag);
+  }
+  document.addEventListener('pointerdown', function(e){
+    if (openSwipeRowEl && !openSwipeRowEl.closest('.chat-row-wrap').contains(e.target)){
+      closeOpenSwipeRow();
+    }
+  });
 
   function deleteChatFromList(chatId, name){
     let chat = chatsIndex[chatId];
