@@ -1300,6 +1300,14 @@
 
       <!-- Tab: Tambah -->
       <div class="gs-panel" id="gsPanelAdd">
+        <div class="panel-section-title" style="margin:0 0 6px;">Tambah Pertemanan Baru</div>
+        <div class="add-friend-box">
+          <input type="text" id="gsNewFriendEmail" placeholder="Masukkan email teman">
+          <button class="btn small primary" id="btnGsSendFriendReq">Kirim</button>
+        </div>
+        <div class="add-friend-msg" id="gsAddFriendMsg"></div>
+
+        <div class="panel-section-title" style="margin:16px 0 6px;">Tambah ke Grup Ini</div>
         <div id="gsAddWrap"></div>
       </div>
     </div>
@@ -2504,6 +2512,10 @@
     if (!chat || chat.type !== 'group') return;
     groupSettingsChatId = chatId;
     gsPendingPhoto = null;
+    let gsNewFriendEmail = document.getElementById('gsNewFriendEmail');
+    let gsAddFriendMsg = document.getElementById('gsAddFriendMsg');
+    if (gsNewFriendEmail) gsNewFriendEmail.value = '';
+    if (gsAddFriendMsg){ gsAddFriendMsg.textContent = ''; gsAddFriendMsg.className = 'add-friend-msg'; }
     setGsTab('settings');
     populateGroupSettings();
     groupSettingsModal.classList.add('show');
@@ -2595,6 +2607,19 @@
       wrap.appendChild(row);
     });
   }
+
+  document.getElementById('btnGsSendFriendReq').addEventListener('click', function(){
+    let inputEl = document.getElementById('gsNewFriendEmail');
+    let msgEl = document.getElementById('gsAddFriendMsg');
+    let btnEl = this;
+    sendFriendRequestTo((inputEl.value || '').trim(), msgEl, inputEl, btnEl);
+  });
+  document.getElementById('gsNewFriendEmail').addEventListener('keydown', function(e){
+    if (e.key === 'Enter'){
+      e.preventDefault();
+      document.getElementById('btnGsSendFriendReq').click();
+    }
+  });
 
   document.getElementById('btnGsChangePhoto').addEventListener('click', function(){
     document.getElementById('gsPhotoInput').click();
