@@ -1818,17 +1818,6 @@
   auth.onAuthStateChanged(function(user){
     detachAllListeners();
     if (user){
-      if (!user.emailVerified){
-        authScreen.style.display = 'none';
-        appScreen.style.display = 'none';
-        verifyScreen.style.display = 'flex';
-        hideInitialLoadingScreen();
-        document.getElementById('verifyEmailTarget').textContent = user.email;
-        document.getElementById('topbarWho').style.display = 'none';
-        currentUser = null;
-        updateConnIndicator();
-        return;
-      }
       verifyScreen.style.display = 'none';
       db.ref('users/' + user.uid).once('value').then(function(snap){
         let profile = snap.val() || { name: user.email, email: user.email };
