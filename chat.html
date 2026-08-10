@@ -2,6 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Data Penting — Chat</title>
@@ -410,6 +413,7 @@
   .avatar-dropdown-item:hover{ background:var(--sidebar-2); }
   .avatar-dropdown-item.danger{ color:var(--danger); }
   .avatar-dropdown-item.danger:hover{ background:rgba(224,82,82,0.12); }
+  .chat-header-dropdown{ left:auto; right:0; min-width:170px; }
   .icon-btn{
     width:34px; height:34px;
     border-radius:50%;
@@ -1145,6 +1149,17 @@
           <button class="icon-btn" id="btnGroupSettings" aria-label="Pengaturan Grup" title="Pengaturan Grup" style="display:none;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           </button>
+          <div class="avatar-menu-wrap">
+            <button class="icon-btn" id="btnChatHeaderMenu" aria-label="Menu obrolan" title="Menu obrolan">
+              <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="12" cy="19" r="1.9"/></svg>
+            </button>
+            <div class="avatar-dropdown chat-header-dropdown" id="chatHeaderDropdown">
+              <button class="avatar-dropdown-item danger" id="btnHeaderDeleteChat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                Hapus Obrolan
+              </button>
+            </div>
+          </div>
         </div>
         <div class="chat-header chat-header-selection" id="chatHeaderSelection" style="display:none;">
           <button class="icon-btn" id="btnCancelSelection" aria-label="Batal">
@@ -1231,7 +1246,6 @@
         <label>Email Akun Kamu</label>
         <input type="text" id="settingsMyEmail" readonly disabled>
       </div>
-      <div class="status-field-hint" style="margin:-10px 0 14px;">Ini email akun yang sedang login.</div>
 
       <div class="field">
         <label>Status</label>
@@ -1241,8 +1255,36 @@
 
       <div class="settings-divider"></div>
 
-      <div class="panel-section-title" style="margin:16px 0 6px;">Permintaan Masuk</div>
-      <div id="incomingRequestsWrap"><div class="empty-hint">Tidak ada permintaan masuk.</div></div>
+      <div class="panel-section-title" style="margin:0 0 6px;">Ubah Password</div>
+      <button class="btn small" id="btnToggleChangePassword" type="button">Ubah Password</button>
+
+      <div id="changePassFormWrap" style="display:none; margin-top:12px;">
+        <div class="auth-error" id="changePassError"></div>
+        <div class="auth-success-msg" id="changePassSuccess"></div>
+        <div class="field">
+          <label>Password Saat Ini</label>
+          <input type="password" id="changePassCurrent" placeholder="Password yang sedang dipakai" autocomplete="current-password">
+        </div>
+        <div class="field">
+          <label>Password Baru</label>
+          <input type="password" id="changePassNew" placeholder="Minimal 6 karakter" autocomplete="new-password">
+        </div>
+        <div class="field">
+          <label>Konfirmasi Password Baru</label>
+          <input type="password" id="changePassConfirm" placeholder="Ulangi password baru" autocomplete="new-password">
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn small primary" id="btnChangePassword" type="button">Simpan Password</button>
+          <button class="btn small" id="btnCancelChangePassword" type="button">Batal</button>
+        </div>
+      </div>
+
+      <div class="settings-divider" style="margin-top:18px;"></div>
+
+      <div id="incomingRequestsSection" style="display:none;">
+        <div class="panel-section-title" style="margin:16px 0 6px;">Permintaan Masuk</div>
+        <div id="incomingRequestsWrap"></div>
+      </div>
 
       <div class="panel-section-title" style="margin:16px 0 6px;">Daftar Teman</div>
       <div id="friendsListWrap"><div class="empty-hint">Belum ada teman. Tambahkan lewat email di atas.</div></div>
@@ -1689,6 +1731,12 @@
     settingsStatusInput.value = currentUser.status || '';
     document.getElementById('settingsMyEmail').value = currentUser.email || '';
     updateMyAvatarEls();
+    document.getElementById('changePassFormWrap').style.display = 'none';
+    document.getElementById('changePassError').style.display = 'none';
+    document.getElementById('changePassSuccess').style.display = 'none';
+    document.getElementById('changePassCurrent').value = '';
+    document.getElementById('changePassNew').value = '';
+    document.getElementById('changePassConfirm').value = '';
     modalSettings.classList.add('show');
   }
   document.getElementById('btnSettings').addEventListener('click', function(){
@@ -2039,6 +2087,85 @@
       .finally(function(){ btn.disabled = false; });
   });
 
+  // ---------------------------------------------------------------
+  // Ubah Password (dari dalam Pengaturan Akun, saat sudah login)
+  // ---------------------------------------------------------------
+  const changePassError = document.getElementById('changePassError');
+  const changePassSuccess = document.getElementById('changePassSuccess');
+  const changePassCurrent = document.getElementById('changePassCurrent');
+  const changePassNew = document.getElementById('changePassNew');
+  const changePassConfirm = document.getElementById('changePassConfirm');
+
+  const changePassFormWrap = document.getElementById('changePassFormWrap');
+
+  document.getElementById('btnToggleChangePassword').addEventListener('click', function(){
+    let isOpen = changePassFormWrap.style.display !== 'none';
+    changePassFormWrap.style.display = isOpen ? 'none' : 'block';
+  });
+  document.getElementById('btnCancelChangePassword').addEventListener('click', function(){
+    changePassFormWrap.style.display = 'none';
+    changePassError.style.display = 'none';
+    changePassSuccess.style.display = 'none';
+    changePassCurrent.value = '';
+    changePassNew.value = '';
+    changePassConfirm.value = '';
+  });
+
+  document.getElementById('btnChangePassword').addEventListener('click', function(){
+    changePassError.style.display = 'none';
+    changePassSuccess.style.display = 'none';
+
+    let curPass = changePassCurrent.value;
+    let newPass = changePassNew.value;
+    let confirmPass = changePassConfirm.value;
+
+    if (!curPass || !newPass || !confirmPass){
+      changePassError.textContent = 'Semua kolom password wajib diisi.';
+      changePassError.style.display = 'block';
+      return;
+    }
+    if (newPass.length < 6){
+      changePassError.textContent = 'Password baru minimal 6 karakter.';
+      changePassError.style.display = 'block';
+      return;
+    }
+    if (newPass !== confirmPass){
+      changePassError.textContent = 'Konfirmasi password baru tidak sama.';
+      changePassError.style.display = 'block';
+      return;
+    }
+
+    let user = auth.currentUser;
+    if (!user || !user.email){
+      changePassError.textContent = 'Sesi login tidak ditemukan, silakan login ulang.';
+      changePassError.style.display = 'block';
+      return;
+    }
+
+    let btn = document.getElementById('btnChangePassword');
+    btn.disabled = true;
+
+    let credential = firebase.auth.EmailAuthProvider.credential(user.email, curPass);
+    user.reauthenticateWithCredential(credential)
+      .then(function(){
+        return user.updatePassword(newPass);
+      })
+      .then(function(){
+        changePassSuccess.textContent = 'Password berhasil diubah.';
+        changePassSuccess.style.display = 'block';
+        changePassCurrent.value = '';
+        changePassNew.value = '';
+        changePassConfirm.value = '';
+      })
+      .catch(function(err){
+        changePassError.textContent = mapAuthError(err);
+        changePassError.style.display = 'block';
+      })
+      .finally(function(){
+        btn.disabled = false;
+      });
+  });
+
   function resetAppState(){
     friendsData = {};
     incomingRequests = {};
@@ -2049,7 +2176,8 @@
     clearSavedActiveChat();
     document.getElementById('chatListWrap').innerHTML = '<div class="empty-hint">Belum ada percakapan. Mulai chat dari tab TEMAN.</div>';
     document.getElementById('friendsListWrap').innerHTML = '<div class="empty-hint">Belum ada teman. Tambahkan lewat email di atas.</div>';
-    document.getElementById('incomingRequestsWrap').innerHTML = '<div class="empty-hint">Tidak ada permintaan masuk.</div>';
+    document.getElementById('incomingRequestsWrap').innerHTML = '';
+    document.getElementById('incomingRequestsSection').style.display = 'none';
     document.getElementById('chatEmptyState').style.display = 'flex';
     document.getElementById('chatActiveWrap').style.display = 'none';
   }
@@ -2271,11 +2399,14 @@
   // ===================================================================
   function renderIncomingRequests(){
     let wrap = document.getElementById('incomingRequestsWrap');
+    let section = document.getElementById('incomingRequestsSection');
     let uids = Object.keys(incomingRequests);
     if (uids.length === 0){
-      wrap.innerHTML = '<div class="empty-hint">Tidak ada permintaan masuk.</div>';
+      wrap.innerHTML = '';
+      section.style.display = 'none';
       return;
     }
+    section.style.display = 'block';
     wrap.innerHTML = '';
     uids.forEach(function(fromUid){
       let req = incomingRequests[fromUid];
@@ -2463,8 +2594,10 @@
       }
       let row = document.createElement('div');
       row.className = 'chat-row-wrap';
+      let isPrivateRow = chat.type !== 'group';
+      let deleteLabel = isPrivateRow ? 'Hapus pertemanan' : 'Hapus obrolan';
       row.innerHTML =
-        '<div class="chat-row-delete-bg"><button type="button" class="chat-row-delete-btn" aria-label="Hapus obrolan" title="Hapus obrolan">' +
+        '<div class="chat-row-delete-bg"><button type="button" class="chat-row-delete-btn" aria-label="' + deleteLabel + '" title="' + deleteLabel + '">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>' +
         '</button></div>' +
         '<div class="list-row chat-swipe-row' + (chatId === activeChatId ? ' active' : '') + '">' +
@@ -2477,7 +2610,13 @@
       row.querySelector('.chat-row-delete-btn').addEventListener('click', function(e){
         e.stopPropagation();
         closeOpenSwipeRow();
-        deleteChatFromList(chatId, name);
+        if (isPrivateRow){
+          let members = chat.members || {};
+          let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
+          removeFriendAndChat(chatId, otherUid, name);
+        } else {
+          deleteChatFromList(chatId, name);
+        }
       });
       wrap.appendChild(row);
     });
@@ -2492,14 +2631,36 @@
       openSwipeRowEl = null;
     }
   }
+  const LONG_PRESS_MS = 500;
   function enableChatRowSwipe(wrapEl, rowEl, onTapOpen){
     let startX = 0, startY = 0, currentX = 0, dragging = false, decided = false, isHorizontal = false;
+    let longPressTimer = null;
+    let longPressFired = false;
+    function clearLongPressTimer(){
+      if (longPressTimer){ clearTimeout(longPressTimer); longPressTimer = null; }
+    }
+    function openDeleteBySwipe(){
+      rowEl.style.transform = 'translateX(' + SWIPE_OPEN_X + 'px)';
+      if (openSwipeRowEl && openSwipeRowEl !== rowEl) openSwipeRowEl.style.transform = 'translateX(0)';
+      openSwipeRowEl = rowEl;
+    }
     rowEl.addEventListener('pointerdown', function(e){
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       startX = e.clientX; startY = e.clientY;
       currentX = openSwipeRowEl === rowEl ? SWIPE_OPEN_X : 0;
       dragging = true; decided = false; isHorizontal = false;
+      longPressFired = false;
       rowEl.classList.add('dragging');
+      // Tekan & tahan (tanpa menggeser) juga membuka akses hapus,
+      // sama seperti swipe ke kiri.
+      clearLongPressTimer();
+      longPressTimer = setTimeout(function(){
+        if (dragging && !decided){
+          longPressFired = true;
+          rowEl.classList.remove('dragging');
+          openDeleteBySwipe();
+        }
+      }, LONG_PRESS_MS);
     });
     rowEl.addEventListener('pointermove', function(e){
       if (!dragging) return;
@@ -2508,6 +2669,7 @@
       if (!decided){
         if (Math.abs(dx) > 6 || Math.abs(dy) > 6){
           decided = true;
+          clearLongPressTimer();
           isHorizontal = Math.abs(dx) > Math.abs(dy);
           if (isHorizontal) rowEl.setPointerCapture(e.pointerId);
         } else {
@@ -2524,9 +2686,11 @@
       rowEl.style.transform = 'translateX(' + x + 'px)';
     });
     function endDrag(e){
+      clearLongPressTimer();
       if (!dragging) return;
       dragging = false;
       rowEl.classList.remove('dragging');
+      if (longPressFired) return;
       if (!isHorizontal){
         if (!decided && onTapOpen){
           if (openSwipeRowEl === rowEl){ closeOpenSwipeRow(); return; }
@@ -2536,9 +2700,7 @@
         return;
       }
       if (currentX < SWIPE_OPEN_X / 2){
-        rowEl.style.transform = 'translateX(' + SWIPE_OPEN_X + 'px)';
-        if (openSwipeRowEl && openSwipeRowEl !== rowEl) openSwipeRowEl.style.transform = 'translateX(0)';
-        openSwipeRowEl = rowEl;
+        openDeleteBySwipe();
       } else {
         rowEl.style.transform = 'translateX(0)';
         if (openSwipeRowEl === rowEl) openSwipeRowEl = null;
@@ -2553,12 +2715,14 @@
     }
   });
 
-  function deleteChatFromList(chatId, name){
+  function deleteChatFromList(chatId, name, simpleConfirm){
     let chat = chatsIndex[chatId];
     let isPrivate = chat && chat.type === 'private';
-    let msg = isPrivate
-      ? 'Hapus semua pesan obrolan dengan "' + name + '"? Nama/teman ini akan tetap ada di daftar chat kamu, hanya riwayat pesannya saja yang dihapus.'
-      : 'Hapus semua pesan obrolan grup "' + name + '"? Grup dan anggotanya akan tetap ada seperti biasa, hanya riwayat pesannya saja yang dihapus untuk semua anggota.';
+    let msg = simpleConfirm
+      ? 'Hapus semua pesan obrolan dengan "' + name + '"?'
+      : (isPrivate
+        ? 'Apakah anda ingin hapus semua pesan obrolan dengan "' + name + '"? Nama/teman ini akan tetap ada di daftar chat kamu, hanya riwayat pesannya saja yang dihapus.'
+        : 'Apakah anda ingin hapus semua pesan obrolan grup "' + name + '"? Grup dan anggotanya akan tetap ada seperti biasa, hanya riwayat pesannya saja yang dihapus untuk semua anggota.');
     if (!confirm(msg)) return;
 
     // Baik chat privat maupun grup: yang dihapus HANYA riwayat
@@ -2575,6 +2739,35 @@
     // Chat/grup tetap terbuka & tetap ada di daftar; pesan-pesannya
     // akan otomatis hilang dari layar lewat listener child_removed
     // kalau chat ini sedang dibuka.
+  }
+
+  function removeFriendAndChat(chatId, otherUid, name){
+    if (!otherUid) return;
+    let msg = 'Hapus pertemanan akan menghapus percakapan kamu sebelumnya, apakah anda yakin?';
+    if (!confirm(msg)) return;
+
+    // Hapus pertemanan dua arah, hapus chat dari daftar kedua pihak,
+    // dan hapus juga isi percakapannya supaya kalau nanti berteman
+    // lagi, obrolannya benar-benar mulai dari kosong/fresh.
+    let updates = {};
+    updates['friends/' + currentUser.uid + '/' + otherUid] = null;
+    updates['friends/' + otherUid + '/' + currentUser.uid] = null;
+    updates['userChats/' + currentUser.uid + '/' + chatId] = null;
+    updates['userChats/' + otherUid + '/' + chatId] = null;
+    updates['chats/' + chatId] = null;
+    db.ref().update(updates).then(function(){
+      if (activeChatId === chatId){
+        activeChatId = null;
+        detachMessagesListener();
+        chatEmptyState.style.display = 'flex';
+        chatActiveWrap.style.display = 'none';
+        mobileViewMode = 'list';
+        updateMobileView();
+        clearSavedActiveChat();
+      }
+    }).catch(function(err){
+      alert('Gagal menghapus pertemanan: ' + err.message);
+    });
   }
 
   function openPrivateChat(friendUid, friendName){
@@ -2693,6 +2886,27 @@
   }
   document.getElementById('btnGroupSettings').addEventListener('click', function(){
     if (activeChatId) openGroupSettings(activeChatId);
+  });
+
+  // Menu titik-tiga di header obrolan aktif -> "Hapus Obrolan"
+  // (hanya menghapus pesan-pesannya, obrolan/teman tetap ada di daftar,
+  // sama seperti aksi tong sampah versi lama).
+  const chatHeaderDropdown = document.getElementById('chatHeaderDropdown');
+  document.getElementById('btnChatHeaderMenu').addEventListener('click', function(e){
+    e.stopPropagation();
+    chatHeaderDropdown.classList.toggle('show');
+  });
+  document.addEventListener('click', function(e){
+    if (!chatHeaderDropdown.contains(e.target) && e.target.id !== 'btnChatHeaderMenu'){
+      chatHeaderDropdown.classList.remove('show');
+    }
+  });
+  document.getElementById('btnHeaderDeleteChat').addEventListener('click', function(){
+    chatHeaderDropdown.classList.remove('show');
+    if (!activeChatId) return;
+    let chat = chatsIndex[activeChatId];
+    let name = chat ? chatDisplayName(chat) : '';
+    deleteChatFromList(activeChatId, name, true);
   });
   document.getElementById('btnCloseGroupSettings').addEventListener('click', function(){
     groupSettingsModal.classList.remove('show');
