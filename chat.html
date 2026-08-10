@@ -1751,8 +1751,11 @@
     });
   });
 
-  // Kirim permintaan pertemanan (dipakai dari tab Teman & dari Pengaturan Akun)
-  function sendFriendRequestTo(targetEmail, msgEl, inputEl, btnEl){
+  // Menambahkan pertemanan: langsung dua arah (tanpa perlu persetujuan
+  // dari pihak satunya dulu), supaya begitu ditambahkan langsung bisa
+  // memulai percakapan. Dipakai dari tab Teman, Pengaturan Akun, dan
+  // dari hasil pencarian "Pengguna Lain".
+  function sendFriendRequestTo(targetEmail, msgEl, inputEl, btnEl, onDone){
     msgEl.className = 'add-friend-msg';
     msgEl.textContent = '';
     if (!targetEmail) return;
@@ -1777,21 +1780,33 @@
       if (friendsData[targetUid]){
         msgEl.className = 'add-friend-msg err';
         msgEl.textContent = 'Kalian sudah berteman.';
+        if (onDone) onDone(targetUid);
         return;
       }
-      return db.ref('friendRequests/' + targetUid + '/' + currentUser.uid).set({
-        fromName: currentUser.name,
-        fromEmail: currentUser.email,
-        fromPhoto: currentUser.photoURL || '',
-        createdAt: firebase.database.ServerValue.TIMESTAMP
-      }).then(function(){
-        msgEl.className = 'add-friend-msg ok';
-        msgEl.textContent = 'Permintaan pertemanan terkirim.';
-        if (inputEl) inputEl.value = '';
+      return db.ref('users/' + targetUid).once('value').then(function(usnap){
+        let targetProfile = usnap.val() || {};
+        let updates = {};
+        updates['friends/' + currentUser.uid + '/' + targetUid] = {
+          name: targetProfile.name || 'Pengguna',
+          email: targetProfile.email || targetEmail,
+          photoURL: targetProfile.photoURL || ''
+        };
+        updates['friends/' + targetUid + '/' + currentUser.uid] = {
+          name: currentUser.name,
+          email: currentUser.email,
+          photoURL: currentUser.photoURL || ''
+        };
+        updates['friendRequests/' + targetUid + '/' + currentUser.uid] = null;
+        return db.ref().update(updates).then(function(){
+          msgEl.className = 'add-friend-msg ok';
+          msgEl.textContent = 'Berteman! Sekarang kalian bisa mulai chat.';
+          if (inputEl) inputEl.value = '';
+          if (onDone) onDone(targetUid);
+        });
       });
     }).catch(function(err){
       msgEl.className = 'add-friend-msg err';
-      msgEl.textContent = 'Gagal mengirim: ' + err.message;
+      msgEl.textContent = 'Gagal menambahkan: ' + err.message;
     }).finally(function(){
       if (btnEl) btnEl.disabled = false;
     });
@@ -2154,7 +2169,14 @@
           e.stopPropagation();
           let btnEl = this;
           let msgEl = document.getElementById('searchOtherMsg-' + uid);
-          sendFriendRequestTo(u.email || '', msgEl, null, btnEl);
+          sendFriendRequestTo(u.email || '', msgEl, null, btnEl, function(friendUid){
+            setTimeout(function(){
+              document.getElementById('searchBox').value = '';
+              searchResultsWrap.style.display = 'none';
+              searchResultsWrap.innerHTML = '';
+              openPrivateChat(friendUid, name);
+            }, 500);
+          });
         });
         searchResultsWrap.appendChild(row);
       });
