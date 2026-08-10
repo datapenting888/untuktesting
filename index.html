@@ -1557,11 +1557,12 @@
   <a class="nav-item" id="navDataPrivasi" href="chat.html" target="_blank" rel="noopener">
     <span class="icon">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 20l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M8 10h.01M12 10h.01M16 10h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 13h6M9 17h6M9 9h1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </span>
-    <span class="label label-sm">DATA PRIVASI</span>
+    <span class="label label-sm">DATA PENTING</span>
   </a>
 
   <div class="sidebar-footer">© 2026 RIKI GOLAN — All Rights Reserved</div>
@@ -4165,7 +4166,7 @@ setInterval(() => {
 
         newRow.innerHTML = `
             <td><input type="text" class="ds-row-date" value="${dateStr}" ${isLocked ? 'disabled' : 'readonly'}></td>
-            <td><input type="text" class="ds-row-rek${isSamar}" value="${rekVal}" onfocus="dsClearPlaceholder(this)" onblur="dsRestorePlaceholder(this)" ${isLocked ? 'disabled' : ''}></td>
+            <td><input type="text" class="ds-row-rek${isSamar}" value="${rekVal}" onfocus="dsClearPlaceholder(this)" onblur="dsRestorePlaceholder(this)" oninput="dsHandleRekInput(this)" ${isLocked ? 'disabled' : ''}></td>
             <td>
                 <select class="ds-row-jenis" ${isLocked ? 'disabled' : ''}>
                     <option value="-" ${jenisVal === '-' ? 'selected' : ''}>-</option>
@@ -4296,12 +4297,40 @@ setInterval(() => {
     function dsProcessImageInput(pasteArea, dataUrl) {
         const row = pasteArea.closest('tr');
 
+        // Tidak ada lagi keharusan mengisi nomor rekening terlebih dahulu.
+        // Screenshot boleh ditempel duluan atau belakangan — gambar yang
+        // baru ditempel langsung ditampilkan sebagai pratinjau di baris
+        // draft ini sambil menunggu nomor rekening diisi (atau langsung
+        // tersimpan bila nomor rekening sudah terisi lebih dulu).
+        row.dataset.dsPendingImg = dataUrl;
+        pasteArea.innerHTML = `<img src="${dataUrl}" class="ds-preview-img" title="Klik untuk memperbesar gambar" onclick="dsOpenModal('${dataUrl}')">`;
+
+        dsTrySaveDraftRow(row);
+    }
+
+    // Dipanggil setiap kali kolom NOMOR REKENING pada baris draft diketik.
+    // Jika screenshot sudah ditempel lebih dulu (menunggu di
+    // row.dataset.dsPendingImg), pengisian nomor rekening ini akan langsung
+    // memicu penyimpanan — tanpa peduli mana yang diisi lebih dulu.
+    function dsHandleRekInput(input) {
+        const row = input.closest('tr');
+        if (row) {
+            dsTrySaveDraftRow(row);
+        }
+    }
+
+    // Menyimpan baris draft ke Firebase HANYA jika kedua data wajib sudah
+    // lengkap: nomor rekening terisi DAN screenshot sudah ditempel. Jika
+    // salah satu masih kosong, fungsi ini berhenti diam-diam dan menunggu
+    // input berikutnya (dipanggil ulang dari dsProcessImageInput / dsHandleRekInput).
+    function dsTrySaveDraftRow(row) {
         const rekInput = row.querySelector('.ds-row-rek');
         const jenisSelect = row.querySelector('.ds-row-jenis');
         const dateInput = row.querySelector('.ds-row-date');
+        const dataUrl = row.dataset.dsPendingImg;
 
-        if (rekInput.value === "NO REKENING" || rekInput.value.trim() === "") {
-            alert("Harap masukkan nomor rekening terlebih dahulu!");
+        const rekFilled = rekInput.value.trim() !== "" && rekInput.value !== "NO REKENING";
+        if (!rekFilled || !dataUrl) {
             return;
         }
 
@@ -4323,6 +4352,8 @@ setInterval(() => {
             console.error('[Firebase] Gagal menyimpan screenshot:', err);
             dsShowToast('⚠ Gagal menyimpan ke Firebase: ' + (err && err.message ? err.message : String(err)));
         });
+
+        delete row.dataset.dsPendingImg;
 
         // Baris "terkunci" (locked) untuk entri ini akan otomatis muncul di
         // atas baris draft lewat listener child_added (real-time). Baris
@@ -4381,6 +4412,7 @@ setInterval(() => {
     window.dsOpenSavedLink = dsOpenSavedLink;
     window.dsHandleCopyAndOpen = dsHandleCopyAndOpen;
     window.dsHandlePaste = dsHandlePaste;
+    window.dsHandleRekInput = dsHandleRekInput;
     window.dsOpenModal = dsOpenModal;
     window.dsCloseModal = dsCloseModal;
 })();
