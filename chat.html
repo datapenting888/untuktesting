@@ -640,13 +640,15 @@
     flex:1;
     border:none;
     background:var(--danger);
+    opacity:1;
     color:#fff;
-    font-size:13.5px;
-    font-weight:700;
-    letter-spacing:.2px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     cursor:pointer;
   }
-  .chat-row-delete-btn:active{ filter:brightness(0.9); }
+  .chat-row-delete-btn svg{ width:22px; height:22px; flex-shrink:0; }
+  .chat-row-delete-btn:active{ filter:brightness(0.85); }
   .chat-swipe-row{
     position:relative;
     background:var(--sidebar);
@@ -2459,7 +2461,9 @@
       let row = document.createElement('div');
       row.className = 'chat-row-wrap';
       row.innerHTML =
-        '<div class="chat-row-delete-bg"><button type="button" class="chat-row-delete-btn">Hapus</button></div>' +
+        '<div class="chat-row-delete-bg"><button type="button" class="chat-row-delete-btn" aria-label="Hapus obrolan" title="Hapus obrolan">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>' +
+        '</button></div>' +
         '<div class="list-row chat-swipe-row' + (chatId === activeChatId ? ' active' : '') + '">' +
           avatarHtml(name, photo, chat.type === 'group' ? 'grp' : '') +
           '<div class="row-main"><div class="row-title">' + escapeHtml(name) + '</div>' +
