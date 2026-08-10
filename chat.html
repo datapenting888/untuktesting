@@ -1289,7 +1289,7 @@
 
         <div class="gs-delete-row" id="gsDeleteRow">
           <button class="btn gs-delete" id="btnGsDeleteGroup">Hapus Grup</button>
-          <div class="gs-delete-note">Hanya pembuat grup yang dapat menghapus grup ini.</div>
+          <div class="gs-delete-note">Grup akan dihapus untuk semua anggota.</div>
         </div>
       </div>
 
@@ -2554,7 +2554,7 @@
     let memberCount = Object.keys(chat.members || {}).length;
     document.getElementById('gsMembersTabLabel').textContent = 'Anggota (' + memberCount + ')';
 
-    document.getElementById('gsDeleteRow').style.display = (chat.createdBy === currentUser.uid) ? 'block' : 'none';
+    document.getElementById('gsDeleteRow').style.display = 'block';
 
     renderGsMembers(chat);
     renderGsAdd(chat);
