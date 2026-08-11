@@ -107,8 +107,8 @@
     transition:background-color .3s ease, box-shadow .3s ease;
   }
   .topbar .brand .dot.online{
-    background:#3ddc5b;
-    box-shadow:0 0 8px #3ddc5b;
+    background:#025902;
+    box-shadow:0 0 8px #025902;
   }
   .topbar .who{
     display:flex;
@@ -191,6 +191,49 @@
     transition:background-color 9999s ease-in-out 0s;
   }
   .field input:disabled{ opacity:0.65; cursor:not-allowed; }
+  /* ---------- Notifikasi pesan masuk (toast dalam-app) ---------- */
+  .msg-toast-wrap{
+    position:fixed;
+    top:calc(10px + env(safe-area-inset-top, 0px));
+    left:50%;
+    transform:translateX(-50%);
+    width:calc(100% - 24px);
+    max-width:420px;
+    z-index:9999;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    pointer-events:none;
+  }
+  .msg-toast{
+    pointer-events:auto;
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    background:var(--bg-card);
+    border:1px solid var(--border-soft);
+    border-radius:14px;
+    padding:12px 14px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+    cursor:pointer;
+    animation:msgToastIn .22s ease;
+  }
+  .msg-toast:active{ transform:scale(0.98); }
+  .msg-toast .mt-avatar{ flex-shrink:0; }
+  .msg-toast .mt-main{ flex:1; min-width:0; }
+  .msg-toast .mt-title{ font-weight:700; font-size:13.5px; color:var(--text-light); margin-bottom:2px; }
+  .msg-toast .mt-body{
+    font-size:12.5px; color:var(--text-dim);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .msg-toast .mt-close{
+    flex-shrink:0; background:none; border:none; color:var(--text-dim);
+    font-size:16px; line-height:1; padding:2px 4px; cursor:pointer;
+  }
+  @keyframes msgToastIn{
+    from{ opacity:0; transform:translateY(-10px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
   .auth-actions{ margin-top:18px; }
   .auth-actions .btn{ width:100%; padding:11px; font-size:14px; }
   .auth-toggle{
@@ -204,7 +247,7 @@
     cursor:pointer;
     font-weight:600;
   }
-  #authToggleLink{ color:#0a7a0a; }
+  #authToggleLink{ color:#025902; }
   .auth-error{
     background:rgba(224,82,82,0.12);
     border:1px solid rgba(224,82,82,0.4);
@@ -388,7 +431,7 @@
   .who-id{ display:flex; flex-direction:column; line-height:1.25; }
   .who-id .who-name{ font-size:13px; font-weight:600; color:var(--text-light); }
   .who-status{ display:flex; align-items:center; gap:5px; font-size:11px; color:#7fe08f; }
-  .who-status .dot{ width:7px; height:7px; border-radius:50%; background:#3ddc5b; box-shadow:0 0 5px #3ddc5b; flex-shrink:0; }
+  .who-status .dot{ width:7px; height:7px; border-radius:50%; background:#025902; box-shadow:0 0 5px #025902; flex-shrink:0; }
 
   .avatar-menu-wrap{ position:relative; }
   .avatar-dropdown{
@@ -1015,6 +1058,7 @@
 </style>
 </head>
 <body>
+<div class="msg-toast-wrap" id="msgToastWrap"></div>
 
 <div class="topbar">
   <div class="brand"><span class="dot" id="connDot"></span> <span id="connLabel">Offline</span></div>
@@ -1573,6 +1617,9 @@
   let chatsIndex = {};         // { chatId: {type,name,members,lastMessage,lastMessageAt} }
   let allUsersData = {};       // { uid: {name,email,photoURL} } — semua akun terdaftar, dipakai untuk pencarian pengguna baru
   let activeChatId = null;
+  let chatMsgBaseline = {};    // { chatId: lastMessageAt } — dipakai untuk mendeteksi pesan BARU (bukan pesan lama saat listener pertama kali nyala)
+  let unreadNotifCount = 0;    // jumlah notifikasi pesan yang belum dilihat (dipakai di judul tab)
+  const pageBaseTitle = document.title;
 
   // -------------------------------------------------------------
   // Ingat posisi chat terakhir (chat + grup yang sedang dibuka, dan
@@ -1941,6 +1988,7 @@
         initAllUsersListener();
         startInactivityWatcher();
         updateConnIndicator();
+        requestNotifPermission();
       });
     } else {
       currentUser = null;
@@ -2199,6 +2247,8 @@
     activeListenerRefs.forEach(function(r){ r.ref.off(r.event, r.cb); });
     activeListenerRefs = [];
     if (messagesListenerRef){ detachMessagesListener(); }
+    chatMsgBaseline = {};
+    clearTabTitleBadge();
   }
   function track(ref, event, cb){
     ref.on(event, cb);
@@ -2503,6 +2553,112 @@
   }
 
   // ===================================================================
+  // NOTIFIKASI: pesan baru masuk (toast dalam-app + notifikasi browser + suara)
+  // ===================================================================
+  function requestNotifPermission(){
+    try{
+      if ('Notification' in window && Notification.permission === 'default'){
+        Notification.requestPermission();
+      }
+    } catch(e){}
+  }
+
+  // Bunyi notifikasi singkat pakai WebAudio, tanpa perlu file audio eksternal.
+  function playNotifSound(){
+    try{
+      let Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      let ctx = new Ctx();
+      let o = ctx.createOscillator();
+      let g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type = 'sine';
+      o.frequency.setValueAtTime(880, ctx.currentTime);
+      g.gain.setValueAtTime(0.001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.32);
+      o.start(ctx.currentTime);
+      o.stop(ctx.currentTime + 0.33);
+      o.onended = function(){ ctx.close(); };
+    } catch(e){}
+  }
+
+  function updateTabTitleBadge(){
+    document.title = unreadNotifCount > 0 ? '(' + unreadNotifCount + ') ' + pageBaseTitle : pageBaseTitle;
+  }
+  function clearTabTitleBadge(){
+    unreadNotifCount = 0;
+    updateTabTitleBadge();
+  }
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden) clearTabTitleBadge();
+  });
+  window.addEventListener('focus', clearTabTitleBadge);
+
+  function showMsgToast(chatId, title, body, photoURL){
+    let wrap = document.getElementById('msgToastWrap');
+    if (!wrap) return;
+    let el = document.createElement('div');
+    el.className = 'msg-toast';
+    el.innerHTML =
+      '<div class="mt-avatar">' + avatarHtml(title, photoURL || '') + '</div>' +
+      '<div class="mt-main"><div class="mt-title"></div><div class="mt-body"></div></div>' +
+      '<button class="mt-close" aria-label="Tutup">&times;</button>';
+    el.querySelector('.mt-title').textContent = title;
+    el.querySelector('.mt-body').textContent = body;
+    el.addEventListener('click', function(e){
+      if (e.target.closest('.mt-close')){ el.remove(); return; }
+      openChat(chatId, title);
+      el.remove();
+    });
+    wrap.appendChild(el);
+    setTimeout(function(){ if (el.parentNode) el.remove(); }, 5000);
+    // Batasi maksimal 3 toast tampil bersamaan biar tidak menumpuk.
+    while (wrap.children.length > 3) wrap.removeChild(wrap.firstChild);
+  }
+
+  function showBrowserNotification(chatId, title, body){
+    try{
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      let n = new Notification(title, { body: body, tag: 'chat_' + chatId });
+      n.onclick = function(){
+        window.focus();
+        openChat(chatId, title);
+        n.close();
+      };
+    } catch(e){}
+  }
+
+  // Dipanggil tiap kali metadata sebuah chat berubah (lihat initChatsListener).
+  // Menentukan apakah perubahan ini adalah pesan BARU dari orang lain, lalu
+  // memicu suara + toast dalam-app + (kalau tab tidak aktif) notifikasi browser.
+  function maybeNotifyNewMessage(chatId, chat){
+    let prevAt = chatMsgBaseline[chatId];
+    let curAt = chat.lastMessageAt || 0;
+    let isFirstSnapshot = (prevAt === undefined);
+    chatMsgBaseline[chatId] = curAt;
+    if (isFirstSnapshot) return; // jangan notif untuk histori lama saat listener baru nyala
+    if (!curAt || curAt <= prevAt) return;
+    if (!chat.lastSender || chat.lastSender === currentUser.uid) return; // pesan dari diri sendiri
+    let title = chatDisplayName(chat);
+    let body = chat.lastMessage || 'Pesan baru';
+    let photoURL = '';
+    if (chat.type !== 'group'){
+      let members = chat.members || {};
+      let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
+      if (otherUid) photoURL = personInfo(otherUid).photoURL || '';
+    }
+    playNotifSound();
+    if (document.hidden){
+      unreadNotifCount++;
+      updateTabTitleBadge();
+      showBrowserNotification(chatId, title, body);
+    } else if (activeChatId !== chatId){
+      showMsgToast(chatId, title, body, photoURL);
+    }
+  }
+
+  // ===================================================================
   // CHATS: index percakapan (private + grup)
   // ===================================================================
   function initChatsListener(){
@@ -2520,6 +2676,7 @@
           let val = csnap.val();
           if (val){
             chatsIndex[chatId] = Object.assign({ id: chatId }, val);
+            maybeNotifyNewMessage(chatId, chatsIndex[chatId]);
           } else {
             delete chatsIndex[chatId];
           }
@@ -3302,11 +3459,13 @@
       if (val){
         let key = Object.keys(val)[0];
         let m = val[key];
-        let preview = (m.text || '').length > 60 ? m.text.slice(0,60) + '…' : (m.text || '');
+        let preview = (m.type === 'image') ? '📷 Foto' : ((m.text || '').length > 60 ? m.text.slice(0,60) + '…' : (m.text || ''));
         updates['chats/' + chatId + '/lastMessage'] = preview;
         updates['chats/' + chatId + '/lastMessageAt'] = m.createdAt || firebase.database.ServerValue.TIMESTAMP;
+        updates['chats/' + chatId + '/lastSender'] = m.sender || null;
       } else {
         updates['chats/' + chatId + '/lastMessage'] = '';
+        updates['chats/' + chatId + '/lastSender'] = null;
       }
       db.ref().update(updates);
     });
@@ -3443,6 +3602,7 @@
     updates['chats/' + activeChatId + '/messages/' + msgRef.key] = payload;
     updates['chats/' + activeChatId + '/lastMessage'] = '📷 Foto';
     updates['chats/' + activeChatId + '/lastMessageAt'] = firebase.database.ServerValue.TIMESTAMP;
+    updates['chats/' + activeChatId + '/lastSender'] = currentUser.uid;
     db.ref().update(updates);
   }
   function openImageViewer(src){
@@ -3486,6 +3646,7 @@
     updates['chats/' + activeChatId + '/messages/' + msgRef.key] = payload;
     updates['chats/' + activeChatId + '/lastMessage'] = text.length > 60 ? text.slice(0,60) + '…' : text;
     updates['chats/' + activeChatId + '/lastMessageAt'] = firebase.database.ServerValue.TIMESTAMP;
+    updates['chats/' + activeChatId + '/lastSender'] = currentUser.uid;
     db.ref().update(updates);
     msgInput.value = '';
     autoGrow();
