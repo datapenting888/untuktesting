@@ -28,8 +28,8 @@
     --border-soft: rgba(255,255,255,0.12);
     --text-light: #f3ede7;
     --text-dim: #9a9aad;
-    --bubble-me: #dcf8c6;
-    --bubble-me-text: #111b21;
+    --bubble-me: #025902;
+    --bubble-me-text: #e9fff0;
     --bubble-them: #ffffff;
     --bubble-them-text: #111b21;
     --danger: #e05252;
@@ -50,8 +50,8 @@
     --border-soft: rgba(0,0,0,0.12);
     --text-light: #1c1c1c;
     --text-dim: #63636b;
-    --bubble-me: #dcf8c6;
-    --bubble-me-text: #111b21;
+    --bubble-me: #025902;
+    --bubble-me-text: #e9fff0;
     --bubble-them: #ffffff;
     --bubble-them-text: #111b21;
     --danger: #c53030;
@@ -818,6 +818,15 @@
     color:var(--bubble-them-text);
     border-bottom-left-radius:3px;
   }
+  /* Mode gelap: pesan dari teman tampil polos tanpa kontener, teks putih */
+  html:not(.light-theme) .msg-row.them .bubble{
+    background:transparent;
+    box-shadow:none;
+    border-radius:0;
+    padding:2px 0;
+    color:#ffffff;
+    font-weight:700;
+  }
   .bubble .sender{
     font-size:11px;
     font-weight:700;
@@ -863,7 +872,7 @@
   }
   .bubble .msg-ticks{ display:inline-flex; align-items:center; flex-shrink:0; }
   .bubble .msg-ticks svg{ display:block; }
-  .msg-row.me .bubble .msg-ticks{ color:rgba(17,27,33,0.55); }
+  .msg-row.me .bubble .msg-ticks{ color:rgba(233,255,240,0.7); }
   .msg-row.me .bubble .msg-ticks.tick-state-read{ color:#34b7f1; }
   /* ---------- Swipe untuk membalas pesan (gaya WhatsApp) ---------- */
   .msg-row{ position:relative; }
@@ -896,6 +905,7 @@
     cursor:pointer;
   }
   .msg-row.them .bubble .reply-quote{ background:rgba(0,0,0,0.15); }
+  html:not(.light-theme) .msg-row.them .bubble .reply-quote{ background:rgba(255,255,255,0.08); }
   .bubble .reply-quote-sender{
     display:block;
     font-size:11px;
@@ -913,7 +923,7 @@
     max-width:220px;
   }
   .bubble .text a.msg-link{ text-decoration:underline; word-break:break-all; }
-  .msg-row.me .bubble .text a.msg-link{ color:#075e54; }
+  .msg-row.me .bubble .text a.msg-link{ color:#9be8a8; }
   .msg-row.them .bubble .text a.msg-link{ color:var(--blue); }
   .reply-banner{
     flex-shrink:0;
