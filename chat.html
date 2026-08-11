@@ -25,7 +25,7 @@
     --border-soft: rgba(255,255,255,0.12);
     --text-light: #f3ede7;
     --text-dim: #9a9aad;
-    --bubble-me: #005c4b;
+    --bubble-me: #025902;
     --bubble-me-text: #e9fff8;
     --bubble-them: #1f2229;
     --bubble-them-text: #f0f0f0;
@@ -47,8 +47,8 @@
     --border-soft: rgba(0,0,0,0.12);
     --text-light: #1c1c1c;
     --text-dim: #63636b;
-    --bubble-me: #d9fdd3;
-    --bubble-me-text: #0b3d2e;
+    --bubble-me: #025902;
+    --bubble-me-text: #eafff0;
     --bubble-them: #ffffff;
     --bubble-them-text: #1c1c1c;
     --danger: #c53030;
@@ -309,9 +309,9 @@
   @keyframes dpSpin{ to{ transform:rotate(360deg); } }
 
   .auth-success-msg{
-    background:rgba(127,216,143,0.12);
-    border:1px solid rgba(127,216,143,0.4);
-    color:#a9e8b4;
+    background:rgba(2,89,2,0.14);
+    border:1px solid rgba(2,89,2,0.5);
+    color:#025902;
     font-size:12.5px;
     padding:9px 11px;
     border-radius:9px;
@@ -393,7 +393,7 @@
     padding:2px 6px 8px;
     min-height:16px;
   }
-  .add-friend-msg.ok{ color:#7fd88f; }
+  .add-friend-msg.ok{ color:#025902; }
   .add-friend-msg.err{ color:#ff9a9a; }
 
   .list-row{
@@ -430,7 +430,7 @@
   .who .avatar{ width:34px; height:34px; font-size:13px; cursor:pointer; }
   .who-id{ display:flex; flex-direction:column; line-height:1.25; }
   .who-id .who-name{ font-size:13px; font-weight:600; color:var(--text-light); }
-  .who-status{ display:flex; align-items:center; gap:5px; font-size:11px; color:#7fe08f; }
+  .who-status{ display:flex; align-items:center; gap:5px; font-size:11px; color:#025902; }
   .who-status .dot{ width:7px; height:7px; border-radius:50%; background:#025902; box-shadow:0 0 5px #025902; flex-shrink:0; }
 
   .avatar-menu-wrap{ position:relative; }
@@ -590,7 +590,7 @@
     padding:12px;
     font-size:14px;
     border-radius:12px;
-    background:linear-gradient(90deg,#25d366,#128c7e);
+    background:#025902;
     border:none;
     color:#fff;
   }
@@ -2091,9 +2091,9 @@
     if (!user) return;
     user.sendEmailVerification({ url: window.location.href }).then(function(){
       msg.style.display = 'block';
-      msg.style.background = 'rgba(127,216,143,0.12)';
-      msg.style.borderColor = 'rgba(127,216,143,0.4)';
-      msg.style.color = '#a9e8b4';
+      msg.style.background = 'rgba(2,89,2,0.14)';
+      msg.style.borderColor = 'rgba(2,89,2,0.5)';
+      msg.style.color = '#025902';
       msg.textContent = 'Email verifikasi baru sudah dikirim.';
     }).catch(function(err){
       msg.style.display = 'block';
