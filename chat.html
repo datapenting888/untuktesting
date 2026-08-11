@@ -817,11 +817,22 @@
     color:var(--bubble-them-text);
     border-bottom-left-radius:3px;
   }
+  .bubble .sender-row{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-bottom:3px;
+  }
+  .bubble .sender-avatar{
+    width:18px;
+    height:18px;
+    font-size:9px;
+    flex-shrink:0;
+  }
   .bubble .sender{
     font-size:11px;
     font-weight:700;
     color:var(--accent-emas);
-    margin-bottom:2px;
     display:block;
   }
   .bubble .time{
@@ -2680,6 +2691,11 @@
       let uid = el.data && el.data.sender;
       let liveName = (userProfiles[uid] && userProfiles[uid].name) || (el.data && el.data.senderName) || '';
       senderEl.textContent = liveName;
+      let avatarEl = el.row.querySelector('.sender-avatar');
+      if (avatarEl){
+        let livePhoto = (userProfiles[uid] && userProfiles[uid].photoURL) || '';
+        avatarEl.outerHTML = avatarHtml(liveName, livePhoto, 'sender-avatar');
+      }
     });
   }
 
@@ -3850,7 +3866,9 @@
     let chat = chatsIndex[activeChatId];
     let showSender = chat && chat.type === 'group' && !isMe;
     if (showSender) ensureUserProfileSynced(m.sender);
-    let senderDisplayName = showSender ? personInfo(m.sender).name || m.senderName || '' : '';
+    let senderInfo = showSender ? personInfo(m.sender) : null;
+    let senderDisplayName = showSender ? (senderInfo.name || m.senderName || '') : '';
+    let senderAvatarHtml = showSender ? avatarHtml(senderDisplayName, senderInfo.photoURL, 'sender-avatar') : '';
     let isImage = m.type === 'image' && m.imageData;
     let replyHtml = m.replyTo ?
       ('<div class="reply-quote" data-reply-target="' + escapeHtml(m.replyTo.id || '') + '">' +
@@ -3860,7 +3878,7 @@
     row.innerHTML =
       '<div class="reply-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg></div>' +
       '<div class="bubble">' +
-        (showSender ? '<span class="sender">' + escapeHtml(senderDisplayName) + '</span>' : '') +
+        (showSender ? '<span class="sender-row">' + senderAvatarHtml + '<span class="sender">' + escapeHtml(senderDisplayName) + '</span></span>' : '') +
         replyHtml +
         (isImage ? '<img class="img-msg" src="' + m.imageData + '" alt="Foto">' : '') +
         '<span class="text"></span>' +
