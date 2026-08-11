@@ -20,7 +20,7 @@
     --bg-card: #0a0a0a;
     --sidebar: #000000;
     --sidebar-2: #161616;
-    --accent-emas: #dbc36e;
+    --accent-emas: #128c7e;
     --pink: #e91e63;
     --pink-dark: #c2185b;
     --blue: #2196d8;
@@ -28,10 +28,10 @@
     --border-soft: rgba(255,255,255,0.12);
     --text-light: #f3ede7;
     --text-dim: #9a9aad;
-    --bubble-me: #25D366;
-    --bubble-me-text: #e9fff8;
-    --bubble-them: #1f2229;
-    --bubble-them-text: #f0f0f0;
+    --bubble-me: #dcf8c6;
+    --bubble-me-text: #111b21;
+    --bubble-them: #ffffff;
+    --bubble-them-text: #111b21;
     --danger: #e05252;
     --input-bg: #0f0f1a;
     --input-text: #f3ede7;
@@ -42,7 +42,7 @@
     --bg-card: #ffffff;
     --sidebar: #ffffff;
     --sidebar-2: #ece9e0;
-    --accent-emas: #b8892f;
+    --accent-emas: #128c7e;
     --pink: #e91e63;
     --pink-dark: #c2185b;
     --blue: #1c7fb8;
@@ -50,15 +50,15 @@
     --border-soft: rgba(0,0,0,0.12);
     --text-light: #1c1c1c;
     --text-dim: #63636b;
-    --bubble-me: #25D366;
-    --bubble-me-text: #eafff0;
+    --bubble-me: #dcf8c6;
+    --bubble-me-text: #111b21;
     --bubble-them: #ffffff;
-    --bubble-them-text: #1c1c1c;
+    --bubble-them-text: #111b21;
     --danger: #c53030;
     --input-bg: #ffffff;
     --input-text: #1c1c1c;
   }
-  html.light-theme .bubble{ box-shadow:0 1px 2px rgba(0,0,0,0.08); }
+  .bubble{ box-shadow:0 1px 2px rgba(0,0,0,0.15); }
   body{ transition:background-color .2s ease, color .2s ease; }
   .list-row, .modal, .icon-btn, .btn, .chat-input-row textarea{ transition:background-color .2s ease, color .2s ease, border-color .2s ease; }
   *{ box-sizing:border-box; }
@@ -425,7 +425,7 @@
     color:#fff;
     text-transform:uppercase;
   }
-  .avatar.grp{ background:linear-gradient(135deg,var(--accent-emas),#c99a3a); color:#1a1400; }
+  .avatar.grp{ background:linear-gradient(135deg,var(--accent-emas),#0d6b5f); color:#eafff8; }
   .avatar img.avatar-img{ width:100%; height:100%; border-radius:50%; object-fit:cover; }
 
   /* ---------- Identity bar (topbar kanan: avatar, nama, status, aksi) ---------- */
@@ -485,7 +485,7 @@
   .icon-btn svg{ width:16px; height:16px; }
   .icon-btn.danger{ color:var(--danger); border-color:rgba(224,82,82,0.4); }
   .icon-btn.danger:hover{ background:rgba(224,82,82,0.12); }
-  .icon-btn.active-pin{ color:var(--accent-emas); border-color:rgba(219,195,110,0.5); background:rgba(219,195,110,0.12); }
+  .icon-btn.active-pin{ color:var(--accent-emas); border-color:rgba(18,140,126,0.5); background:rgba(18,140,126,0.12); }
 
   /* ---------- Footer panel: toggle mode (kiri) + copyright (kanan) ---------- */
   .panel-footer{
@@ -839,7 +839,7 @@
     width:18px; height:18px;
     border-radius:50%;
     background:var(--accent-emas);
-    color:#1c1c1c;
+    color:#eafffb;
     align-items:center;
     justify-content:center;
     box-shadow:0 1px 3px rgba(0,0,0,0.35);
@@ -863,7 +863,7 @@
   }
   .bubble .msg-ticks{ display:inline-flex; align-items:center; flex-shrink:0; }
   .bubble .msg-ticks svg{ display:block; }
-  .msg-row.me .bubble .msg-ticks{ color:rgba(255,255,255,0.75); }
+  .msg-row.me .bubble .msg-ticks{ color:rgba(17,27,33,0.55); }
   .msg-row.me .bubble .msg-ticks.tick-state-read{ color:#34b7f1; }
   /* ---------- Swipe untuk membalas pesan (gaya WhatsApp) ---------- */
   .msg-row{ position:relative; }
@@ -891,7 +891,7 @@
     margin-bottom:4px;
     padding:5px 8px;
     border-left:3px solid var(--accent-emas);
-    background:rgba(255,255,255,0.08);
+    background:rgba(0,0,0,0.08);
     border-radius:6px;
     cursor:pointer;
   }
@@ -913,7 +913,7 @@
     max-width:220px;
   }
   .bubble .text a.msg-link{ text-decoration:underline; word-break:break-all; }
-  .msg-row.me .bubble .text a.msg-link{ color:var(--bubble-me-text); }
+  .msg-row.me .bubble .text a.msg-link{ color:#075e54; }
   .msg-row.them .bubble .text a.msg-link{ color:var(--blue); }
   .reply-banner{
     flex-shrink:0;
@@ -1228,8 +1228,8 @@
   <div class="auth-card" style="text-align:center;">
     <div class="verify-icon">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-        <path d="M3 6l9 6 9-6" stroke="#dbc36e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <rect x="3" y="5" width="18" height="14" rx="2" stroke="#dbc36e" stroke-width="2"/>
+        <path d="M3 6l9 6 9-6" stroke="#128C7E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="3" y="5" width="18" height="14" rx="2" stroke="#128C7E" stroke-width="2"/>
       </svg>
     </div>
     <h1>Verifikasi Email Kamu</h1>
@@ -3878,6 +3878,14 @@
     });
   }
 
+  const senderColorPalette = ['#e67e22','#7c5cff','#2196d8','#e91e63','#16a085','#d35400','#8e44ad','#2980b9','#c0392b','#27ae60'];
+  function senderColorFor(uid){
+    if (!uid) return senderColorPalette[0];
+    let hash = 0;
+    for (let i = 0; i < uid.length; i++){ hash = (hash * 31 + uid.charCodeAt(i)) >>> 0; }
+    return senderColorPalette[hash % senderColorPalette.length];
+  }
+
   function appendMessage(m, msgId){
     if (!m || !msgId) return;
     let row = document.createElement('div');
@@ -3898,7 +3906,7 @@
       '<div class="reply-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg></div>' +
       '<div class="bubble">' +
         '<span class="pin-badge" aria-hidden="true" title="Disematkan"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 3a1 1 0 0 1 0 2 2 2 0 0 0 0 4 1 1 0 0 1 .78 1.62l-2.6 3.25L15 17H9l.82-3.13-2.6-3.25A1 1 0 0 1 8 9a2 2 0 0 0 0-4 1 1 0 0 1 0-2Z"/><path d="M11 17h2v4h-2z"/></svg></span>' +
-        (showSender ? '<span class="sender">' + escapeHtml(senderDisplayName) + '</span>' : '') +
+        (showSender ? '<span class="sender" style="color:' + senderColorFor(m.sender) + '">' + escapeHtml(senderDisplayName) + '</span>' : '') +
         replyHtml +
         (isImage ? '<img class="img-msg" src="' + m.imageData + '" alt="Foto">' : '') +
         '<span class="text"></span>' +
