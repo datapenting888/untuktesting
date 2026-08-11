@@ -30,6 +30,8 @@
     --bubble-them: #1f2229;
     --bubble-them-text: #f0f0f0;
     --danger: #e05252;
+    --input-bg: #0f0f1a;
+    --input-text: #f3ede7;
   }
   html.light-theme{
     --bg-app: #f4f3ee;
@@ -50,6 +52,8 @@
     --bubble-them: #ffffff;
     --bubble-them-text: #1c1c1c;
     --danger: #c53030;
+    --input-bg: #ffffff;
+    --input-text: #1c1c1c;
   }
   html.light-theme .bubble{ box-shadow:0 1px 2px rgba(0,0,0,0.08); }
   body{ transition:background-color .2s ease, color .2s ease; }
@@ -168,15 +172,24 @@
   }
   .field input{
     width:100%;
-    background:#0f0f1a;
+    background:var(--input-bg);
     border:1px solid var(--border-soft);
-    color:var(--text-light);
+    color:var(--input-text);
     padding:11px 12px;
     border-radius:10px;
     font-size:14px;
     outline:none;
   }
   .field input:focus{ border-color:var(--accent-emas); }
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus{
+    -webkit-text-fill-color:var(--input-text);
+    -webkit-box-shadow:0 0 0 1000px var(--input-bg) inset;
+    box-shadow:0 0 0 1000px var(--input-bg) inset;
+    caret-color:var(--input-text);
+    transition:background-color 9999s ease-in-out 0s;
+  }
   .field input:disabled{ opacity:0.65; cursor:not-allowed; }
   .auth-actions{ margin-top:18px; }
   .auth-actions .btn{ width:100%; padding:11px; font-size:14px; }
@@ -323,9 +336,9 @@
   }
   .add-friend-box input{
     flex:1;
-    background:#0f0f1a;
+    background:var(--input-bg);
     border:1px solid var(--border-soft);
-    color:var(--text-light);
+    color:var(--input-text);
     padding:9px 10px;
     border-radius:9px;
     font-size:13px;
@@ -473,9 +486,9 @@
   .search-bar{ padding:10px 10px 0; }
   .search-bar input{
     width:100%;
-    background:#0f0f1a;
+    background:var(--input-bg);
     border:1px solid var(--border-soft);
-    color:var(--text-light);
+    color:var(--input-text);
     padding:9px 12px;
     border-radius:10px;
     font-size:13px;
@@ -519,9 +532,9 @@
   }
   .settings-friend-box input{
     flex:1;
-    background:#0f0f1a;
+    background:var(--input-bg);
     border:1px solid var(--border-soft);
-    color:var(--text-light);
+    color:var(--input-text);
     padding:9px 10px;
     border-radius:10px;
     font-size:13px;
@@ -588,7 +601,7 @@
   .gs-name-edit-row{ display:none; gap:8px; margin-top:8px; }
   .gs-name-edit-row.show{ display:flex; }
   .gs-name-edit-row input{
-    flex:1; background:#0f0f1a; border:1px solid var(--border-soft); color:var(--text-light);
+    flex:1; background:var(--input-bg); border:1px solid var(--border-soft); color:var(--input-text);
     padding:8px 10px; border-radius:9px; font-size:13.5px; outline:none;
   }
   .gs-name-edit-row input:focus{ border-color:var(--accent-emas); }
@@ -810,9 +823,9 @@
   .chat-input-row textarea{
     flex:1;
     resize:none;
-    background:#0f0f1a;
+    background:var(--input-bg);
     border:1px solid var(--border-soft);
-    color:var(--text-light);
+    color:var(--input-text);
     padding:10px 16px;
     border-radius:22px;
     font-size:13.5px;
@@ -842,7 +855,7 @@
     height:40px;
     border-radius:50%;
     border:1px solid var(--border-soft);
-    background:#0f0f1a;
+    background:var(--input-bg);
     color:var(--text-light);
     display:flex;
     align-items:center;
