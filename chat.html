@@ -833,6 +833,87 @@
     font-style:italic;
     margin-left:4px;
   }
+  .bubble .time{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:3px;
+  }
+  .bubble .msg-ticks{ display:inline-flex; align-items:center; flex-shrink:0; }
+  .bubble .msg-ticks svg{ display:block; }
+  .msg-row.me .bubble .msg-ticks{ color:rgba(255,255,255,0.75); }
+  .msg-row.me .bubble .msg-ticks.tick-state-read{ color:#34b7f1; }
+  /* ---------- Swipe untuk membalas pesan (gaya WhatsApp) ---------- */
+  .msg-row{ position:relative; }
+  .msg-row .bubble{ transition:transform .2s ease; touch-action:pan-y; }
+  .msg-row .bubble.dragging{ transition:none; }
+  .msg-row .reply-icon{
+    position:absolute;
+    top:50%;
+    width:28px; height:28px;
+    border-radius:50%;
+    background:var(--sidebar-2);
+    border:1px solid var(--border-soft);
+    color:var(--accent-emas);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0;
+    transform:translateY(-50%) scale(0.6);
+    pointer-events:none;
+    z-index:1;
+  }
+  .msg-row .reply-icon svg{ width:14px; height:14px; }
+  .msg-row.them .reply-icon{ left:6px; }
+  .msg-row.me .reply-icon{ right:6px; }
+  .bubble .reply-quote{
+    display:block;
+    margin-bottom:4px;
+    padding:5px 8px;
+    border-left:3px solid var(--accent-emas);
+    background:rgba(255,255,255,0.08);
+    border-radius:6px;
+    cursor:pointer;
+  }
+  .msg-row.them .bubble .reply-quote{ background:rgba(0,0,0,0.15); }
+  .bubble .reply-quote-sender{
+    display:block;
+    font-size:11px;
+    font-weight:700;
+    color:var(--accent-emas);
+    margin-bottom:1px;
+  }
+  .bubble .reply-quote-text{
+    display:block;
+    font-size:12px;
+    opacity:0.85;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:220px;
+  }
+  .bubble .text a.msg-link{ text-decoration:underline; word-break:break-all; }
+  .msg-row.me .bubble .text a.msg-link{ color:var(--bubble-me-text); }
+  .msg-row.them .bubble .text a.msg-link{ color:var(--blue); }
+  .reply-banner{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:8px 14px;
+    background:var(--sidebar-2);
+    border-top:1px solid var(--border-soft);
+    border-left:3px solid var(--accent-emas);
+  }
+  .reply-banner-text{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .reply-banner-text span:first-child{ font-size:11.5px; font-weight:700; color:var(--accent-emas); }
+  .reply-banner-preview{
+    font-size:12.5px;
+    color:var(--text-dim);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:260px;
+  }
   .edit-banner{
     flex-shrink:0;
     display:flex;
@@ -1231,6 +1312,12 @@
           </button>
         </div>
         <div class="messages" id="messagesWrap"></div>
+        <div class="reply-banner" id="replyBanner" style="display:none;">
+          <div class="reply-banner-text"><span id="replyBannerSender">Membalas</span><span id="replyBannerPreview" class="reply-banner-preview"></span></div>
+          <button class="icon-btn" id="btnCancelReplyMsg" aria-label="Batal balas">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
         <div class="edit-banner" id="editBanner" style="display:none;">
           <div class="edit-banner-text"><span>Mengedit pesan</span><span id="editBannerPreview" class="edit-banner-preview"></span></div>
           <button class="icon-btn" id="btnCancelEditMsg" aria-label="Batal edit">
@@ -1595,6 +1682,16 @@
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
   }
+  // Ubah URL polos dalam teks pesan menjadi tautan yang bisa diklik/tap,
+  // sehingga langsung membuka browser (tab baru).
+  function linkifyText(str){
+    let escaped = escapeHtml(str || '');
+    let urlPattern = /((?:https?:\/\/|www\.)[^\s<]+[^\s<.,:;!?'")\]])/gi;
+    return escaped.replace(urlPattern, function(match){
+      let href = /^https?:\/\//i.test(match) ? match : 'https://' + match;
+      return '<a href="' + href + '" target="_blank" rel="noopener noreferrer" class="msg-link">' + match + '</a>';
+    });
+  }
   function fmtTime(ts){
     if (!ts) return '';
     let d = new Date(ts);
@@ -1605,6 +1702,128 @@
   function privateChatId(uidA, uidB){
     let pair = [uidA, uidB].sort();
     return 'priv_' + pair[0] + '_' + pair[1];
+  }
+
+  // ---------------------------------------------------------------
+  // Centang status pesan (gaya WhatsApp)
+  //  - 1 centang putih : terkirim, lawan bicara sedang offline
+  //  - 2 centang putih : terkirim & lawan bicara sedang online
+  //  - 2 centang biru  : chat sudah dibaca lawan bicara
+  // ---------------------------------------------------------------
+  function tickSvgSingle(){
+    return '<svg viewBox="0 0 16 12" width="15" height="11"><path d="M2 6.2L6 10L14 1.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+  function tickSvgDouble(){
+    return '<svg viewBox="0 0 20 12" width="18" height="11">' +
+      '<path d="M1 6.2L5 10L13 1.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="M6.5 6.2L10.5 10L19 0.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '</svg>';
+  }
+  function ticksHtml(state){
+    return state === 'sent' ? tickSvgSingle() : tickSvgDouble();
+  }
+  function otherMemberUids(chat){
+    let members = (chat && chat.members) || {};
+    return Object.keys(members).filter(function(u){ return u !== currentUser.uid; });
+  }
+  // Tentukan status centang pesan MILIK SAYA berdasarkan status baca
+  // (chatReads) dan status online (presenceData) lawan bicara di chat
+  // yang sedang aktif.
+  function computeMsgTickState(createdAt){
+    let chat = chatsIndex[activeChatId];
+    if (!chat) return 'sent';
+    let others = otherMemberUids(chat);
+    if (others.length === 0) return 'sent';
+    let allRead = others.every(function(u){
+      let r = chatReads[u];
+      return !!r && !!createdAt && r >= createdAt;
+    });
+    if (allRead) return 'read';
+    let allOnline = others.every(function(u){ return presenceData[u] === true; });
+    return allOnline ? 'delivered' : 'sent';
+  }
+  function updateRowTicks(row, m){
+    let slot = row.querySelector('.msg-ticks');
+    if (!slot) return;
+    let state = computeMsgTickState(m.createdAt);
+    slot.className = 'msg-ticks tick-state-' + state;
+    slot.innerHTML = ticksHtml(state);
+  }
+  function refreshAllTickStates(){
+    Object.keys(messageEls).forEach(function(id){
+      let el = messageEls[id];
+      if (el && el.data && currentUser && el.data.sender === currentUser.uid){
+        updateRowTicks(el.row, el.data);
+      }
+    });
+  }
+
+  // ---- Status baca (reads) & status online (presence) chat aktif ----
+  let chatReads = {};      // { uid: timestamp } — kapan tiap anggota lain terakhir membaca chat ini
+  let presenceData = {};   // { uid: true/false } — status online tiap anggota lain
+  let chatReadsRef = null, chatReadsHandler = null;
+  let presenceListenerRefs = {}; // { uid: { ref, handler } }
+
+  function detachChatStatusListeners(){
+    if (chatReadsRef && chatReadsHandler) chatReadsRef.off('value', chatReadsHandler);
+    chatReadsRef = null;
+    chatReadsHandler = null;
+    Object.keys(presenceListenerRefs).forEach(function(uid){
+      presenceListenerRefs[uid].ref.off('value', presenceListenerRefs[uid].handler);
+    });
+    presenceListenerRefs = {};
+    chatReads = {};
+    presenceData = {};
+  }
+  function attachChatStatusListeners(chatId){
+    detachChatStatusListeners();
+    let chat = chatsIndex[chatId];
+    if (!chat || !currentUser) return;
+    chatReadsRef = db.ref('chats/' + chatId + '/reads');
+    chatReadsHandler = function(snap){
+      chatReads = snap.val() || {};
+      refreshAllTickStates();
+    };
+    chatReadsRef.on('value', chatReadsHandler);
+    otherMemberUids(chat).forEach(function(uid){
+      let ref = db.ref('presence/' + uid);
+      let handler = function(snap){
+        presenceData[uid] = snap.val() === true;
+        refreshAllTickStates();
+      };
+      ref.on('value', handler);
+      presenceListenerRefs[uid] = { ref: ref, handler: handler };
+    });
+  }
+  // Tandai chat ini sudah saya baca sampai saat ini (dipakai lawan bicara
+  // untuk menentukan centang biru pada pesan yang mereka kirim ke saya).
+  function markChatAsRead(chatId){
+    if (!chatId || !currentUser) return;
+    db.ref('chats/' + chatId + '/reads/' + currentUser.uid).set(firebase.database.ServerValue.TIMESTAMP);
+  }
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden && activeChatId) markChatAsRead(activeChatId);
+  });
+
+  // ---- Status online saya sendiri (presence), gaya Firebase RTDB ----
+  let presenceConnHandler = null;
+  function initPresence(){
+    if (!currentUser) return;
+    let myPresenceRef = db.ref('presence/' + currentUser.uid);
+    presenceConnHandler = function(snap){
+      if (snap.val() === true){
+        myPresenceRef.onDisconnect().set(false);
+        myPresenceRef.set(true);
+      }
+    };
+    db.ref('.info/connected').on('value', presenceConnHandler);
+  }
+  function teardownPresence(uid){
+    if (presenceConnHandler){
+      db.ref('.info/connected').off('value', presenceConnHandler);
+      presenceConnHandler = null;
+    }
+    if (uid) db.ref('presence/' + uid).set(false);
   }
 
   // ---------------------------------------------------------------
@@ -1760,6 +1979,7 @@
   });
 
   document.getElementById('btnLogout').addEventListener('click', function(){
+    teardownPresence(currentUser && currentUser.uid);
     auth.signOut();
   });
 
@@ -1990,6 +2210,7 @@
         startInactivityWatcher();
         updateConnIndicator();
         requestNotifPermission();
+        initPresence();
       });
     } else {
       currentUser = null;
@@ -2035,6 +2256,7 @@
     if (!currentUser) return;
     if (!isDesktopView()) return; // jaga-jaga kalau resize terjadi tepat saat timeout
     pendingAutoLogoutNotice = true;
+    teardownPresence(currentUser.uid);
     auth.signOut();
   }
 
@@ -2248,6 +2470,7 @@
     activeListenerRefs.forEach(function(r){ r.ref.off(r.event, r.cb); });
     activeListenerRefs = [];
     if (messagesListenerRef){ detachMessagesListener(); }
+    detachChatStatusListeners();
     chatMsgBaseline = {};
     clearTabTitleBadge();
   }
@@ -3329,6 +3552,7 @@
     messageEls = {};
     exitSelectionMode();
     cancelEditMessage();
+    cancelReplyToMessage();
     renderChatList();
     updateChatHeader(fallbackName);
     mobileViewMode = 'chat';
@@ -3337,8 +3561,13 @@
     saveMobileViewState('chat');
 
     detachMessagesListener();
+    attachChatStatusListeners(chatId);
+    if (!document.hidden) markChatAsRead(chatId);
     let msgsRef = db.ref('chats/' + chatId + '/messages').limitToLast(200);
-    let cbAdded = function(snap){ appendMessage(snap.val(), snap.key); };
+    let cbAdded = function(snap){
+      appendMessage(snap.val(), snap.key);
+      if (!document.hidden) markChatAsRead(chatId);
+    };
     let cbChanged = function(snap){ updateMessageInDOM(snap.key, snap.val()); };
     let cbRemoved = function(snap){ removeMessageFromDOM(snap.key); };
     msgsRef.on('child_added', cbAdded);
@@ -3363,6 +3592,7 @@
   let selectionMode = false;
   let selectedIds = {};     // msgId -> true
   let editingMessageId = null;
+  let replyingToId = null;
 
   const chatHeaderNormal = document.getElementById('chatHeaderNormal');
   const chatHeaderSelection = document.getElementById('chatHeaderSelection');
@@ -3373,6 +3603,40 @@
   const editBanner = document.getElementById('editBanner');
   const editBannerPreview = document.getElementById('editBannerPreview');
   const btnCancelEditMsg = document.getElementById('btnCancelEditMsg');
+  const replyBanner = document.getElementById('replyBanner');
+  const replyBannerSender = document.getElementById('replyBannerSender');
+  const replyBannerPreview = document.getElementById('replyBannerPreview');
+  const btnCancelReplyMsg = document.getElementById('btnCancelReplyMsg');
+
+  function startReplyToMessage(msgId){
+    let el = messageEls[msgId];
+    if (!el || !el.data) return;
+    if (selectionMode) exitSelectionMode();
+    if (editingMessageId) cancelEditMessage();
+    replyingToId = msgId;
+    let isMe = el.data.sender === currentUser.uid;
+    let senderName = isMe ? 'Anda' : (personInfo(el.data.sender).name || el.data.senderName || '');
+    let preview = el.data.type === 'image' ? '📷 Foto' : (el.data.text || '');
+    replyBannerSender.textContent = 'Membalas ' + senderName;
+    replyBannerPreview.textContent = preview;
+    replyBanner.style.display = 'flex';
+    msgInput.focus();
+  }
+  function cancelReplyToMessage(){
+    replyingToId = null;
+    replyBanner.style.display = 'none';
+  }
+  btnCancelReplyMsg.addEventListener('click', cancelReplyToMessage);
+
+  function scrollToMessage(msgId){
+    let el = messageEls[msgId];
+    if (!el) return;
+    el.row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    el.row.classList.add('selected');
+    setTimeout(function(){
+      if (!selectedIds[msgId]) el.row.classList.remove('selected');
+    }, 900);
+  }
 
   function enterSelectionMode(){
     if (selectionMode) return;
@@ -3435,6 +3699,7 @@
     let id = ids[0];
     let el = messageEls[id];
     if (!el) return;
+    if (replyingToId) cancelReplyToMessage();
     editingMessageId = id;
     msgInput.value = el.data.text || '';
     autoGrow();
@@ -3472,19 +3737,34 @@
     });
   }
 
-  // Tekan & tahan (atau klik saat sedang dalam mode pilih) untuk
-  // memilih satu pesan; klik pesan lain untuk menambah pilihan.
+  // Tekan & tahan (atau klik saat sedang dalam mode pilih) untuk memilih
+  // satu pesan; klik pesan lain untuk menambah pilihan. Menggeser (swipe)
+  // bubble pesan ke arah "terbuka"-nya (pesan orang lain: ke kanan, pesan
+  // sendiri: ke kiri) akan langsung membuka mode balas pesan, gaya WhatsApp.
   function attachRowSelectionHandlers(row, msgId){
     let pressTimer = null;
     let longPressFired = false;
     let startX = 0, startY = 0;
-    const MOVE_TOLERANCE = 12; // px toleransi geser jari sebelum long-press dibatalkan
+    let dragging = false, decided = false, isHorizontal = false, replyDirOk = false, replyFired = false;
+    const MOVE_TOLERANCE = 12;  // px toleransi geser jari sebelum long-press dibatalkan
+    const REPLY_TRIGGER_X = 56; // px jarak geser untuk memicu balas
+    const REPLY_DRAG_MAX = 74;  // px batas maksimum geser bubble
+    let isMeRow = row.classList.contains('me');
+
+    function clearPressTimer(){
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+    function bubbleEl(){ return row.querySelector('.bubble'); }
+    function replyIconEl(){ return row.querySelector('.reply-icon'); }
+
     function startPress(e){
       longPressFired = false;
+      dragging = true; decided = false; isHorizontal = false; replyFired = false;
       let pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
       startX = pt.clientX;
       startY = pt.clientY;
-      clearTimeout(pressTimer);
+      clearPressTimer();
       pressTimer = setTimeout(function(){
         longPressFired = true;
         if (navigator.vibrate) { try { navigator.vibrate(15); } catch(e){} }
@@ -3492,26 +3772,68 @@
         toggleSelectMessage(msgId);
       }, 420);
     }
-    function cancelPress(){
-      clearTimeout(pressTimer);
+    function springBack(){
+      let bubble = bubbleEl();
+      if (bubble){
+        bubble.classList.remove('dragging');
+        bubble.style.transform = 'translateX(0)';
+      }
+      let icon = replyIconEl();
+      if (icon){ icon.style.opacity = 0; icon.style.transform = 'translateY(-50%) scale(0.6)'; }
+    }
+    function endPress(){
+      clearPressTimer();
+      if (dragging && isHorizontal) springBack();
+      dragging = false;
     }
     function movePress(e){
+      if (!dragging) return;
       let pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
-      let dx = Math.abs(pt.clientX - startX);
-      let dy = Math.abs(pt.clientY - startY);
-      if (dx > MOVE_TOLERANCE || dy > MOVE_TOLERANCE){
-        clearTimeout(pressTimer);
+      let dx = pt.clientX - startX;
+      let dy = pt.clientY - startY;
+      if (!decided){
+        if (Math.abs(dx) > MOVE_TOLERANCE || Math.abs(dy) > MOVE_TOLERANCE){
+          decided = true;
+          isHorizontal = Math.abs(dx) > Math.abs(dy);
+          if (isHorizontal){
+            clearPressTimer();
+            replyDirOk = isMeRow ? dx < 0 : dx > 0;
+          }
+        } else {
+          return;
+        }
+      }
+      if (!isHorizontal){ clearPressTimer(); return; }
+      if (!replyDirOk) return;
+      if (e.cancelable) e.preventDefault();
+      let bubble = bubbleEl();
+      if (bubble) bubble.classList.add('dragging');
+      let mag = Math.min(Math.abs(dx), REPLY_DRAG_MAX);
+      let x = isMeRow ? -mag : mag;
+      if (bubble) bubble.style.transform = 'translateX(' + x + 'px)';
+      let icon = replyIconEl();
+      if (icon){
+        let progress = Math.min(mag / REPLY_TRIGGER_X, 1);
+        icon.style.opacity = progress;
+        icon.style.transform = 'translateY(-50%) scale(' + (0.6 + progress * 0.4) + ')';
+      }
+      if (!replyFired && mag >= REPLY_TRIGGER_X){
+        replyFired = true;
+        if (navigator.vibrate) { try { navigator.vibrate(12); } catch(e){} }
+        startReplyToMessage(msgId);
       }
     }
     row.addEventListener('mousedown', startPress);
-    row.addEventListener('mouseup', cancelPress);
-    row.addEventListener('mouseleave', cancelPress);
+    row.addEventListener('mousemove', movePress);
+    row.addEventListener('mouseup', endPress);
+    row.addEventListener('mouseleave', endPress);
     row.addEventListener('touchstart', startPress, { passive: true });
-    row.addEventListener('touchend', cancelPress);
-    row.addEventListener('touchcancel', cancelPress);
-    row.addEventListener('touchmove', movePress, { passive: true });
+    row.addEventListener('touchmove', movePress, { passive: false });
+    row.addEventListener('touchend', endPress);
+    row.addEventListener('touchcancel', endPress);
     row.addEventListener('click', function(){
       if (longPressFired){ longPressFired = false; return; }
+      if (decided && isHorizontal){ decided = false; return; }
       if (selectionMode) toggleSelectMessage(msgId);
     });
   }
@@ -3527,23 +3849,44 @@
     if (showSender) ensureUserProfileSynced(m.sender);
     let senderDisplayName = showSender ? personInfo(m.sender).name || m.senderName || '' : '';
     let isImage = m.type === 'image' && m.imageData;
+    let replyHtml = m.replyTo ?
+      ('<div class="reply-quote" data-reply-target="' + escapeHtml(m.replyTo.id || '') + '">' +
+        '<span class="reply-quote-sender">' + escapeHtml(m.replyTo.senderName || '') + '</span>' +
+        '<span class="reply-quote-text">' + escapeHtml(m.replyTo.preview || '') + '</span>' +
+      '</div>') : '';
     row.innerHTML =
+      '<div class="reply-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg></div>' +
       '<div class="bubble">' +
         (showSender ? '<span class="sender">' + escapeHtml(senderDisplayName) + '</span>' : '') +
+        replyHtml +
         (isImage ? '<img class="img-msg" src="' + m.imageData + '" alt="Foto">' : '') +
         '<span class="text"></span>' +
-        '<span class="time">' + fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + '</span>' +
+        '<span class="time">' + fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + (isMe ? '<span class="msg-ticks"></span>' : '') + '</span>' +
       '</div>';
-    row.querySelector('.text').textContent = isImage ? '' : (m.text || '');
+    row.querySelector('.text').innerHTML = isImage ? '' : linkifyText(m.text || '');
+    row.querySelectorAll('.text a.msg-link').forEach(function(a){
+      // Cegah tap pada link memicu mode pilih pesan; biarkan tautan
+      // langsung membuka di tab/browser baru seperti biasa.
+      a.addEventListener('click', function(e){ e.stopPropagation(); });
+      a.addEventListener('mousedown', function(e){ e.stopPropagation(); });
+      a.addEventListener('touchstart', function(e){ e.stopPropagation(); }, { passive: true });
+    });
     if (isImage){
       row.querySelector('.img-msg').addEventListener('click', function(){
         openImageViewer(m.imageData);
+      });
+    }
+    if (m.replyTo){
+      row.querySelector('.reply-quote').addEventListener('click', function(e){
+        e.stopPropagation();
+        if (m.replyTo.id) scrollToMessage(m.replyTo.id);
       });
     }
     messagesWrap.appendChild(row);
     messagesWrap.scrollTop = messagesWrap.scrollHeight;
     messageEls[msgId] = { row: row, data: m };
     attachRowSelectionHandlers(row, msgId);
+    if (isMe) updateRowTicks(row, m);
   }
 
   function updateMessageInDOM(msgId, m){
@@ -3551,8 +3894,16 @@
     if (!el || !m) return;
     el.data = m;
     let isImage = m.type === 'image' && m.imageData;
-    el.row.querySelector('.text').textContent = isImage ? '' : (m.text || '');
-    el.row.querySelector('.time').innerHTML = fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '');
+    let textEl = el.row.querySelector('.text');
+    textEl.innerHTML = isImage ? '' : linkifyText(m.text || '');
+    textEl.querySelectorAll('a.msg-link').forEach(function(a){
+      a.addEventListener('click', function(e){ e.stopPropagation(); });
+      a.addEventListener('mousedown', function(e){ e.stopPropagation(); });
+      a.addEventListener('touchstart', function(e){ e.stopPropagation(); }, { passive: true });
+    });
+    let isMe = currentUser && m.sender === currentUser.uid;
+    el.row.querySelector('.time').innerHTML = fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + (isMe ? '<span class="msg-ticks"></span>' : '');
+    if (isMe) updateRowTicks(el.row, m);
     if (editingMessageId === msgId){
       editBannerPreview.textContent = m.text || '';
     }
@@ -3566,6 +3917,7 @@
       updateSelectionUI();
     }
     if (editingMessageId === msgId) cancelEditMessage();
+    if (replyingToId === msgId) cancelReplyToMessage();
     el.row.remove();
     delete messageEls[msgId];
   }
@@ -3643,6 +3995,19 @@
       text: text,
       createdAt: firebase.database.ServerValue.TIMESTAMP
     };
+    if (replyingToId){
+      let replyEl = messageEls[replyingToId];
+      if (replyEl && replyEl.data){
+        let rIsMe = replyEl.data.sender === currentUser.uid;
+        let rSenderName = rIsMe ? 'Anda' : (personInfo(replyEl.data.sender).name || replyEl.data.senderName || '');
+        let rPreview = replyEl.data.type === 'image' ? '📷 Foto' : (replyEl.data.text || '');
+        payload.replyTo = {
+          id: replyingToId,
+          senderName: rSenderName,
+          preview: rPreview.length > 80 ? rPreview.slice(0,80) + '…' : rPreview
+        };
+      }
+    }
     let updates = {};
     updates['chats/' + activeChatId + '/messages/' + msgRef.key] = payload;
     updates['chats/' + activeChatId + '/lastMessage'] = text.length > 60 ? text.slice(0,60) + '…' : text;
@@ -3651,6 +4016,7 @@
     db.ref().update(updates);
     msgInput.value = '';
     autoGrow();
+    cancelReplyToMessage();
   }
 
   btnSendMsg.addEventListener('click', sendMessage);
