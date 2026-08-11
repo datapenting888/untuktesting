@@ -3601,10 +3601,15 @@
     let cbAdded = function(snap){
       let m = snap.val();
       if (m && clearedAt && m.createdAt && m.createdAt <= clearedAt) return;
+      if (m && m.deletedFor && m.deletedFor[currentUser.uid]) return;
       appendMessage(m, snap.key);
       if (!document.hidden) markChatAsRead(chatId);
     };
-    let cbChanged = function(snap){ updateMessageInDOM(snap.key, snap.val()); };
+    let cbChanged = function(snap){
+      let m = snap.val();
+      if (m && m.deletedFor && m.deletedFor[currentUser.uid]){ removeMessageFromDOM(snap.key); return; }
+      updateMessageInDOM(snap.key, m);
+    };
     let cbRemoved = function(snap){ removeMessageFromDOM(snap.key); };
     msgsRef.on('child_added', cbAdded);
     msgsRef.on('child_changed', cbChanged);
@@ -3717,14 +3722,18 @@
   btnDeleteSelectedMsg.addEventListener('click', function(){
     let ids = Object.keys(selectedIds);
     if (ids.length === 0 || !activeChatId) return;
-    let msg = ids.length === 1 ? 'Hapus pesan ini?' : 'Hapus ' + ids.length + ' pesan ini?';
+    let msg = ids.length === 1 ? 'Hapus pesan ini dari chat kamu?' : 'Hapus ' + ids.length + ' pesan ini dari chat kamu?';
     if (!confirm(msg)) return;
     let chatId = activeChatId;
     let updates = {};
-    ids.forEach(function(id){ updates['chats/' + chatId + '/messages/' + id] = null; });
+    // PENTING: menghapus pesan di sini HANYA menandainya tersembunyi
+    // untuk akun kamu sendiri ('deletedFor/{uid}' pada pesan itu).
+    // Data pesan aslinya TIDAK dihapus dari database, sehingga tetap
+    // utuh & terlihat seperti biasa di chat teman/anggota grup lain.
+    ids.forEach(function(id){ updates['chats/' + chatId + '/messages/' + id + '/deletedFor/' + currentUser.uid] = true; });
     if (editingMessageId && selectedIds[editingMessageId]) cancelEditMessage();
     db.ref().update(updates).then(function(){
-      refreshLastMessagePreview(chatId);
+      ids.forEach(function(id){ removeMessageFromDOM(id); });
     });
     exitSelectionMode();
   });
