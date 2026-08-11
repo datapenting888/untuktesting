@@ -28,7 +28,7 @@
     --border-soft: rgba(255,255,255,0.12);
     --text-light: #f3ede7;
     --text-dim: #9a9aad;
-    --bubble-me: #025902;
+    --bubble-me: #203301;
     --bubble-me-text: #e9fff8;
     --bubble-them: #1f2229;
     --bubble-them-text: #f0f0f0;
@@ -50,7 +50,7 @@
     --border-soft: rgba(0,0,0,0.12);
     --text-light: #1c1c1c;
     --text-dim: #63636b;
-    --bubble-me: #025902;
+    --bubble-me: #203301;
     --bubble-me-text: #eafff0;
     --bubble-them: #ffffff;
     --bubble-them-text: #1c1c1c;
@@ -110,8 +110,8 @@
     transition:background-color .3s ease, box-shadow .3s ease;
   }
   .topbar .brand .dot.online{
-    background:#025902;
-    box-shadow:0 0 8px #025902;
+    background:#203301;
+    box-shadow:0 0 8px #203301;
   }
   .topbar .who{
     display:flex;
@@ -250,7 +250,7 @@
     cursor:pointer;
     font-weight:600;
   }
-  #authToggleLink{ color:#025902; }
+  #authToggleLink{ color:#203301; }
   .auth-error{
     background:rgba(224,82,82,0.12);
     border:1px solid rgba(224,82,82,0.4);
@@ -312,9 +312,9 @@
   @keyframes dpSpin{ to{ transform:rotate(360deg); } }
 
   .auth-success-msg{
-    background:rgba(2,89,2,0.14);
-    border:1px solid rgba(2,89,2,0.5);
-    color:#025902;
+    background:rgba(32,51,1,0.14);
+    border:1px solid rgba(32,51,1,0.5);
+    color:#203301;
     font-size:12.5px;
     padding:9px 11px;
     border-radius:9px;
@@ -396,7 +396,7 @@
     padding:2px 6px 8px;
     min-height:16px;
   }
-  .add-friend-msg.ok{ color:#025902; }
+  .add-friend-msg.ok{ color:#203301; }
   .add-friend-msg.err{ color:#ff9a9a; }
 
   .list-row{
@@ -433,8 +433,8 @@
   .who .avatar{ width:34px; height:34px; font-size:13px; cursor:pointer; }
   .who-id{ display:flex; flex-direction:column; line-height:1.25; }
   .who-id .who-name{ font-size:13px; font-weight:600; color:var(--text-light); }
-  .who-status{ display:flex; align-items:center; gap:5px; font-size:11px; color:#025902; }
-  .who-status .dot{ width:7px; height:7px; border-radius:50%; background:#025902; box-shadow:0 0 5px #025902; flex-shrink:0; }
+  .who-status{ display:flex; align-items:center; gap:5px; font-size:11px; color:#203301; }
+  .who-status .dot{ width:7px; height:7px; border-radius:50%; background:#203301; box-shadow:0 0 5px #203301; flex-shrink:0; }
 
   .avatar-menu-wrap{ position:relative; }
   .avatar-dropdown{
@@ -485,6 +485,7 @@
   .icon-btn svg{ width:16px; height:16px; }
   .icon-btn.danger{ color:var(--danger); border-color:rgba(224,82,82,0.4); }
   .icon-btn.danger:hover{ background:rgba(224,82,82,0.12); }
+  .icon-btn.active-pin{ color:var(--accent-emas); border-color:rgba(219,195,110,0.5); background:rgba(219,195,110,0.12); }
 
   /* ---------- Footer panel: toggle mode (kiri) + copyright (kanan) ---------- */
   .panel-footer{
@@ -594,7 +595,7 @@
     padding:12px;
     font-size:14px;
     border-radius:12px;
-    background:#025902;
+    background:#203301;
     border:none;
     color:#fff;
   }
@@ -831,6 +832,23 @@
     display:block;
     text-align:right;
   }
+  .pin-badge{
+    display:none;
+    position:absolute;
+    top:-7px;
+    width:18px; height:18px;
+    border-radius:50%;
+    background:var(--accent-emas);
+    color:#1c1c1c;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 1px 3px rgba(0,0,0,0.35);
+    z-index:1;
+  }
+  .pin-badge svg{ width:11px; height:11px; }
+  .msg-row.them .pin-badge{ right:-6px; }
+  .msg-row.me .pin-badge{ left:-6px; }
+  .msg-row.pinned .pin-badge{ display:flex; }
   .bubble .edited-tag{
     font-size:10px;
     opacity:0.6;
@@ -1310,6 +1328,9 @@
           <div class="row-main"><div class="row-title" id="selectionCount">1 dipilih</div></div>
           <button class="icon-btn" id="btnEditSelectedMsg" aria-label="Edit pesan" title="Edit pesan" style="display:none;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+          <button class="icon-btn" id="btnPinSelectedMsg" aria-label="Sematkan pesan" title="Sematkan pesan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1v3.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>
           </button>
           <button class="icon-btn danger" id="btnDeleteSelectedMsg" aria-label="Hapus pesan" title="Hapus pesan">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7H20"/><path d="M9 7V4.8C9 4.36 9.36 4 9.8 4H14.2C14.64 4 15 4.36 15 4.8V7"/><path d="M6.5 7L7.2 19.2C7.24 19.9 7.82 20.5 8.53 20.5H15.47C16.18 20.5 16.76 19.9 16.8 19.2L17.5 7"/><path d="M10 11V16.5"/><path d="M14 11V16.5"/></svg>
@@ -2317,9 +2338,9 @@
     if (!user) return;
     user.sendEmailVerification({ url: window.location.href }).then(function(){
       msg.style.display = 'block';
-      msg.style.background = 'rgba(2,89,2,0.14)';
-      msg.style.borderColor = 'rgba(2,89,2,0.5)';
-      msg.style.color = '#025902';
+      msg.style.background = 'rgba(32,51,1,0.14)';
+      msg.style.borderColor = 'rgba(32,51,1,0.5)';
+      msg.style.color = '#203301';
       msg.textContent = 'Email verifikasi baru sudah dikirim.';
     }).catch(function(err){
       msg.style.display = 'block';
@@ -3601,6 +3622,7 @@
   const chatHeaderSelection = document.getElementById('chatHeaderSelection');
   const selectionCountEl = document.getElementById('selectionCount');
   const btnEditSelectedMsg = document.getElementById('btnEditSelectedMsg');
+  const btnPinSelectedMsg = document.getElementById('btnPinSelectedMsg');
   const btnDeleteSelectedMsg = document.getElementById('btnDeleteSelectedMsg');
   const btnCancelSelection = document.getElementById('btnCancelSelection');
   const editBanner = document.getElementById('editBanner');
@@ -3665,6 +3687,10 @@
     let ids = Object.keys(selectedIds);
     let canEdit = count === 1 && messageEls[ids[0]] && messageEls[ids[0]].data.sender === currentUser.uid;
     btnEditSelectedMsg.style.display = canEdit ? 'flex' : 'none';
+    let allPinned = ids.every(function(id){ return messageEls[id] && messageEls[id].data && messageEls[id].data.pinned; });
+    btnPinSelectedMsg.title = allPinned ? 'Lepas sematan' : 'Sematkan pesan';
+    btnPinSelectedMsg.setAttribute('aria-label', btnPinSelectedMsg.title);
+    btnPinSelectedMsg.classList.toggle('active-pin', allPinned);
   }
   function toggleSelectMessage(msgId){
     let el = messageEls[msgId];
@@ -3709,6 +3735,17 @@
     msgInput.focus();
     editBannerPreview.textContent = el.data.text || '';
     editBanner.style.display = 'flex';
+    exitSelectionMode();
+  });
+
+  btnPinSelectedMsg.addEventListener('click', function(){
+    let ids = Object.keys(selectedIds);
+    if (ids.length === 0 || !activeChatId) return;
+    let chatId = activeChatId;
+    let allPinned = ids.every(function(id){ return messageEls[id] && messageEls[id].data && messageEls[id].data.pinned; });
+    let updates = {};
+    ids.forEach(function(id){ updates['chats/' + chatId + '/messages/' + id + '/pinned'] = allPinned ? null : true; });
+    db.ref().update(updates);
     exitSelectionMode();
   });
 
@@ -3845,7 +3882,7 @@
     if (!m || !msgId) return;
     let row = document.createElement('div');
     let isMe = m.sender === currentUser.uid;
-    row.className = 'msg-row ' + (isMe ? 'me' : 'them');
+    row.className = 'msg-row ' + (isMe ? 'me' : 'them') + (m.pinned ? ' pinned' : '');
     row.dataset.msgId = msgId;
     let chat = chatsIndex[activeChatId];
     let showSender = chat && chat.type === 'group' && !isMe;
@@ -3860,6 +3897,7 @@
     row.innerHTML =
       '<div class="reply-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg></div>' +
       '<div class="bubble">' +
+        '<span class="pin-badge" aria-hidden="true" title="Disematkan"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 3a1 1 0 0 1 0 2 2 2 0 0 0 0 4 1 1 0 0 1 .78 1.62l-2.6 3.25L15 17H9l.82-3.13-2.6-3.25A1 1 0 0 1 8 9a2 2 0 0 0 0-4 1 1 0 0 1 0-2Z"/><path d="M11 17h2v4h-2z"/></svg></span>' +
         (showSender ? '<span class="sender">' + escapeHtml(senderDisplayName) + '</span>' : '') +
         replyHtml +
         (isImage ? '<img class="img-msg" src="' + m.imageData + '" alt="Foto">' : '') +
@@ -3896,6 +3934,7 @@
     let el = messageEls[msgId];
     if (!el || !m) return;
     el.data = m;
+    el.row.classList.toggle('pinned', !!m.pinned);
     let isImage = m.type === 'image' && m.imageData;
     let textEl = el.row.querySelector('.text');
     textEl.innerHTML = isImage ? '' : linkifyText(m.text || '');
