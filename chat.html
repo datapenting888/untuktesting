@@ -817,22 +817,11 @@
     color:var(--bubble-them-text);
     border-bottom-left-radius:3px;
   }
-  .bubble .sender-row{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    margin-bottom:3px;
-  }
-  .bubble .sender-avatar{
-    width:18px;
-    height:18px;
-    font-size:9px;
-    flex-shrink:0;
-  }
   .bubble .sender{
     font-size:11px;
     font-weight:700;
     color:var(--accent-emas);
+    margin-bottom:2px;
     display:block;
   }
   .bubble .time{
@@ -2691,11 +2680,6 @@
       let uid = el.data && el.data.sender;
       let liveName = (userProfiles[uid] && userProfiles[uid].name) || (el.data && el.data.senderName) || '';
       senderEl.textContent = liveName;
-      let avatarEl = el.row.querySelector('.sender-avatar');
-      if (avatarEl){
-        let livePhoto = (userProfiles[uid] && userProfiles[uid].photoURL) || '';
-        avatarEl.outerHTML = avatarHtml(liveName, livePhoto, 'sender-avatar');
-      }
     });
   }
 
@@ -3008,8 +2992,6 @@
       row.className = 'chat-row-wrap';
       let isPrivateRow = chat.type !== 'group';
       let deleteLabel = isPrivateRow ? 'Hapus pertemanan' : 'Hapus obrolan';
-      let clearedAt = (chat.clearedFor && chat.clearedFor[currentUser.uid]) || 0;
-      let previewVisible = (clearedAt && chat.lastMessageAt && chat.lastMessageAt <= clearedAt) ? '' : (chat.lastMessage || '');
       row.innerHTML =
         '<div class="chat-row-delete-bg"><button type="button" class="chat-row-delete-btn" aria-label="' + deleteLabel + '" title="' + deleteLabel + '">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>' +
@@ -3017,7 +2999,7 @@
         '<div class="list-row chat-swipe-row' + (chatId === activeChatId ? ' active' : '') + '">' +
           avatarHtml(name, photo, chat.type === 'group' ? 'grp' : '') +
           '<div class="row-main"><div class="row-title">' + escapeHtml(name) + '</div>' +
-          '<div class="row-sub">' + escapeHtml(previewVisible || 'Belum ada pesan') + '</div></div>' +
+          '<div class="row-sub">' + escapeHtml(chat.lastMessage || 'Belum ada pesan') + '</div></div>' +
         '</div>';
       let swipeRow = row.querySelector('.chat-swipe-row');
       enableChatRowSwipe(row, swipeRow, function(){ openChat(chatId, name); });
@@ -3133,50 +3115,42 @@
     let chat = chatsIndex[chatId];
     let isPrivate = chat && chat.type === 'private';
     let msg = simpleConfirm
-      ? 'Hapus semua pesan obrolan dengan "' + name + '" dari chat kamu?'
+      ? 'Hapus semua pesan obrolan dengan "' + name + '"?'
       : (isPrivate
-        ? 'Apakah anda ingin hapus riwayat obrolan dengan "' + name + '"? Riwayat pesan ini hanya akan hilang di chat kamu saja — nama/teman ini tetap ada di daftar chat kamu, dan teman kamu masih tetap melihat semua riwayat percakapannya seperti biasa.'
-        : 'Apakah anda ingin hapus riwayat obrolan grup "' + name + '"? Riwayat pesan ini hanya akan hilang di chat kamu saja — grup dan anggotanya tetap ada seperti biasa, dan anggota lain masih tetap melihat semua riwayat percakapannya seperti biasa.');
+        ? 'Apakah anda ingin hapus semua pesan obrolan dengan "' + name + '"? Nama/teman ini akan tetap ada di daftar chat kamu, hanya riwayat pesannya saja yang dihapus.'
+        : 'Apakah anda ingin hapus semua pesan obrolan grup "' + name + '"? Grup dan anggotanya akan tetap ada seperti biasa, hanya riwayat pesannya saja yang dihapus untuk semua anggota.');
     if (!confirm(msg)) return;
 
-    // PENTING: menghapus obrolan di sini HANYA menyembunyikan riwayat
-    // pesan di sisi akun kamu sendiri (per-user clear), dengan
-    // menyimpan penanda waktu "clearedFor/{uid}" pada chat tersebut.
-    // Data pesan asli di 'chats/{chatId}/messages' TIDAK pernah
-    // disentuh/dihapus, sehingga teman atau anggota grup lain di chat
-    // ini tetap melihat seluruh riwayat percakapan seperti biasa —
-    // yang berubah cuma tampilan di perangkat kamu.
+    // Baik chat privat maupun grup: yang dihapus HANYA riwayat
+    // pesan/obrolannya saja. Chat/grup itu sendiri (data chat, nama
+    // teman/grup, keanggotaan) tetap ada dan tetap muncul di daftar
+    // chat semua pihak — cuma kosong tanpa pesan. Untuk menghapus
+    // grup sepenuhnya (bukan cuma pesannya), pakai "Hapus grup" di
+    // Pengaturan Grup.
     let updates = {};
-    updates['chats/' + chatId + '/clearedFor/' + currentUser.uid] = firebase.database.ServerValue.TIMESTAMP;
-    db.ref().update(updates).then(function(){
-      // Langsung kosongkan tampilan pesan di layar kamu kalau chat ini
-      // sedang terbuka, tanpa perlu tunggu listener 'value' berikutnya.
-      if (activeChatId === chatId){
-        messagesWrap.innerHTML = '';
-        messageEls = {};
-      }
-    });
+    updates['chats/' + chatId + '/messages'] = null;
+    updates['chats/' + chatId + '/lastMessage'] = '';
+    updates['chats/' + chatId + '/lastMessageAt'] = null;
+    db.ref().update(updates);
+    // Chat/grup tetap terbuka & tetap ada di daftar; pesan-pesannya
+    // akan otomatis hilang dari layar lewat listener child_removed
+    // kalau chat ini sedang dibuka.
   }
 
   function removeFriendAndChat(chatId, otherUid, name){
     if (!otherUid) return;
-    let msg = 'Hapus pertemanan dengan "' + name + '"? Chat ini akan hilang dari daftar chat kamu, tapi riwayat percakapannya tetap tersimpan di sisi teman kamu.';
+    let msg = 'Hapus pertemanan akan menghapus percakapan kamu sebelumnya, apakah anda yakin?';
     if (!confirm(msg)) return;
 
-    // Putus pertemanan dua arah (memang harus dua arah, supaya kalian
-    // berdua sama-sama tidak lagi terdaftar sebagai teman). TAPI untuk
-    // chat/pesannya sendiri: yang dihapus HANYA salinan/akses milik
-    // akun kamu (userChats kamu + penanda "clearedFor" kamu), sehingga
-    // chat ini langsung hilang dari daftar & layar kamu. Node
-    // 'chats/{chatId}' beserta seluruh isi pesannya TIDAK dihapus sama
-    // sekali, dan 'userChats/{otherUid}' juga tidak disentuh — jadi di
-    // sisi teman kamu, chat dan semua riwayat percakapannya tetap ada
-    // persis seperti sebelumnya.
+    // Hapus pertemanan dua arah, hapus chat dari daftar kedua pihak,
+    // dan hapus juga isi percakapannya supaya kalau nanti berteman
+    // lagi, obrolannya benar-benar mulai dari kosong/fresh.
     let updates = {};
     updates['friends/' + currentUser.uid + '/' + otherUid] = null;
     updates['friends/' + otherUid + '/' + currentUser.uid] = null;
     updates['userChats/' + currentUser.uid + '/' + chatId] = null;
-    updates['chats/' + chatId + '/clearedFor/' + currentUser.uid] = firebase.database.ServerValue.TIMESTAMP;
+    updates['userChats/' + otherUid + '/' + chatId] = null;
+    updates['chats/' + chatId] = null;
     db.ref().update(updates).then(function(){
       if (activeChatId === chatId){
         activeChatId = null;
@@ -3592,24 +3566,12 @@
     detachMessagesListener();
     attachChatStatusListeners(chatId);
     if (!document.hidden) markChatAsRead(chatId);
-    // Kalau akun ini pernah "menghapus" obrolan ini sebelumnya, sembunyikan
-    // pesan-pesan lama (createdAt <= waktu hapus) hanya di sisi kamu.
-    // Pesan aslinya tetap utuh di database untuk pihak lain.
-    let chatMeta = chatsIndex[chatId];
-    let clearedAt = (chatMeta && chatMeta.clearedFor && chatMeta.clearedFor[currentUser.uid]) || 0;
     let msgsRef = db.ref('chats/' + chatId + '/messages').limitToLast(200);
     let cbAdded = function(snap){
-      let m = snap.val();
-      if (m && clearedAt && m.createdAt && m.createdAt <= clearedAt) return;
-      if (m && m.deletedFor && m.deletedFor[currentUser.uid]) return;
-      appendMessage(m, snap.key);
+      appendMessage(snap.val(), snap.key);
       if (!document.hidden) markChatAsRead(chatId);
     };
-    let cbChanged = function(snap){
-      let m = snap.val();
-      if (m && m.deletedFor && m.deletedFor[currentUser.uid]){ removeMessageFromDOM(snap.key); return; }
-      updateMessageInDOM(snap.key, m);
-    };
+    let cbChanged = function(snap){ updateMessageInDOM(snap.key, snap.val()); };
     let cbRemoved = function(snap){ removeMessageFromDOM(snap.key); };
     msgsRef.on('child_added', cbAdded);
     msgsRef.on('child_changed', cbChanged);
@@ -3722,18 +3684,14 @@
   btnDeleteSelectedMsg.addEventListener('click', function(){
     let ids = Object.keys(selectedIds);
     if (ids.length === 0 || !activeChatId) return;
-    let msg = ids.length === 1 ? 'Hapus pesan ini dari chat kamu?' : 'Hapus ' + ids.length + ' pesan ini dari chat kamu?';
+    let msg = ids.length === 1 ? 'Hapus pesan ini?' : 'Hapus ' + ids.length + ' pesan ini?';
     if (!confirm(msg)) return;
     let chatId = activeChatId;
     let updates = {};
-    // PENTING: menghapus pesan di sini HANYA menandainya tersembunyi
-    // untuk akun kamu sendiri ('deletedFor/{uid}' pada pesan itu).
-    // Data pesan aslinya TIDAK dihapus dari database, sehingga tetap
-    // utuh & terlihat seperti biasa di chat teman/anggota grup lain.
-    ids.forEach(function(id){ updates['chats/' + chatId + '/messages/' + id + '/deletedFor/' + currentUser.uid] = true; });
+    ids.forEach(function(id){ updates['chats/' + chatId + '/messages/' + id] = null; });
     if (editingMessageId && selectedIds[editingMessageId]) cancelEditMessage();
     db.ref().update(updates).then(function(){
-      ids.forEach(function(id){ removeMessageFromDOM(id); });
+      refreshLastMessagePreview(chatId);
     });
     exitSelectionMode();
   });
@@ -3892,9 +3850,7 @@
     let chat = chatsIndex[activeChatId];
     let showSender = chat && chat.type === 'group' && !isMe;
     if (showSender) ensureUserProfileSynced(m.sender);
-    let senderInfo = showSender ? personInfo(m.sender) : null;
-    let senderDisplayName = showSender ? (senderInfo.name || m.senderName || '') : '';
-    let senderAvatarHtml = showSender ? avatarHtml(senderDisplayName, senderInfo.photoURL, 'sender-avatar') : '';
+    let senderDisplayName = showSender ? personInfo(m.sender).name || m.senderName || '' : '';
     let isImage = m.type === 'image' && m.imageData;
     let replyHtml = m.replyTo ?
       ('<div class="reply-quote" data-reply-target="' + escapeHtml(m.replyTo.id || '') + '">' +
@@ -3904,7 +3860,7 @@
     row.innerHTML =
       '<div class="reply-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg></div>' +
       '<div class="bubble">' +
-        (showSender ? '<span class="sender-row">' + senderAvatarHtml + '<span class="sender">' + escapeHtml(senderDisplayName) + '</span></span>' : '') +
+        (showSender ? '<span class="sender">' + escapeHtml(senderDisplayName) + '</span>' : '') +
         replyHtml +
         (isImage ? '<img class="img-msg" src="' + m.imageData + '" alt="Foto">' : '') +
         '<span class="text"></span>' +
