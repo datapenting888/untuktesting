@@ -3162,30 +3162,42 @@
     // grup sepenuhnya (bukan cuma pesannya), pakai "Hapus grup" di
     // Pengaturan Grup.
     //
-    // Batasi penghapusan hanya sampai pesan TERAKHIR yang kita
-    // ketahui saat tombol ini diklik (chat.lastMessageAt), bukan
-    // main hapus seluruh node 'messages' begitu saja. Ini supaya
-    // kalau tepat pada saat bersamaan teman kita mengirim pesan baru
-    // (race condition), pesan baru itu TIDAK ikut kehapus di tempat
-    // teman — hanya pesan-pesan yang sudah ada sampai titik waktu ini
-    // yang dihapus, untuk kedua belah pihak.
-    let cutoff = (chat && chat.lastMessageAt) ? chat.lastMessageAt : Date.now();
-    db.ref('chats/' + chatId + '/messages').orderByChild('createdAt').endAt(cutoff).once('value').then(function(snap){
-      let updates = {};
-      snap.forEach(function(child){
-        updates['chats/' + chatId + '/messages/' + child.key] = null;
-      });
-      return db.ref('chats/' + chatId + '/lastMessageAt').once('value').then(function(latestSnap){
-        let latestAt = latestSnap.val();
-        // Hanya kosongkan preview "pesan terakhir" kalau memang belum
-        // ada pesan baru lagi setelah titik cutoff tadi. Kalau sudah
-        // ada pesan baru masuk (lebih baru dari cutoff), biarkan
-        // preview & waktunya tetap menunjuk ke pesan baru itu.
-        if (!latestAt || latestAt <= cutoff){
-          updates['chats/' + chatId + '/lastMessage'] = '';
-          updates['chats/' + chatId + '/lastMessageAt'] = null;
-        }
-        return db.ref().update(updates);
+    // Yang dihapus di tempat teman HANYA pesan-pesan yang MASIH
+    // KELIHATAN di layar kita saat ini — bukan seluruh riwayat chat.
+    // Kalau kita sebelumnya pernah "Hapus obrolan" sendiri lewat
+    // ikon tempat sampah di daftar (delete-for-me, lihat
+    // 'clearedFor'), pesan-pesan lama sebelum titik itu memang sudah
+    // tidak kita lihat lagi — dan pesan-pesan itu TIDAK ikut terhapus
+    // di tempat teman; punya teman untuk pesan-pesan lama itu tetap
+    // dibiarkan utuh, tidak diubah sama sekali.
+    db.ref('chats/' + chatId + '/clearedFor/' + currentUser.uid).once('value').then(function(clearedSnap){
+      let myClearedAt = clearedSnap.val();
+      let lowerBound = (typeof myClearedAt === 'number' && myClearedAt > 0) ? myClearedAt : null;
+      // Batasi juga sampai pesan TERAKHIR yang kita ketahui saat tombol
+      // ini diklik (chat.lastMessageAt), bukan main hapus seluruh node
+      // 'messages' begitu saja. Ini supaya kalau tepat pada saat
+      // bersamaan teman kita mengirim pesan baru (race condition),
+      // pesan baru itu TIDAK ikut kehapus di tempat teman.
+      let cutoff = (chat && chat.lastMessageAt) ? chat.lastMessageAt : Date.now();
+      let query = db.ref('chats/' + chatId + '/messages').orderByChild('createdAt');
+      query = lowerBound ? query.startAt(lowerBound + 1).endAt(cutoff) : query.endAt(cutoff);
+      return query.once('value').then(function(snap){
+        let updates = {};
+        snap.forEach(function(child){
+          updates['chats/' + chatId + '/messages/' + child.key] = null;
+        });
+        return db.ref('chats/' + chatId + '/lastMessageAt').once('value').then(function(latestSnap){
+          let latestAt = latestSnap.val();
+          // Hanya kosongkan preview "pesan terakhir" kalau memang belum
+          // ada pesan baru lagi setelah titik cutoff tadi. Kalau sudah
+          // ada pesan baru masuk (lebih baru dari cutoff), biarkan
+          // preview & waktunya tetap menunjuk ke pesan baru itu.
+          if (!latestAt || latestAt <= cutoff){
+            updates['chats/' + chatId + '/lastMessage'] = '';
+            updates['chats/' + chatId + '/lastMessageAt'] = null;
+          }
+          return db.ref().update(updates);
+        });
       });
     });
     // Chat/grup tetap terbuka & tetap ada di daftar; pesan-pesannya
