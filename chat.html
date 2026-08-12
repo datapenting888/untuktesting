@@ -3161,11 +3161,33 @@
     // chat semua pihak — cuma kosong tanpa pesan. Untuk menghapus
     // grup sepenuhnya (bukan cuma pesannya), pakai "Hapus grup" di
     // Pengaturan Grup.
-    let updates = {};
-    updates['chats/' + chatId + '/messages'] = null;
-    updates['chats/' + chatId + '/lastMessage'] = '';
-    updates['chats/' + chatId + '/lastMessageAt'] = null;
-    db.ref().update(updates);
+    //
+    // Batasi penghapusan hanya sampai pesan TERAKHIR yang kita
+    // ketahui saat tombol ini diklik (chat.lastMessageAt), bukan
+    // main hapus seluruh node 'messages' begitu saja. Ini supaya
+    // kalau tepat pada saat bersamaan teman kita mengirim pesan baru
+    // (race condition), pesan baru itu TIDAK ikut kehapus di tempat
+    // teman — hanya pesan-pesan yang sudah ada sampai titik waktu ini
+    // yang dihapus, untuk kedua belah pihak.
+    let cutoff = (chat && chat.lastMessageAt) ? chat.lastMessageAt : Date.now();
+    db.ref('chats/' + chatId + '/messages').orderByChild('createdAt').endAt(cutoff).once('value').then(function(snap){
+      let updates = {};
+      snap.forEach(function(child){
+        updates['chats/' + chatId + '/messages/' + child.key] = null;
+      });
+      return db.ref('chats/' + chatId + '/lastMessageAt').once('value').then(function(latestSnap){
+        let latestAt = latestSnap.val();
+        // Hanya kosongkan preview "pesan terakhir" kalau memang belum
+        // ada pesan baru lagi setelah titik cutoff tadi. Kalau sudah
+        // ada pesan baru masuk (lebih baru dari cutoff), biarkan
+        // preview & waktunya tetap menunjuk ke pesan baru itu.
+        if (!latestAt || latestAt <= cutoff){
+          updates['chats/' + chatId + '/lastMessage'] = '';
+          updates['chats/' + chatId + '/lastMessageAt'] = null;
+        }
+        return db.ref().update(updates);
+      });
+    });
     // Chat/grup tetap terbuka & tetap ada di daftar; pesan-pesannya
     // akan otomatis hilang dari layar lewat listener child_removed
     // kalau chat ini sedang dibuka.
