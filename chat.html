@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Data Penting — Chat</title>
-<link rel="icon" type="image/png" href="https://i.ibb.co/HpFNLwjY/image.png">
-<link rel="shortcut icon" type="image/png" href="https://i.ibb.co/HpFNLwjY/image.png">
-<link rel="apple-touch-icon" href="https://i.ibb.co/HpFNLwjY/image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Fraunces:ital,wght@0,400;0,600;0,700;1,500;1,600;1,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -184,26 +181,6 @@
     outline:none;
   }
   .field input:focus{ border-color:var(--accent-emas); }
-  .pass-wrap{ position:relative; }
-  .pass-wrap input{ padding-right:42px; }
-  .pass-toggle{
-    position:absolute;
-    top:50%;
-    right:6px;
-    transform:translateY(-50%);
-    width:32px;
-    height:32px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:transparent;
-    border:none;
-    border-radius:8px;
-    color:var(--text-dim);
-    padding:0;
-  }
-  .pass-toggle svg{ width:18px; height:18px; }
-  .pass-toggle:hover{ color:var(--text-light); background:rgba(255,255,255,0.06); }
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus{
@@ -593,7 +570,6 @@
   .settings-avatar-wrap .camera-overlay svg{ width:26px; height:26px; }
   .settings-avatar-hint{ margin-top:8px; font-size:11.5px; color:var(--text-dim); }
   .status-field-hint{ font-size:11px; color:var(--text-dim); margin-top:-8px; margin-bottom:14px; }
-  .field label.status-label{ font-size:14px; color:var(--text-light); }
   .settings-friend-box{
     display:flex; gap:8px; margin-bottom:6px;
   }
@@ -857,87 +833,6 @@
     font-style:italic;
     margin-left:4px;
   }
-  .bubble .time{
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
-    gap:3px;
-  }
-  .bubble .msg-ticks{ display:inline-flex; align-items:center; flex-shrink:0; }
-  .bubble .msg-ticks svg{ display:block; }
-  .msg-row.me .bubble .msg-ticks{ color:rgba(255,255,255,0.75); }
-  .msg-row.me .bubble .msg-ticks.tick-state-read{ color:#34b7f1; }
-  /* ---------- Swipe untuk membalas pesan (gaya WhatsApp) ---------- */
-  .msg-row{ position:relative; }
-  .msg-row .bubble{ transition:transform .2s ease; touch-action:pan-y; }
-  .msg-row .bubble.dragging{ transition:none; }
-  .msg-row .reply-icon{
-    position:absolute;
-    top:50%;
-    width:28px; height:28px;
-    border-radius:50%;
-    background:var(--sidebar-2);
-    border:1px solid var(--border-soft);
-    color:var(--accent-emas);
-    display:flex; align-items:center; justify-content:center;
-    opacity:0;
-    transform:translateY(-50%) scale(0.6);
-    pointer-events:none;
-    z-index:1;
-  }
-  .msg-row .reply-icon svg{ width:14px; height:14px; }
-  .msg-row.them .reply-icon{ left:6px; }
-  .msg-row.me .reply-icon{ right:6px; }
-  .bubble .reply-quote{
-    display:block;
-    margin-bottom:4px;
-    padding:5px 8px;
-    border-left:3px solid var(--accent-emas);
-    background:rgba(255,255,255,0.08);
-    border-radius:6px;
-    cursor:pointer;
-  }
-  .msg-row.them .bubble .reply-quote{ background:rgba(0,0,0,0.15); }
-  .bubble .reply-quote-sender{
-    display:block;
-    font-size:11px;
-    font-weight:700;
-    color:var(--accent-emas);
-    margin-bottom:1px;
-  }
-  .bubble .reply-quote-text{
-    display:block;
-    font-size:12px;
-    opacity:0.85;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    max-width:220px;
-  }
-  .bubble .text a.msg-link{ text-decoration:underline; word-break:break-all; }
-  .msg-row.me .bubble .text a.msg-link{ color:var(--bubble-me-text); }
-  .msg-row.them .bubble .text a.msg-link{ color:var(--blue); }
-  .reply-banner{
-    flex-shrink:0;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-    padding:8px 14px;
-    background:var(--sidebar-2);
-    border-top:1px solid var(--border-soft);
-    border-left:3px solid var(--accent-emas);
-  }
-  .reply-banner-text{ display:flex; flex-direction:column; gap:2px; min-width:0; }
-  .reply-banner-text span:first-child{ font-size:11.5px; font-weight:700; color:var(--accent-emas); }
-  .reply-banner-preview{
-    font-size:12.5px;
-    color:var(--text-dim);
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    max-width:260px;
-  }
   .edit-banner{
     flex-shrink:0;
     display:flex;
@@ -1025,6 +920,27 @@
     -webkit-user-select:none;
     user-select:none;
   }
+  .bubble .img-msg-placeholder{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:180px;
+    height:140px;
+    max-width:100%;
+    border-radius:10px;
+    margin-bottom:4px;
+    background:rgba(127,127,127,0.15);
+  }
+  .bubble .img-msg-placeholder::after{
+    content:"";
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    border:2.5px solid rgba(127,127,127,0.4);
+    border-top-color:var(--text-dim);
+    animation:imgMsgSpin .8s linear infinite;
+  }
+  @keyframes imgMsgSpin{ to{ transform:rotate(360deg); } }
   .img-viewer-modal{
     position:fixed;
     inset:0;
@@ -1210,13 +1126,7 @@
     </div>
     <div class="field">
       <label>Password</label>
-      <div class="pass-wrap">
-        <input type="password" id="inputPassword" placeholder="Minimal 6 karakter" autocomplete="current-password">
-        <button type="button" class="pass-toggle" id="btnTogglePassword" aria-label="Tampilkan password" tabindex="-1">
-          <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-          <svg class="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.6 21.6 0 0 1 5.06-6.06M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 7 11 7a21.6 21.6 0 0 1-3.22 4.36M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-        </button>
-      </div>
+      <input type="password" id="inputPassword" placeholder="Minimal 6 karakter" autocomplete="current-password">
     </div>
 
     <div class="auth-actions">
@@ -1342,12 +1252,6 @@
           </button>
         </div>
         <div class="messages" id="messagesWrap"></div>
-        <div class="reply-banner" id="replyBanner" style="display:none;">
-          <div class="reply-banner-text"><span id="replyBannerSender">Membalas</span><span id="replyBannerPreview" class="reply-banner-preview"></span></div>
-          <button class="icon-btn" id="btnCancelReplyMsg" aria-label="Batal balas">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        </div>
         <div class="edit-banner" id="editBanner" style="display:none;">
           <div class="edit-banner-text"><span>Mengedit pesan</span><span id="editBannerPreview" class="edit-banner-preview"></span></div>
           <button class="icon-btn" id="btnCancelEditMsg" aria-label="Batal edit">
@@ -1422,9 +1326,10 @@
       </div>
 
       <div class="field">
-        <label class="status-label">Status</label>
+        <label>Status</label>
         <input type="text" id="settingsStatusInput" placeholder="Tulis status kamu..." maxlength="70">
       </div>
+      <div class="status-field-hint">Contoh: "Sibuk", "Tersedia untuk chat", dsb.</div>
 
       <div class="settings-divider"></div>
 
@@ -1572,6 +1477,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <script>
 (function(){
   "use strict";
@@ -1640,6 +1546,7 @@
   syncViewportHeight();
   const auth = firebase.auth();
   const db = firebase.database();
+  const fsdb = firebase.firestore(); // Firestore: penyimpanan nama lengkap, foto profil, foto grup, dan gambar chat
 
   // ---------------------------------------------------------------
   // Indikator status koneksi (dot logo DATA PENTING)
@@ -1687,7 +1594,7 @@
     }
     return '<div class="' + cls + '">' + initials(name) + '</div>';
   }
-  function resizeImageToDataUrl(file, maxSize, callback){
+  function resizeImageToDataUrl(file, maxSize, callback, quality){
     let reader = new FileReader();
     reader.onload = function(e){
       let img = new Image();
@@ -1698,7 +1605,7 @@
         let canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        callback(canvas.toDataURL('image/jpeg', 0.82));
+        callback(canvas.toDataURL('image/jpeg', quality || 0.82));
       };
       img.onerror = function(){ callback(null); };
       img.src = e.target.result;
@@ -1706,19 +1613,34 @@
     reader.onerror = function(){ callback(null); };
     reader.readAsDataURL(file);
   }
+
+  // Firestore membatasi 1 dokumen maksimal ~1MB, jadi gambar chat perlu
+  // dipastikan cukup kecil. Kalau hasil kompresi pertama masih kebesaran,
+  // coba lagi dengan ukuran/kualitas lebih rendah sampai aman.
+  const FIRESTORE_IMG_SAFE_BYTES = 700000; // sisakan ruang untuk field lain di dokumen
+  function resizeImageForChatFirestore(file, callback){
+    let attempts = [
+      { maxSize: 1000, quality: 0.82 },
+      { maxSize: 800,  quality: 0.7 },
+      { maxSize: 600,  quality: 0.6 },
+      { maxSize: 450,  quality: 0.5 }
+    ];
+    function tryAttempt(i){
+      if (i >= attempts.length){ callback(null); return; }
+      resizeImageToDataUrl(file, attempts[i].maxSize, function(dataUrl){
+        if (!dataUrl){ callback(null); return; }
+        if (dataUrl.length <= FIRESTORE_IMG_SAFE_BYTES || i === attempts.length - 1){
+          callback(dataUrl);
+        } else {
+          tryAttempt(i + 1);
+        }
+      }, attempts[i].quality);
+    }
+    tryAttempt(0);
+  }
   function escapeHtml(str){
     return (str || '').replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-    });
-  }
-  // Ubah URL polos dalam teks pesan menjadi tautan yang bisa diklik/tap,
-  // sehingga langsung membuka browser (tab baru).
-  function linkifyText(str){
-    let escaped = escapeHtml(str || '');
-    let urlPattern = /((?:https?:\/\/|www\.)[^\s<]+[^\s<.,:;!?'")\]])/gi;
-    return escaped.replace(urlPattern, function(match){
-      let href = /^https?:\/\//i.test(match) ? match : 'https://' + match;
-      return '<a href="' + href + '" target="_blank" rel="noopener noreferrer" class="msg-link">' + match + '</a>';
     });
   }
   function fmtTime(ts){
@@ -1734,134 +1656,29 @@
   }
 
   // ---------------------------------------------------------------
-  // Centang status pesan (gaya WhatsApp)
-  //  - 1 centang putih : terkirim, lawan bicara sedang offline
-  //  - 2 centang putih : terkirim & lawan bicara sedang online
-  //  - 2 centang biru  : chat sudah dibaca lawan bicara
-  // ---------------------------------------------------------------
-  function tickSvgSingle(){
-    return '<svg viewBox="0 0 16 12" width="15" height="11"><path d="M2 6.2L6 10L14 1.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  }
-  function tickSvgDouble(){
-    return '<svg viewBox="0 0 20 12" width="18" height="11">' +
-      '<path d="M1 6.2L5 10L13 1.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
-      '<path d="M6.5 6.2L10.5 10L19 0.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
-    '</svg>';
-  }
-  function ticksHtml(state){
-    return state === 'sent' ? tickSvgSingle() : tickSvgDouble();
-  }
-  function otherMemberUids(chat){
-    let members = (chat && chat.members) || {};
-    return Object.keys(members).filter(function(u){ return u !== currentUser.uid; });
-  }
-  // Tentukan status centang pesan MILIK SAYA berdasarkan status baca
-  // (chatReads) dan status online (presenceData) lawan bicara di chat
-  // yang sedang aktif.
-  function computeMsgTickState(createdAt){
-    let chat = chatsIndex[activeChatId];
-    if (!chat) return 'sent';
-    let others = otherMemberUids(chat);
-    if (others.length === 0) return 'sent';
-    let allRead = others.every(function(u){
-      let r = chatReads[u];
-      return !!r && !!createdAt && r >= createdAt;
-    });
-    if (allRead) return 'read';
-    let allOnline = others.every(function(u){ return presenceData[u] === true; });
-    return allOnline ? 'delivered' : 'sent';
-  }
-  function updateRowTicks(row, m){
-    let slot = row.querySelector('.msg-ticks');
-    if (!slot) return;
-    let state = computeMsgTickState(m.createdAt);
-    slot.className = 'msg-ticks tick-state-' + state;
-    slot.innerHTML = ticksHtml(state);
-  }
-  function refreshAllTickStates(){
-    Object.keys(messageEls).forEach(function(id){
-      let el = messageEls[id];
-      if (el && el.data && currentUser && el.data.sender === currentUser.uid){
-        updateRowTicks(el.row, el.data);
-      }
-    });
-  }
-
-  // ---- Status baca (reads) & status online (presence) chat aktif ----
-  let chatReads = {};      // { uid: timestamp } — kapan tiap anggota lain terakhir membaca chat ini
-  let presenceData = {};   // { uid: true/false } — status online tiap anggota lain
-  let chatReadsRef = null, chatReadsHandler = null;
-  let presenceListenerRefs = {}; // { uid: { ref, handler } }
-
-  function detachChatStatusListeners(){
-    if (chatReadsRef && chatReadsHandler) chatReadsRef.off('value', chatReadsHandler);
-    chatReadsRef = null;
-    chatReadsHandler = null;
-    Object.keys(presenceListenerRefs).forEach(function(uid){
-      presenceListenerRefs[uid].ref.off('value', presenceListenerRefs[uid].handler);
-    });
-    presenceListenerRefs = {};
-    chatReads = {};
-    presenceData = {};
-  }
-  function attachChatStatusListeners(chatId){
-    detachChatStatusListeners();
-    let chat = chatsIndex[chatId];
-    if (!chat || !currentUser) return;
-    chatReadsRef = db.ref('chats/' + chatId + '/reads');
-    chatReadsHandler = function(snap){
-      chatReads = snap.val() || {};
-      refreshAllTickStates();
-    };
-    chatReadsRef.on('value', chatReadsHandler);
-    otherMemberUids(chat).forEach(function(uid){
-      let ref = db.ref('presence/' + uid);
-      let handler = function(snap){
-        presenceData[uid] = snap.val() === true;
-        refreshAllTickStates();
-      };
-      ref.on('value', handler);
-      presenceListenerRefs[uid] = { ref: ref, handler: handler };
-    });
-  }
-  // Tandai chat ini sudah saya baca sampai saat ini (dipakai lawan bicara
-  // untuk menentukan centang biru pada pesan yang mereka kirim ke saya).
-  function markChatAsRead(chatId){
-    if (!chatId || !currentUser) return;
-    db.ref('chats/' + chatId + '/reads/' + currentUser.uid).set(firebase.database.ServerValue.TIMESTAMP);
-  }
-  document.addEventListener('visibilitychange', function(){
-    if (!document.hidden && activeChatId) markChatAsRead(activeChatId);
-  });
-
-  // ---- Status online saya sendiri (presence), gaya Firebase RTDB ----
-  let presenceConnHandler = null;
-  function initPresence(){
-    if (!currentUser) return;
-    let myPresenceRef = db.ref('presence/' + currentUser.uid);
-    presenceConnHandler = function(snap){
-      if (snap.val() === true){
-        myPresenceRef.onDisconnect().set(false);
-        myPresenceRef.set(true);
-      }
-    };
-    db.ref('.info/connected').on('value', presenceConnHandler);
-  }
-  function teardownPresence(uid){
-    if (presenceConnHandler){
-      db.ref('.info/connected').off('value', presenceConnHandler);
-      presenceConnHandler = null;
-    }
-    if (uid) db.ref('presence/' + uid).set(false);
-  }
-
-  // ---------------------------------------------------------------
   // State
   // ---------------------------------------------------------------
   let currentUser = null;      // { uid, name, email }
   let friendsData = {};        // { uid: {name,email} } — cache awal, dipakai sebelum profil live sinkron
   let userProfiles = {};       // { uid: {name,email,photoURL,status} } — live dari users/{uid}
   let userProfileRefs = {};    // { uid: firebaseRef } — biar listener profil tidak didaftarkan dobel
+  let profileUnsubs = {};      // { uid: firestoreUnsubscribeFn } — untuk melepas listener Firestore saat logout
+  let allUsersProfileUnsub = null;
+  let groupPhotoUnsubs = {};   // { chatId: firestoreUnsubscribeFn } — foto grup dari Firestore
+  let groupPhotoCache = {};    // { chatId: photoURL }
+  let chatImageCache = {};     // { imageId: dataUrl } — cache gambar chat yang sudah diambil dari Firestore
+
+  // Ambil data gambar chat dari Firestore (chatImages/{imageId}), pakai cache
+  // supaya tidak fetch berulang untuk gambar yang sama.
+  function getChatImageUrl(imageId, callback){
+    if (!imageId) { callback(''); return; }
+    if (chatImageCache[imageId] !== undefined){ callback(chatImageCache[imageId]); return; }
+    fsdb.collection('chatImages').doc(imageId).get().then(function(doc){
+      let url = (doc.exists && doc.data().data) || '';
+      chatImageCache[imageId] = url;
+      callback(url);
+    }).catch(function(){ callback(''); });
+  }
   let incomingRequests = {};   // { fromUid: {fromName,fromEmail} }
   let chatsIndex = {};         // { chatId: {type,name,members,lastMessage,lastMessageAt} }
   let allUsersData = {};       // { uid: {name,email,photoURL} } — semua akun terdaftar, dipakai untuk pencarian pengguna baru
@@ -1912,16 +1729,6 @@
   const inputEmail = document.getElementById('inputEmail');
   const inputPassword = document.getElementById('inputPassword');
   const btnAuthSubmit = document.getElementById('btnAuthSubmit');
-  const btnTogglePassword = document.getElementById('btnTogglePassword');
-  if (btnTogglePassword && inputPassword){
-    btnTogglePassword.addEventListener('click', function(){
-      let showing = inputPassword.type === 'text';
-      inputPassword.type = showing ? 'password' : 'text';
-      btnTogglePassword.querySelector('.eye-open').style.display = showing ? '' : 'none';
-      btnTogglePassword.querySelector('.eye-closed').style.display = showing ? 'none' : '';
-      btnTogglePassword.setAttribute('aria-label', showing ? 'Tampilkan password' : 'Sembunyikan password');
-    });
-  }
   const authTitle = document.getElementById('authTitle');
   const authSub = document.getElementById('authSub');
   const authToggleText = document.getElementById('authToggleText');
@@ -1993,11 +1800,14 @@
         .then(function(cred){
           let uid = cred.user.uid;
           return db.ref('users/' + uid).set({
-            name: name,
             email: email,
             status: 'Halo, saya menggunakan Data Penting Chat',
-            photoURL: '',
             createdAt: firebase.database.ServerValue.TIMESTAMP
+          }).then(function(){
+            return fsdb.collection('profiles').doc(uid).set({
+              name: name,
+              photoURL: ''
+            });
           }).then(function(){
             return db.ref('userIndex/' + emailKey(email)).set(uid);
           }).then(function(){
@@ -2018,7 +1828,6 @@
   });
 
   document.getElementById('btnLogout').addEventListener('click', function(){
-    teardownPresence(currentUser && currentUser.uid);
     auth.signOut();
   });
 
@@ -2105,12 +1914,15 @@
     }
     let btn = document.getElementById('btnSaveSettings');
     btn.disabled = true;
-    let updates = { name: newName, status: newStatus || 'Halo, saya menggunakan Data Penting Chat' };
-    if (pendingPhotoData) updates.photoURL = pendingPhotoData;
+    let rtdbUpdates = { status: newStatus || 'Halo, saya menggunakan Data Penting Chat' };
+    let profileUpdates = { name: newName };
+    if (pendingPhotoData) profileUpdates.photoURL = pendingPhotoData;
 
-    db.ref('users/' + currentUser.uid).update(updates).then(function(){
+    db.ref('users/' + currentUser.uid).update(rtdbUpdates)
+      .then(function(){ return fsdb.collection('profiles').doc(currentUser.uid).set(profileUpdates, { merge: true }); })
+      .then(function(){
       currentUser.name = newName;
-      currentUser.status = updates.status;
+      currentUser.status = rtdbUpdates.status;
       if (pendingPhotoData) currentUser.photoURL = pendingPhotoData;
       document.getElementById('whoName').textContent = currentUser.name;
       updateMyAvatarEls();
@@ -2155,26 +1967,19 @@
         if (onDone) onDone(targetUid);
         return;
       }
-      return db.ref('users/' + targetUid).once('value').then(function(usnap){
-        let targetProfile = usnap.val() || {};
-        let updates = {};
-        updates['friends/' + currentUser.uid + '/' + targetUid] = {
-          name: targetProfile.name || 'Pengguna',
-          email: targetProfile.email || targetEmail,
-          photoURL: targetProfile.photoURL || ''
-        };
-        updates['friends/' + targetUid + '/' + currentUser.uid] = {
-          name: currentUser.name,
-          email: currentUser.email,
-          photoURL: currentUser.photoURL || ''
-        };
-        updates['friendRequests/' + targetUid + '/' + currentUser.uid] = null;
-        return db.ref().update(updates).then(function(){
-          msgEl.className = 'add-friend-msg ok';
-          msgEl.textContent = 'Berteman! Sekarang kalian bisa mulai chat.';
-          if (inputEl) inputEl.value = '';
-          if (onDone) onDone(targetUid);
-        });
+      let updates = {};
+      updates['friends/' + currentUser.uid + '/' + targetUid] = {
+        email: targetEmail
+      };
+      updates['friends/' + targetUid + '/' + currentUser.uid] = {
+        email: currentUser.email
+      };
+      updates['friendRequests/' + targetUid + '/' + currentUser.uid] = null;
+      return db.ref().update(updates).then(function(){
+        msgEl.className = 'add-friend-msg ok';
+        msgEl.textContent = 'Berteman! Sekarang kalian bisa mulai chat.';
+        if (inputEl) inputEl.value = '';
+        if (onDone) onDone(targetUid);
       });
     }).catch(function(err){
       msgEl.className = 'add-friend-msg err';
@@ -2208,14 +2013,16 @@
     if (user){
       verifyScreen.style.display = 'none';
       db.ref('users/' + user.uid).once('value').then(function(snap){
-        let profile = snap.val() || { name: user.email, email: user.email };
-        currentUser = {
-          uid: user.uid,
-          name: profile.name,
-          email: profile.email || user.email,
-          status: profile.status || 'Halo, saya menggunakan Data Penting Chat',
-          photoURL: profile.photoURL || ''
-        };
+        let profile = snap.val() || { email: user.email };
+        return fsdb.collection('profiles').doc(user.uid).get().then(function(pdoc){
+          let pdata = pdoc.exists ? pdoc.data() : {};
+          currentUser = {
+            uid: user.uid,
+            name: pdata.name || user.email,
+            email: profile.email || user.email,
+            status: profile.status || 'Halo, saya menggunakan Data Penting Chat',
+            photoURL: pdata.photoURL || ''
+          };
         document.getElementById('whoName').textContent = currentUser.name;
         updateMyAvatarEls();
         document.getElementById('topbarWho').style.display = 'flex';
@@ -2249,7 +2056,7 @@
         startInactivityWatcher();
         updateConnIndicator();
         requestNotifPermission();
-        initPresence();
+        });
       });
     } else {
       currentUser = null;
@@ -2295,7 +2102,6 @@
     if (!currentUser) return;
     if (!isDesktopView()) return; // jaga-jaga kalau resize terjadi tepat saat timeout
     pendingAutoLogoutNotice = true;
-    teardownPresence(currentUser.uid);
     auth.signOut();
   }
 
@@ -2493,6 +2299,8 @@
     incomingRequests = {};
     chatsIndex = {};
     allUsersData = {};
+    allUsersEmailData = {};
+    allUsersProfileData = {};
     activeChatId = null;
     restoredActiveChatOnLoad = false;
     clearSavedActiveChat();
@@ -2509,9 +2317,16 @@
     activeListenerRefs.forEach(function(r){ r.ref.off(r.event, r.cb); });
     activeListenerRefs = [];
     if (messagesListenerRef){ detachMessagesListener(); }
-    detachChatStatusListeners();
     chatMsgBaseline = {};
     clearTabTitleBadge();
+    Object.keys(profileUnsubs).forEach(function(uid){ profileUnsubs[uid](); });
+    profileUnsubs = {};
+    userProfileRefs = {};
+    userProfiles = {};
+    if (allUsersProfileUnsub){ allUsersProfileUnsub(); allUsersProfileUnsub = null; }
+    Object.keys(groupPhotoUnsubs).forEach(function(chatId){ groupPhotoUnsubs[chatId](); });
+    groupPhotoUnsubs = {};
+    groupPhotoCache = {};
   }
   function track(ref, event, cb){
     ref.on(event, cb);
@@ -2660,15 +2475,21 @@
     if (!uid || (currentUser && uid === currentUser.uid) || userProfileRefs[uid]) return;
     let ref = db.ref('users/' + uid);
     userProfileRefs[uid] = ref;
+    if (!userProfiles[uid]) userProfiles[uid] = { name: 'Pengguna', email: '', photoURL: '', status: '' };
     ref.on('value', function(snap){
       let val = snap.val();
       if (val){
-        userProfiles[uid] = {
-          name: val.name || 'Pengguna',
-          email: val.email || '',
-          photoURL: val.photoURL || '',
-          status: val.status || ''
-        };
+        userProfiles[uid].email = val.email || '';
+        userProfiles[uid].status = val.status || '';
+      }
+      onUserProfileChanged();
+    });
+    // Nama lengkap & foto profil disimpan di Firestore (bukan RTDB), didengarkan real-time juga.
+    profileUnsubs[uid] = fsdb.collection('profiles').doc(uid).onSnapshot(function(docSnap){
+      let val = docSnap.data();
+      if (val){
+        userProfiles[uid].name = val.name || 'Pengguna';
+        userProfiles[uid].photoURL = val.photoURL || '';
       }
       onUserProfileChanged();
     });
@@ -2763,8 +2584,8 @@
 
   function acceptRequest(fromUid, req){
     let updates = {};
-    updates['friends/' + currentUser.uid + '/' + fromUid] = { name: req.fromName, email: req.fromEmail, photoURL: req.fromPhoto || '' };
-    updates['friends/' + fromUid + '/' + currentUser.uid] = { name: currentUser.name, email: currentUser.email, photoURL: currentUser.photoURL || '' };
+    updates['friends/' + currentUser.uid + '/' + fromUid] = { email: req.fromEmail };
+    updates['friends/' + fromUid + '/' + currentUser.uid] = { email: currentUser.email };
     updates['friendRequests/' + currentUser.uid + '/' + fromUid] = null;
     db.ref().update(updates);
   }
@@ -2809,9 +2630,33 @@
   // Semua akun terdaftar di aplikasi (bukan cuma yang sudah berteman),
   // supaya kolom pencarian di atas daftar obrolan bisa nemuin teman
   // baru yang barusan daftar juga, bukan cuma yang sudah ditambahkan.
+  // Email/status diambil live dari RTDB (users/), nama & foto dari
+  // Firestore (profiles/), lalu digabung jadi satu objek allUsersData.
+  let allUsersEmailData = {};
+  let allUsersProfileData = {};
+  function mergeAllUsersData(){
+    allUsersData = {};
+    let uids = new Set(Object.keys(allUsersEmailData).concat(Object.keys(allUsersProfileData)));
+    uids.forEach(function(uid){
+      let e = allUsersEmailData[uid] || {};
+      let p = allUsersProfileData[uid] || {};
+      allUsersData[uid] = {
+        name: p.name || 'Pengguna',
+        email: e.email || '',
+        photoURL: p.photoURL || ''
+      };
+    });
+  }
   function initAllUsersListener(){
     track(db.ref('users'), 'value', function(snap){
-      allUsersData = snap.val() || {};
+      allUsersEmailData = snap.val() || {};
+      mergeAllUsersData();
+    });
+    allUsersProfileUnsub = fsdb.collection('profiles').onSnapshot(function(qsnap){
+      let data = {};
+      qsnap.forEach(function(doc){ data[doc.id] = doc.data(); });
+      allUsersProfileData = data;
+      mergeAllUsersData();
     });
   }
 
@@ -2939,6 +2784,9 @@
           let val = csnap.val();
           if (val){
             chatsIndex[chatId] = Object.assign({ id: chatId }, val);
+            if (groupPhotoCache[chatId] !== undefined){
+              chatsIndex[chatId].photoURL = groupPhotoCache[chatId];
+            }
             maybeNotifyNewMessage(chatId, chatsIndex[chatId]);
           } else {
             delete chatsIndex[chatId];
@@ -2962,6 +2810,21 @@
             }
           }
         });
+        // Foto grup disimpan di Firestore (groupPhotos/{chatId}), bukan RTDB.
+        if (!groupPhotoUnsubs[chatId]){
+          groupPhotoUnsubs[chatId] = fsdb.collection('groupPhotos').doc(chatId).onSnapshot(function(doc){
+            let photoURL = (doc.exists && doc.data().photoURL) || '';
+            groupPhotoCache[chatId] = photoURL;
+            if (chatsIndex[chatId]){
+              chatsIndex[chatId].photoURL = photoURL;
+              renderChatList();
+              if (activeChatId === chatId) updateChatHeader();
+              if (groupSettingsModal && groupSettingsModal.classList.contains('show') && groupSettingsChatId === chatId){
+                populateGroupSettings();
+              }
+            }
+          });
+        }
       });
     });
   }
@@ -3027,7 +2890,7 @@
       let row = document.createElement('div');
       row.className = 'chat-row-wrap';
       let isPrivateRow = chat.type !== 'group';
-      let deleteLabel = 'Hapus obrolan';
+      let deleteLabel = isPrivateRow ? 'Hapus pertemanan' : 'Hapus obrolan';
       row.innerHTML =
         '<div class="chat-row-delete-bg"><button type="button" class="chat-row-delete-btn" aria-label="' + deleteLabel + '" title="' + deleteLabel + '">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>' +
@@ -3043,7 +2906,9 @@
         e.stopPropagation();
         closeOpenSwipeRow();
         if (isPrivateRow){
-          deleteChatForMeOnly(chatId, name);
+          let members = chat.members || {};
+          let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
+          removeFriendAndChat(chatId, otherUid, name);
         } else {
           deleteChatFromList(chatId, name);
         }
@@ -3161,70 +3026,41 @@
     // chat semua pihak — cuma kosong tanpa pesan. Untuk menghapus
     // grup sepenuhnya (bukan cuma pesannya), pakai "Hapus grup" di
     // Pengaturan Grup.
-    //
-    // Yang dihapus di tempat teman HANYA pesan-pesan yang MASIH
-    // KELIHATAN di layar kita saat ini — bukan seluruh riwayat chat.
-    // Kalau kita sebelumnya pernah "Hapus obrolan" sendiri lewat
-    // ikon tempat sampah di daftar (delete-for-me, lihat
-    // 'clearedFor'), pesan-pesan lama sebelum titik itu memang sudah
-    // tidak kita lihat lagi — dan pesan-pesan itu TIDAK ikut terhapus
-    // di tempat teman; punya teman untuk pesan-pesan lama itu tetap
-    // dibiarkan utuh, tidak diubah sama sekali.
-    db.ref('chats/' + chatId + '/clearedFor/' + currentUser.uid).once('value').then(function(clearedSnap){
-      let myClearedAt = clearedSnap.val();
-      let lowerBound = (typeof myClearedAt === 'number' && myClearedAt > 0) ? myClearedAt : null;
-      // Batasi juga sampai pesan TERAKHIR yang kita ketahui saat tombol
-      // ini diklik (chat.lastMessageAt), bukan main hapus seluruh node
-      // 'messages' begitu saja. Ini supaya kalau tepat pada saat
-      // bersamaan teman kita mengirim pesan baru (race condition),
-      // pesan baru itu TIDAK ikut kehapus di tempat teman.
-      let cutoff = (chat && chat.lastMessageAt) ? chat.lastMessageAt : Date.now();
-      let query = db.ref('chats/' + chatId + '/messages').orderByChild('createdAt');
-      query = lowerBound ? query.startAt(lowerBound + 1).endAt(cutoff) : query.endAt(cutoff);
-      return query.once('value').then(function(snap){
-        let updates = {};
-        snap.forEach(function(child){
-          updates['chats/' + chatId + '/messages/' + child.key] = null;
-        });
-        return db.ref('chats/' + chatId + '/lastMessageAt').once('value').then(function(latestSnap){
-          let latestAt = latestSnap.val();
-          // Hanya kosongkan preview "pesan terakhir" kalau memang belum
-          // ada pesan baru lagi setelah titik cutoff tadi. Kalau sudah
-          // ada pesan baru masuk (lebih baru dari cutoff), biarkan
-          // preview & waktunya tetap menunjuk ke pesan baru itu.
-          if (!latestAt || latestAt <= cutoff){
-            updates['chats/' + chatId + '/lastMessage'] = '';
-            updates['chats/' + chatId + '/lastMessageAt'] = null;
-          }
-          return db.ref().update(updates);
-        });
+    let updates = {};
+    updates['chats/' + chatId + '/messages'] = null;
+    updates['chats/' + chatId + '/lastMessage'] = '';
+    updates['chats/' + chatId + '/lastMessageAt'] = null;
+    // Bersihkan juga gambar terkait di Firestore, kalau chat ini sedang terbuka
+    // (datanya ada di cache messageEls). Untuk chat yang tidak sedang dibuka,
+    // gambar lama tidak otomatis ikut terhapus (batasan yang diketahui).
+    if (chatId === activeChatId){
+      Object.keys(messageEls).forEach(function(msgId){
+        let el = messageEls[msgId];
+        if (el && el.data && el.data.type === 'image' && el.data.imageId){
+          fsdb.collection('chatImages').doc(el.data.imageId).delete().catch(function(){});
+        }
       });
-    });
+    }
+    db.ref().update(updates);
     // Chat/grup tetap terbuka & tetap ada di daftar; pesan-pesannya
     // akan otomatis hilang dari layar lewat listener child_removed
     // kalau chat ini sedang dibuka.
   }
 
-  // Hapus obrolan HANYA di sisi sendiri ("delete for me"). Pertemanan
-  // tetap ada, data chat & riwayat pesan di database TIDAK dihapus —
-  // hanya disembunyikan dari daftar obrolan milik kita sendiri lewat
-  // penanda 'chats/{chatId}/clearedFor/{uid}'. Bagi teman kita, chat
-  // ini tetap muncul normal di daftar obrolannya beserta semua pesan
-  // lama yang sudah ada, sama sekali tidak terpengaruh.
-  //
-  // Kalau nanti ada pesan baru masuk/keluar di chat ini lagi (lihat
-  // sendMessage/sendImageMessage), entrinya di userChats kita akan
-  // otomatis dipulihkan sehingga obrolan muncul kembali di daftar —
-  // tapi pesan-pesan lama sebelum waktu hapus tadi tetap disembunyikan
-  // dari kita (lihat openChat, yang mem-filter pesan berdasarkan
-  // 'clearedFor').
-  function deleteChatForMeOnly(chatId, name){
-    let msg = 'Hapus obrolan dengan "' + name + '" dari daftar kamu? Obrolan ini hanya akan hilang di sisi kamu — "' + name + '" tetap bisa melihat riwayat percakapan seperti biasa di daftarnya.';
+  function removeFriendAndChat(chatId, otherUid, name){
+    if (!otherUid) return;
+    let msg = 'Hapus pertemanan akan menghapus percakapan kamu sebelumnya, apakah anda yakin?';
     if (!confirm(msg)) return;
 
+    // Hapus pertemanan dua arah, hapus chat dari daftar kedua pihak,
+    // dan hapus juga isi percakapannya supaya kalau nanti berteman
+    // lagi, obrolannya benar-benar mulai dari kosong/fresh.
     let updates = {};
-    updates['chats/' + chatId + '/clearedFor/' + currentUser.uid] = firebase.database.ServerValue.TIMESTAMP;
+    updates['friends/' + currentUser.uid + '/' + otherUid] = null;
+    updates['friends/' + otherUid + '/' + currentUser.uid] = null;
     updates['userChats/' + currentUser.uid + '/' + chatId] = null;
+    updates['userChats/' + otherUid + '/' + chatId] = null;
+    updates['chats/' + chatId] = null;
     db.ref().update(updates).then(function(){
       if (activeChatId === chatId){
         activeChatId = null;
@@ -3236,7 +3072,7 @@
         clearSavedActiveChat();
       }
     }).catch(function(err){
-      alert('Gagal menghapus obrolan: ' + err.message);
+      alert('Gagal menghapus pertemanan: ' + err.message);
     });
   }
 
@@ -3500,7 +3336,7 @@
       if (!dataUrl){ alert('Gagal memuat gambar.'); return; }
       gsPendingPhoto = dataUrl;
       document.getElementById('gsPhotoPreview').innerHTML = '<img class="avatar-img" src="' + dataUrl + '" alt="">';
-      db.ref('chats/' + groupSettingsChatId + '/photoURL').set(dataUrl);
+      fsdb.collection('groupPhotos').doc(groupSettingsChatId).set({ photoURL: dataUrl });
     });
   });
 
@@ -3526,6 +3362,7 @@
     updates['chats/' + chatId] = null;
     uids.forEach(function(uid){ updates['userChats/' + uid + '/' + chatId] = null; });
     db.ref().update(updates).then(function(){
+      fsdb.collection('groupPhotos').doc(chatId).delete().catch(function(){});
       groupSettingsModal.classList.remove('show');
       if (activeChatId === chatId){
         activeChatId = null;
@@ -3629,7 +3466,6 @@
     messageEls = {};
     exitSelectionMode();
     cancelEditMessage();
-    cancelReplyToMessage();
     renderChatList();
     updateChatHeader(fallbackName);
     mobileViewMode = 'chat';
@@ -3638,31 +3474,14 @@
     saveMobileViewState('chat');
 
     detachMessagesListener();
-    attachChatStatusListeners(chatId);
-    if (!document.hidden) markChatAsRead(chatId);
-
-    // Kalau kita pernah "Hapus obrolan" (untuk diri sendiri) di chat
-    // ini, ambil dulu penanda waktunya supaya pesan-pesan lama sebelum
-    // waktu itu tidak ikut ditampilkan lagi ke kita — meski pesan itu
-    // masih tersimpan utuh di database untuk lawan bicara.
-    let myClearMarkerRef = db.ref('chats/' + chatId + '/clearedFor/' + currentUser.uid);
-    myClearMarkerRef.once('value').then(function(csnap){
-      if (activeChatId !== chatId) return; // sudah pindah chat lain, batalkan
-      let clearedAt = csnap.val();
-      let msgsRef = (typeof clearedAt === 'number' && clearedAt > 0)
-        ? db.ref('chats/' + chatId + '/messages').orderByChild('createdAt').startAt(clearedAt + 1).limitToLast(200)
-        : db.ref('chats/' + chatId + '/messages').limitToLast(200);
-      let cbAdded = function(snap){
-        appendMessage(snap.val(), snap.key);
-        if (!document.hidden) markChatAsRead(chatId);
-      };
-      let cbChanged = function(snap){ updateMessageInDOM(snap.key, snap.val()); };
-      let cbRemoved = function(snap){ removeMessageFromDOM(snap.key); };
-      msgsRef.on('child_added', cbAdded);
-      msgsRef.on('child_changed', cbChanged);
-      msgsRef.on('child_removed', cbRemoved);
-      messagesListenerRef = { ref: msgsRef, handlers: { child_added: cbAdded, child_changed: cbChanged, child_removed: cbRemoved } };
-    });
+    let msgsRef = db.ref('chats/' + chatId + '/messages').limitToLast(200);
+    let cbAdded = function(snap){ appendMessage(snap.val(), snap.key); };
+    let cbChanged = function(snap){ updateMessageInDOM(snap.key, snap.val()); };
+    let cbRemoved = function(snap){ removeMessageFromDOM(snap.key); };
+    msgsRef.on('child_added', cbAdded);
+    msgsRef.on('child_changed', cbChanged);
+    msgsRef.on('child_removed', cbRemoved);
+    messagesListenerRef = { ref: msgsRef, handlers: { child_added: cbAdded, child_changed: cbChanged, child_removed: cbRemoved } };
   }
 
   function detachMessagesListener(){
@@ -3681,7 +3500,6 @@
   let selectionMode = false;
   let selectedIds = {};     // msgId -> true
   let editingMessageId = null;
-  let replyingToId = null;
 
   const chatHeaderNormal = document.getElementById('chatHeaderNormal');
   const chatHeaderSelection = document.getElementById('chatHeaderSelection');
@@ -3692,40 +3510,6 @@
   const editBanner = document.getElementById('editBanner');
   const editBannerPreview = document.getElementById('editBannerPreview');
   const btnCancelEditMsg = document.getElementById('btnCancelEditMsg');
-  const replyBanner = document.getElementById('replyBanner');
-  const replyBannerSender = document.getElementById('replyBannerSender');
-  const replyBannerPreview = document.getElementById('replyBannerPreview');
-  const btnCancelReplyMsg = document.getElementById('btnCancelReplyMsg');
-
-  function startReplyToMessage(msgId){
-    let el = messageEls[msgId];
-    if (!el || !el.data) return;
-    if (selectionMode) exitSelectionMode();
-    if (editingMessageId) cancelEditMessage();
-    replyingToId = msgId;
-    let isMe = el.data.sender === currentUser.uid;
-    let senderName = isMe ? 'Anda' : (personInfo(el.data.sender).name || el.data.senderName || '');
-    let preview = el.data.type === 'image' ? '📷 Foto' : (el.data.text || '');
-    replyBannerSender.textContent = 'Membalas ' + senderName;
-    replyBannerPreview.textContent = preview;
-    replyBanner.style.display = 'flex';
-    msgInput.focus();
-  }
-  function cancelReplyToMessage(){
-    replyingToId = null;
-    replyBanner.style.display = 'none';
-  }
-  btnCancelReplyMsg.addEventListener('click', cancelReplyToMessage);
-
-  function scrollToMessage(msgId){
-    let el = messageEls[msgId];
-    if (!el) return;
-    el.row.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    el.row.classList.add('selected');
-    setTimeout(function(){
-      if (!selectedIds[msgId]) el.row.classList.remove('selected');
-    }, 900);
-  }
 
   function enterSelectionMode(){
     if (selectionMode) return;
@@ -3774,7 +3558,13 @@
     if (!confirm(msg)) return;
     let chatId = activeChatId;
     let updates = {};
-    ids.forEach(function(id){ updates['chats/' + chatId + '/messages/' + id] = null; });
+    ids.forEach(function(id){
+      updates['chats/' + chatId + '/messages/' + id] = null;
+      let el = messageEls[id];
+      if (el && el.data && el.data.type === 'image' && el.data.imageId){
+        fsdb.collection('chatImages').doc(el.data.imageId).delete().catch(function(){});
+      }
+    });
     if (editingMessageId && selectedIds[editingMessageId]) cancelEditMessage();
     db.ref().update(updates).then(function(){
       refreshLastMessagePreview(chatId);
@@ -3788,7 +3578,6 @@
     let id = ids[0];
     let el = messageEls[id];
     if (!el) return;
-    if (replyingToId) cancelReplyToMessage();
     editingMessageId = id;
     msgInput.value = el.data.text || '';
     autoGrow();
@@ -3826,34 +3615,19 @@
     });
   }
 
-  // Tekan & tahan (atau klik saat sedang dalam mode pilih) untuk memilih
-  // satu pesan; klik pesan lain untuk menambah pilihan. Menggeser (swipe)
-  // bubble pesan ke arah "terbuka"-nya (pesan orang lain: ke kanan, pesan
-  // sendiri: ke kiri) akan langsung membuka mode balas pesan, gaya WhatsApp.
+  // Tekan & tahan (atau klik saat sedang dalam mode pilih) untuk
+  // memilih satu pesan; klik pesan lain untuk menambah pilihan.
   function attachRowSelectionHandlers(row, msgId){
     let pressTimer = null;
     let longPressFired = false;
     let startX = 0, startY = 0;
-    let dragging = false, decided = false, isHorizontal = false, replyDirOk = false, replyFired = false;
-    const MOVE_TOLERANCE = 12;  // px toleransi geser jari sebelum long-press dibatalkan
-    const REPLY_TRIGGER_X = 56; // px jarak geser untuk memicu balas
-    const REPLY_DRAG_MAX = 74;  // px batas maksimum geser bubble
-    let isMeRow = row.classList.contains('me');
-
-    function clearPressTimer(){
-      clearTimeout(pressTimer);
-      pressTimer = null;
-    }
-    function bubbleEl(){ return row.querySelector('.bubble'); }
-    function replyIconEl(){ return row.querySelector('.reply-icon'); }
-
+    const MOVE_TOLERANCE = 12; // px toleransi geser jari sebelum long-press dibatalkan
     function startPress(e){
       longPressFired = false;
-      dragging = true; decided = false; isHorizontal = false; replyFired = false;
       let pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
       startX = pt.clientX;
       startY = pt.clientY;
-      clearPressTimer();
+      clearTimeout(pressTimer);
       pressTimer = setTimeout(function(){
         longPressFired = true;
         if (navigator.vibrate) { try { navigator.vibrate(15); } catch(e){} }
@@ -3861,68 +3635,26 @@
         toggleSelectMessage(msgId);
       }, 420);
     }
-    function springBack(){
-      let bubble = bubbleEl();
-      if (bubble){
-        bubble.classList.remove('dragging');
-        bubble.style.transform = 'translateX(0)';
-      }
-      let icon = replyIconEl();
-      if (icon){ icon.style.opacity = 0; icon.style.transform = 'translateY(-50%) scale(0.6)'; }
-    }
-    function endPress(){
-      clearPressTimer();
-      if (dragging && isHorizontal) springBack();
-      dragging = false;
+    function cancelPress(){
+      clearTimeout(pressTimer);
     }
     function movePress(e){
-      if (!dragging) return;
       let pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
-      let dx = pt.clientX - startX;
-      let dy = pt.clientY - startY;
-      if (!decided){
-        if (Math.abs(dx) > MOVE_TOLERANCE || Math.abs(dy) > MOVE_TOLERANCE){
-          decided = true;
-          isHorizontal = Math.abs(dx) > Math.abs(dy);
-          if (isHorizontal){
-            clearPressTimer();
-            replyDirOk = isMeRow ? dx < 0 : dx > 0;
-          }
-        } else {
-          return;
-        }
-      }
-      if (!isHorizontal){ clearPressTimer(); return; }
-      if (!replyDirOk) return;
-      if (e.cancelable) e.preventDefault();
-      let bubble = bubbleEl();
-      if (bubble) bubble.classList.add('dragging');
-      let mag = Math.min(Math.abs(dx), REPLY_DRAG_MAX);
-      let x = isMeRow ? -mag : mag;
-      if (bubble) bubble.style.transform = 'translateX(' + x + 'px)';
-      let icon = replyIconEl();
-      if (icon){
-        let progress = Math.min(mag / REPLY_TRIGGER_X, 1);
-        icon.style.opacity = progress;
-        icon.style.transform = 'translateY(-50%) scale(' + (0.6 + progress * 0.4) + ')';
-      }
-      if (!replyFired && mag >= REPLY_TRIGGER_X){
-        replyFired = true;
-        if (navigator.vibrate) { try { navigator.vibrate(12); } catch(e){} }
-        startReplyToMessage(msgId);
+      let dx = Math.abs(pt.clientX - startX);
+      let dy = Math.abs(pt.clientY - startY);
+      if (dx > MOVE_TOLERANCE || dy > MOVE_TOLERANCE){
+        clearTimeout(pressTimer);
       }
     }
     row.addEventListener('mousedown', startPress);
-    row.addEventListener('mousemove', movePress);
-    row.addEventListener('mouseup', endPress);
-    row.addEventListener('mouseleave', endPress);
+    row.addEventListener('mouseup', cancelPress);
+    row.addEventListener('mouseleave', cancelPress);
     row.addEventListener('touchstart', startPress, { passive: true });
-    row.addEventListener('touchmove', movePress, { passive: false });
-    row.addEventListener('touchend', endPress);
-    row.addEventListener('touchcancel', endPress);
+    row.addEventListener('touchend', cancelPress);
+    row.addEventListener('touchcancel', cancelPress);
+    row.addEventListener('touchmove', movePress, { passive: true });
     row.addEventListener('click', function(){
       if (longPressFired){ longPressFired = false; return; }
-      if (decided && isHorizontal){ decided = false; return; }
       if (selectionMode) toggleSelectMessage(msgId);
     });
   }
@@ -3937,62 +3669,41 @@
     let showSender = chat && chat.type === 'group' && !isMe;
     if (showSender) ensureUserProfileSynced(m.sender);
     let senderDisplayName = showSender ? personInfo(m.sender).name || m.senderName || '' : '';
-    let isImage = m.type === 'image' && m.imageData;
-    let replyHtml = m.replyTo ?
-      ('<div class="reply-quote" data-reply-target="' + escapeHtml(m.replyTo.id || '') + '">' +
-        '<span class="reply-quote-sender">' + escapeHtml(m.replyTo.senderName || '') + '</span>' +
-        '<span class="reply-quote-text">' + escapeHtml(m.replyTo.preview || '') + '</span>' +
-      '</div>') : '';
+    let isImage = m.type === 'image' && m.imageId;
     row.innerHTML =
-      '<div class="reply-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg></div>' +
       '<div class="bubble">' +
         (showSender ? '<span class="sender">' + escapeHtml(senderDisplayName) + '</span>' : '') +
-        replyHtml +
-        (isImage ? '<img class="img-msg" src="' + m.imageData + '" alt="Foto">' : '') +
+        (isImage ? '<div class="img-msg-placeholder"></div>' : '') +
         '<span class="text"></span>' +
-        '<span class="time">' + fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + (isMe ? '<span class="msg-ticks"></span>' : '') + '</span>' +
+        '<span class="time">' + fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + '</span>' +
       '</div>';
-    row.querySelector('.text').innerHTML = isImage ? '' : linkifyText(m.text || '');
-    row.querySelectorAll('.text a.msg-link').forEach(function(a){
-      // Cegah tap pada link memicu mode pilih pesan; biarkan tautan
-      // langsung membuka di tab/browser baru seperti biasa.
-      a.addEventListener('click', function(e){ e.stopPropagation(); });
-      a.addEventListener('mousedown', function(e){ e.stopPropagation(); });
-      a.addEventListener('touchstart', function(e){ e.stopPropagation(); }, { passive: true });
-    });
+    row.querySelector('.text').textContent = isImage ? '' : (m.text || '');
     if (isImage){
-      row.querySelector('.img-msg').addEventListener('click', function(){
-        openImageViewer(m.imageData);
-      });
-    }
-    if (m.replyTo){
-      row.querySelector('.reply-quote').addEventListener('click', function(e){
-        e.stopPropagation();
-        if (m.replyTo.id) scrollToMessage(m.replyTo.id);
+      let bubbleEl = row.querySelector('.bubble');
+      let placeholderEl = row.querySelector('.img-msg-placeholder');
+      getChatImageUrl(m.imageId, function(url){
+        if (!placeholderEl.parentNode) return; // baris sudah dihapus sebelum gambar selesai dimuat
+        let img = document.createElement('img');
+        img.className = 'img-msg';
+        img.alt = 'Foto';
+        img.src = url;
+        img.addEventListener('click', function(){ openImageViewer(url); });
+        bubbleEl.replaceChild(img, placeholderEl);
       });
     }
     messagesWrap.appendChild(row);
     messagesWrap.scrollTop = messagesWrap.scrollHeight;
     messageEls[msgId] = { row: row, data: m };
     attachRowSelectionHandlers(row, msgId);
-    if (isMe) updateRowTicks(row, m);
   }
 
   function updateMessageInDOM(msgId, m){
     let el = messageEls[msgId];
     if (!el || !m) return;
     el.data = m;
-    let isImage = m.type === 'image' && m.imageData;
-    let textEl = el.row.querySelector('.text');
-    textEl.innerHTML = isImage ? '' : linkifyText(m.text || '');
-    textEl.querySelectorAll('a.msg-link').forEach(function(a){
-      a.addEventListener('click', function(e){ e.stopPropagation(); });
-      a.addEventListener('mousedown', function(e){ e.stopPropagation(); });
-      a.addEventListener('touchstart', function(e){ e.stopPropagation(); }, { passive: true });
-    });
-    let isMe = currentUser && m.sender === currentUser.uid;
-    el.row.querySelector('.time').innerHTML = fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + (isMe ? '<span class="msg-ticks"></span>' : '');
-    if (isMe) updateRowTicks(el.row, m);
+    let isImage = m.type === 'image' && m.imageId;
+    el.row.querySelector('.text').textContent = isImage ? '' : (m.text || '');
+    el.row.querySelector('.time').innerHTML = fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '');
     if (editingMessageId === msgId){
       editBannerPreview.textContent = m.text || '';
     }
@@ -4006,7 +3717,6 @@
       updateSelectionUI();
     }
     if (editingMessageId === msgId) cancelEditMessage();
-    if (replyingToId === msgId) cancelReplyToMessage();
     el.row.remove();
     delete messageEls[msgId];
   }
@@ -4025,47 +3735,39 @@
     let file = chatPhotoInput.files && chatPhotoInput.files[0];
     chatPhotoInput.value = '';
     if (!file || !activeChatId) return;
-    resizeImageToDataUrl(file, 1000, function(dataUrl){
-      if (!dataUrl) return;
+    resizeImageForChatFirestore(file, function(dataUrl){
+      if (!dataUrl){ alert('Gagal memuat gambar.'); return; }
       sendImageMessage(dataUrl);
     });
   });
-  // Kalau salah satu member pernah "Hapus obrolan" (untuk dirinya
-  // sendiri) di chat ini, begitu ada pesan baru terkirim/masuk lagi,
-  // obrolan ini otomatis muncul kembali di daftar member tersebut
-  // (mis. WhatsApp: chat yang dihapus akan balik muncul kalau ada
-  // pesan baru). Pesan-pesan LAMA sebelum waktu hapusnya tetap tidak
-  // ditampilkan ke dia (lihat filter 'clearedFor' di openChat) —
-  // hanya pesan baru dan seterusnya yang kelihatan lagi.
-  function restoreChatForAllMembers(chatId, updates){
-    let chat = chatsIndex[chatId];
-    let members = chat && chat.members ? chat.members : null;
-    if (members){
-      Object.keys(members).forEach(function(uid){
-        updates['userChats/' + uid + '/' + chatId] = true;
-      });
-    } else {
-      updates['userChats/' + currentUser.uid + '/' + chatId] = true;
-    }
-  }
-
   function sendImageMessage(dataUrl){
-    let msgRef = db.ref('chats/' + activeChatId + '/messages').push();
-    let payload = {
+    let chatId = activeChatId;
+    let imgRef = fsdb.collection('chatImages').doc();
+    imgRef.set({
+      data: dataUrl,
+      chatId: chatId,
       sender: currentUser.uid,
-      senderName: currentUser.name,
-      type: 'image',
-      imageData: dataUrl,
-      text: '',
-      createdAt: firebase.database.ServerValue.TIMESTAMP
-    };
-    let updates = {};
-    updates['chats/' + activeChatId + '/messages/' + msgRef.key] = payload;
-    updates['chats/' + activeChatId + '/lastMessage'] = '📷 Foto';
-    updates['chats/' + activeChatId + '/lastMessageAt'] = firebase.database.ServerValue.TIMESTAMP;
-    updates['chats/' + activeChatId + '/lastSender'] = currentUser.uid;
-    restoreChatForAllMembers(activeChatId, updates);
-    db.ref().update(updates);
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){
+      chatImageCache[imgRef.id] = dataUrl; // sudah kita punya datanya sendiri, tak perlu fetch ulang
+      let msgRef = db.ref('chats/' + chatId + '/messages').push();
+      let payload = {
+        sender: currentUser.uid,
+        senderName: currentUser.name,
+        type: 'image',
+        imageId: imgRef.id,
+        text: '',
+        createdAt: firebase.database.ServerValue.TIMESTAMP
+      };
+      let updates = {};
+      updates['chats/' + chatId + '/messages/' + msgRef.key] = payload;
+      updates['chats/' + chatId + '/lastMessage'] = '📷 Foto';
+      updates['chats/' + chatId + '/lastMessageAt'] = firebase.database.ServerValue.TIMESTAMP;
+      updates['chats/' + chatId + '/lastSender'] = currentUser.uid;
+      db.ref().update(updates);
+    }).catch(function(err){
+      alert('Gagal mengirim foto: ' + err.message);
+    });
   }
   function openImageViewer(src){
     imgViewerImg.src = src;
@@ -4104,29 +3806,14 @@
       text: text,
       createdAt: firebase.database.ServerValue.TIMESTAMP
     };
-    if (replyingToId){
-      let replyEl = messageEls[replyingToId];
-      if (replyEl && replyEl.data){
-        let rIsMe = replyEl.data.sender === currentUser.uid;
-        let rSenderName = rIsMe ? 'Anda' : (personInfo(replyEl.data.sender).name || replyEl.data.senderName || '');
-        let rPreview = replyEl.data.type === 'image' ? '📷 Foto' : (replyEl.data.text || '');
-        payload.replyTo = {
-          id: replyingToId,
-          senderName: rSenderName,
-          preview: rPreview.length > 80 ? rPreview.slice(0,80) + '…' : rPreview
-        };
-      }
-    }
     let updates = {};
     updates['chats/' + activeChatId + '/messages/' + msgRef.key] = payload;
     updates['chats/' + activeChatId + '/lastMessage'] = text.length > 60 ? text.slice(0,60) + '…' : text;
     updates['chats/' + activeChatId + '/lastMessageAt'] = firebase.database.ServerValue.TIMESTAMP;
     updates['chats/' + activeChatId + '/lastSender'] = currentUser.uid;
-    restoreChatForAllMembers(activeChatId, updates);
     db.ref().update(updates);
     msgInput.value = '';
     autoGrow();
-    cancelReplyToMessage();
   }
 
   btnSendMsg.addEventListener('click', sendMessage);

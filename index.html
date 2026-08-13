@@ -1565,6 +1565,19 @@
     <span class="label label-sm">DATA PENTING</span>
   </a>
 
+  <!--
+    Menu "CARA BETTING TOGEL" — halaman panduan cara betting togel
+    (lihat <div id="pageCaraBetting"> di bawah).
+  -->
+  <div class="nav-item" id="navCaraBetting">
+    <span class="icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="label label-sm">CARA BETTING TOGEL PNG</span>
+  </div>
+
   <div class="sidebar-footer">© 2026 RIKI GOLAN — All Rights Reserved</div>
 </div>
 
@@ -3817,6 +3830,462 @@ setInterval(() => {
   </div>
 </div>
 
+<!--
+  Halaman "CARA BETTING TOGEL" — panduan/isi bebas, silakan ganti teks
+  di dalam .panel di bawah sesuai kebutuhan.
+-->
+<div id="pageCaraBetting" style="display:none;">
+  <div class="topbar">
+    <h1><span>CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL</span><span>CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL</span></h1>
+  </div>
+
+  <style>
+    .cbt-scope{ font-family:Arial, Helvetica, sans-serif; margin:20px 16px 16px; }
+    .cbt-panel{
+      background:#0a0d1a;
+      border:1px solid rgba(237,224,212,0.2);
+      border-radius:15px;
+      padding:20px;
+      box-shadow: 0 0 30px rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    .cbt-header{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:14px;
+    }
+    .cbt-header .cbt-icon{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:22px; height:22px;
+      border-radius:5px;
+      background: rgba(122,90,248,0.18);
+      color:#a78bfa;
+      font-size:13px;
+    }
+    .cbt-header .cbt-title{
+      color: var(--text-light);
+      font-size:15px;
+      font-weight:700;
+      letter-spacing:0.4px;
+      text-transform:uppercase;
+    }
+    .cbt-header .cbt-pill{
+      margin-left:auto;
+      width:34px; height:16px;
+      border-radius:999px;
+      background: rgba(255,255,255,0.12);
+      border:1px solid var(--border-soft);
+      position:relative;
+      flex:none;
+    }
+    .cbt-header .cbt-pill::after{
+      content:"";
+      position:absolute;
+      top:2px; left:2px;
+      width:11px; height:11px;
+      border-radius:50%;
+      background: rgba(255,255,255,0.55);
+    }
+    .cbt-select{
+      position:relative;
+      width:100%;
+    }
+    .cbt-toggle{
+      width:100%;
+      box-sizing:border-box;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background: rgba(255,255,255,0.03);
+      border:1px solid rgba(122,140,255,0.35);
+      border-radius:8px;
+      padding:12px 16px;
+      color: var(--text-light);
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+      font-family:Arial, Helvetica, sans-serif;
+    }
+    .cbt-toggle .caret{
+      font-size:12px;
+      color: var(--text-light);
+      opacity:0.7;
+      transition: transform .15s ease;
+    }
+    .cbt-toggle.open .caret{ transform: rotate(180deg); }
+    .cbt-list{
+      position:absolute;
+      top:calc(100% + 6px);
+      left:0; right:0;
+      background: var(--bg-card);
+      border:1px solid var(--border-soft);
+      border-radius:8px;
+      max-height:320px;
+      overflow-y:auto;
+      z-index:20;
+      box-shadow:0 10px 26px rgba(0,0,0,0.45);
+      display:none;
+    }
+    .cbt-list.show{ display:block; }
+    .cbt-search-wrap{
+      position:sticky;
+      top:0;
+      background: var(--bg-card);
+      padding:8px;
+      border-bottom:1px solid var(--border-soft);
+      z-index:1;
+    }
+    .cbt-search{
+      width:100%;
+      box-sizing:border-box;
+      background: rgba(255,255,255,0.05);
+      border:1px solid rgba(122,140,255,0.35);
+      border-radius:6px;
+      padding:8px 10px;
+      color: var(--text-light);
+      font-size:14px;
+      font-family:Arial, Helvetica, sans-serif;
+      outline:none;
+    }
+    .cbt-search::placeholder{ color: rgba(255,255,255,0.4); }
+    .cbt-item.empty{
+      color: rgba(255,255,255,0.4);
+      cursor:default;
+    }
+    .cbt-item.empty:hover{ background:none; }
+    .cbt-item{
+      padding:10px 16px;
+      font-size:14.5px;
+      color: var(--text-light);
+      cursor:pointer;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .cbt-item:hover{ background: rgba(255,255,255,0.06); }
+    .cbt-item.active{ background:#2f6fed; color:#fff; }
+    .cbt-item.placeholder{
+      color: rgba(255,255,255,0.4);
+      cursor:default;
+    }
+    .cbt-item.placeholder:hover{ background:none; }
+    .cbt-content{
+      margin-top:16px;
+      color:#dcdce3;
+      font-size:14.5px;
+      line-height:1.7;
+      max-width:100%;
+      overflow:hidden;
+    }
+    .cbt-content img,
+    .cbt-content .cbt-shot{
+      display:block;
+      width:100%;
+      max-width:100%;
+      height:auto;
+      object-fit:contain;
+      border-radius:10px;
+      border:1px solid var(--border-soft);
+      margin-bottom:18px;
+      box-sizing:border-box;
+    }
+    .cbt-content .cbt-subheading{
+      color:#fff;
+      font-weight:700;
+      margin:14px 0 8px;
+    }
+    .cbt-content .cbt-step{ margin-bottom:12px; }
+    .cbt-content .cbt-num{ font-weight:700; color:#dcdce3; margin-right:2px; }
+    .cbt-content .cbt-example{ margin:0 0 12px; }
+    .cbt-content .cbt-red{ color:#ff5c5c; font-weight:700; }
+    .cbt-content .cbt-yellow{ color:#ffb020; font-weight:700; }
+    .cbt-content .cbt-purple{ color:#b48cff; font-weight:700; }
+    .cbt-content .cbt-green{ color:#2bd9a5; font-weight:700; }
+    .cbt-content .cbt-white-bold{ color:#fff; font-weight:700; }
+    .cbt-copybtn{
+      display:block;
+      background-color:#3a1b5e;
+      color:#ffffff;
+      border:none;
+      width:100%;
+      max-width:280px;
+      padding:10px 14px;
+      border-radius:8px;
+      font-weight:bold;
+      font-size:14.5px;
+      cursor:pointer;
+      transition:0.3s;
+      margin:10px 0 16px;
+    }
+    .cbt-copybtn:hover{ background-color:#4d2680; }
+  </style>
+
+  <div class="cbt-scope">
+    <div class="cbt-panel">
+      <div class="cbt-select">
+        <button type="button" class="cbt-toggle" id="cbtToggle">
+          <span id="cbtLabel">-- Ketuk untuk memilih --</span>
+          <span class="caret">&#9660;</span>
+        </button>
+        <div class="cbt-list" id="cbtList">
+          <div class="cbt-search-wrap">
+            <input type="text" class="cbt-search" id="cbtSearch" placeholder="Cari panduan..." autocomplete="off">
+          </div>
+          <div class="cbt-items" id="cbtItems"></div>
+        </div>
+      </div>
+
+      <div class="cbt-content" id="cbtContent"></div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    var CBT_ITEMS = [
+      "Cara Bet 4D 3D 2D",
+      "Cara Bet Bb",
+      "Cara Bet Bbfs (Bb Campuran)",
+      "Cara Bet Angka Tarung",
+      "Cara Bet Fast 4D",
+      "Cara Bet 4D, 3D, 2D Easy",
+      "Cara Bet 3D",
+      "Cara Bet 2D Belakang",
+      "Cara Bet 2D Depan",
+      "Cara Bet 2D Tengah",
+      "Cara Bet Colok Bebas",
+      "Cara Bet Colok Bebas 2D",
+      "Cara Bet Colok Naga",
+      "Cara Bermain Colok Jitu",
+      "Cara Bermain Tengah Tepi",
+      "Cara Bermain Togel Menu Bet [Dasar]",
+      "Cara Bermain Dan Bet Togel 50-50",
+      "Cara Betting Shio",
+      "Cara Bermain Silang Homo",
+      "Cara Bermain Kembang Kempis",
+      "Cara Bermain Kombinasi"
+    ];
+
+    var CBT_CONTENT = {
+      "Cara Bet 4D 3D 2D":
+        '<img src="https://i.imgur.com/sAT9he1.png" alt="Cara Bet 4D 3D 2D">' +
+        '<p class="cbt-subheading">Panduan lengkap melakukan betting untuk jenis permainan 4D, 3D, dan 2D standar.</p>',
+
+      "Cara Bet Bb":
+        '<img src="https://i.imgur.com/4uosxH1.png" alt="Cara Bet Bb">' +
+        '<p class="cbt-subheading">Sistem Betting dimana angka yang dibet tepat maupun Bolak Balik (BB) akan mendapatkan kemenangan.</p>',
+
+      "Cara Bet Bbfs (Bb Campuran)":
+        '<img src="https://i.imgur.com/fzw0OQl.png" alt="Cara Bet Bbfs (Bb Campuran)">' +
+        '<p class="cbt-subheading">Cara melakukan betting BBFS (Bolak Balik Full Set) atau BB Campuran untuk memperbesar peluang.</p>',
+
+      "Cara Bet Angka Tarung":
+        '<img src="https://i.imgur.com/uctIKzf.png" alt="Cara Bet Angka Tarung">' +
+        '<p class="cbt-subheading">Panduan cara memasang taruhan dengan metode angka tarung (artar).</p>',
+
+      "Cara Bet Fast 4D":
+        '<img src="https://i.imgur.com/Q50jW4e.png" alt="Cara Bet Fast 4D">' +
+        '<p class="cbt-subheading">Cara cepat dan praktis melakukan betting khusus mode Fast 4D.</p>',
+
+      "Cara Bet 4D, 3D, 2D Easy":
+        '<img src="https://i.imgur.com/XHfBtfL.png" alt="Cara Bet 4D, 3D, 2D Easy">' +
+        '<p class="cbt-subheading">Metode termudah dan efisien dalam memasang taruhan 4D, 3D, serta 2D.</p>',
+
+      "Cara Bet 3D":
+        '<img src="https://i.imgur.com/uJFQarG.png" alt="Cara Bet 3D">' +
+        '<p class="cbt-subheading">Panduan khusus untuk melakukan pemasangan angka pada pasaran 3D.</p>',
+
+      "Cara Bet 2D Belakang":
+        '<img src="https://i.imgur.com/7gyU5lO.png" alt="Cara Bet 2D Belakang">' +
+        '<p class="cbt-subheading">Panduan memasang taruhan 2D pada posisi bagian belakang angka result.</p>',
+
+      "Cara Bet 2D Depan":
+        '<img src="https://i.imgur.com/Wh9LLZH.png" alt="Cara Bet 2D Depan">' +
+        '<p class="cbt-subheading">Panduan memasang taruhan 2D pada posisi bagian depan angka result.</p>',
+
+      "Cara Bet 2D Tengah":
+        '<img src="https://i.imgur.com/3HjkZCu.png" alt="Cara Bet 2D Tengah">' +
+        '<p class="cbt-subheading">Panduan memasang taruhan 2D pada posisi bagian tengah angka result.</p>',
+
+      "Cara Bet Colok Bebas":
+        '<img src="https://i.imgur.com/a4NHaIk.png" alt="Cara Bet Colok Bebas">' +
+        '<p class="cbt-subheading">Cara bermain colok bebas dengan menebak satu angka jitu pada posisi mana saja.</p>',
+
+      "Cara Bet Colok Bebas 2D":
+        '<img src="https://i.imgur.com/qtxc3tv.png" alt="Cara Bet Colok Bebas 2D">' +
+        '<p class="cbt-subheading">Cara bermain colok bebas dengan menebak dua angka jitu pada result keluaran.</p>',
+
+      "Cara Bet Colok Naga":
+        '<img src="https://i.imgur.com/JNCWCqu.png" alt="Cara Bet Colok Naga">' +
+        '<p class="cbt-subheading">Cara bermain colok naga dengan menebak tiga angka jitu pada posisi keluaran.</p>',
+
+      "Cara Bermain Colok Jitu":
+        '<img src="https://i.imgur.com/n39qLYT.png" alt="Cara Bermain Colok Jitu">' +
+        '<p class="cbt-subheading">Panduan menebak satu angka tepat pada posisi tertentu (As, Kop, Kepala, Ekor).</p>',
+
+      "Cara Bermain Tengah Tepi":
+        '<img src="https://i.imgur.com/E54ZOyy.png" alt="Cara Bermain Tengah Tepi">' +
+        '<p class="cbt-subheading">Panduan taruhan menebak posisi angka tengah atau tepi dari 2D belakang.</p>',
+
+      "Cara Bermain Togel Menu Bet [Dasar]":
+        '<img src="https://i.imgur.com/gBLLJlh.png" alt="Cara Bermain Togel Menu Bet [Dasar]">' +
+        '<p class="cbt-subheading">Pengenalan dasar menu betting togel untuk pemula agar lebih mudah dipahami.</p>',
+
+      "Cara Bermain Dan Bet Togel 50-50":
+        '<img src="https://i.imgur.com/fT8OwHk.png" alt="Cara Bermain Dan Bet Togel 50-50">' +
+        '<p class="cbt-subheading">Cara pasang taruhan 50-50 menebak Ganjil/Genap atau Besar/Kecil.</p>',
+
+      "Cara Betting Shio":
+        '<img src="https://i.imgur.com/XUmmNBE.png" alt="Cara Betting Shio">' +
+        '<p class="cbt-subheading">Panduan melakukan taruhan berdasarkan 12 lambang Shio dalam penanggalan Tionghoa.</p>',
+
+      "Cara Bermain Silang Homo":
+        '<img src="https://i.imgur.com/jW3gHDi.png" alt="Cara Bermain Silang Homo">' +
+        '<p class="cbt-subheading">Panduan taruhan menebak posisi silang (kombinasi besar/kecil) atau homo.</p>',
+
+      "Cara Bermain Kembang Kempis":
+        '<img src="https://i.imgur.com/1ZG3LGW.png" alt="Cara Bermain Kembang Kempis">' +
+        '<p class="cbt-subheading">Panduan menebak pola angka yang semakin membesar (kembang) atau mengecil (kempis).</p>',
+
+      "Cara Bermain Kombinasi":
+        '<img src="https://i.imgur.com/p6wPJon.png" alt="Cara Bermain Kombinasi">' +
+        '<p class="cbt-subheading">Panduan taruhan kombinasi dua jenis pasaran dalam satu formasi.</p>'
+    };
+
+    var cbtState = { selected: null };
+
+    // Menyalin HANYA gambar (screenshot panduan) ke clipboard, tanpa teks.
+    function cbtCopyImage(imgEl, btn){
+      var originalText = btn.textContent;
+      function showResult(ok){
+        btn.textContent = ok ? "\u2705 GAMBAR TERSALIN" : "GAGAL, COBA LAGI";
+        btn.style.backgroundColor = ok ? "#28a745" : "#c0392b";
+        setTimeout(function(){
+          btn.textContent = originalText;
+          btn.style.backgroundColor = "";
+        }, 1500);
+      }
+      if(!navigator.clipboard || !window.ClipboardItem){
+        alert("Browser ini tidak mendukung salin gambar ke clipboard.");
+        return;
+      }
+      fetch(imgEl.src)
+        .then(function(res){ return res.blob(); })
+        .then(function(blob){
+          return navigator.clipboard.write([
+            new ClipboardItem({ [blob.type]: blob })
+          ]);
+        })
+        .then(function(){ showResult(true); })
+        .catch(function(err){
+          console.warn("Gagal menyalin gambar:", err);
+          showResult(false);
+        });
+    }
+
+    function cbtInit(){
+      var toggle = document.getElementById("cbtToggle");
+      var list = document.getElementById("cbtList");
+      var items = document.getElementById("cbtItems");
+      var search = document.getElementById("cbtSearch");
+      var label = document.getElementById("cbtLabel");
+      var content = document.getElementById("cbtContent");
+      if(!toggle || !list || !items || !label) return;
+      if(toggle.dataset.cbtInit === "1") return;
+      toggle.dataset.cbtInit = "1";
+
+      function renderContent(){
+        if(!cbtState.selected){
+          content.innerHTML = "";
+          return;
+        }
+        if(CBT_CONTENT[cbtState.selected]){
+          content.innerHTML = CBT_CONTENT[cbtState.selected];
+        } else {
+          content.textContent = "Konten panduan \"" + cbtState.selected + "\" bisa diisi di sini.";
+          return;
+        }
+        var img = content.querySelector("img");
+        if(img){
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "cbt-copybtn";
+          btn.textContent = "\uD83D\uDCCB SALIN GAMBAR";
+          btn.addEventListener("click", function(){ cbtCopyImage(img, btn); });
+          img.insertAdjacentElement("afterend", btn);
+        }
+      }
+
+      function renderList(){
+        items.innerHTML = "";
+
+        var query = (search && search.value ? search.value : "").trim().toLowerCase();
+        var filtered = CBT_ITEMS.filter(function(name){
+          return name.toLowerCase().indexOf(query) !== -1;
+        });
+
+        if(filtered.length === 0){
+          var empty = document.createElement("div");
+          empty.className = "cbt-item empty";
+          empty.textContent = "Tidak ditemukan";
+          items.appendChild(empty);
+          return;
+        }
+
+        filtered.forEach(function(name){
+          var item = document.createElement("div");
+          item.className = "cbt-item" + (cbtState.selected && name === cbtState.selected ? " active" : "");
+          item.textContent = name;
+          item.addEventListener("click", function(){
+            cbtState.selected = name;
+            label.textContent = name;
+            list.classList.remove("show");
+            toggle.classList.remove("open");
+            renderList();
+            renderContent();
+          });
+          items.appendChild(item);
+        });
+      }
+
+      toggle.addEventListener("click", function(){
+        var willShow = !list.classList.contains("show");
+        list.classList.toggle("show");
+        toggle.classList.toggle("open");
+        if(willShow){
+          renderList();
+          if(search){
+            search.value = "";
+            setTimeout(function(){ search.focus(); }, 0);
+          }
+        }
+      });
+
+      if(search){
+        search.addEventListener("input", renderList);
+        search.addEventListener("click", function(e){ e.stopPropagation(); });
+      }
+
+      document.addEventListener("click", function(e){
+        if(!toggle.contains(e.target) && !list.contains(e.target)){
+          list.classList.remove("show");
+          toggle.classList.remove("open");
+        }
+      });
+
+      label.textContent = cbtState.selected ? cbtState.selected : "-- Ketuk untuk memilih --";
+      renderContent();
+    }
+
+    cbtInit();
+    var navCaraBettingEl = document.getElementById("navCaraBetting");
+    if(navCaraBettingEl) navCaraBettingEl.addEventListener("click", cbtInit);
+  })();
+  </script>
+</div>
+
 <div id="dsImgModal" class="ds-modal">
     <span class="ds-close" onclick="dsCloseModal()">&times;</span>
     <img class="ds-modal-content" id="dsModalImg">
@@ -5796,7 +6265,8 @@ setInterval(() => {
       bola: document.getElementById("navBola"),
       hasilJadwal: document.getElementById("navHasilJadwal"),
       cekNawala: document.getElementById("navCekNawala"),
-      dataScreenshot: document.getElementById("navDataScreenshot")
+      dataScreenshot: document.getElementById("navDataScreenshot"),
+      caraBetting: document.getElementById("navCaraBetting")
     };
     var pages = {
       prediksi: document.getElementById("pagePrediksi"),
@@ -5805,7 +6275,8 @@ setInterval(() => {
       bola: document.getElementById("pageBola"),
       hasilJadwal: document.getElementById("pageHasilJadwal"),
       cekNawala: document.getElementById("pageCekNawala"),
-      dataScreenshot: document.getElementById("pageDataScreenshot")
+      dataScreenshot: document.getElementById("pageDataScreenshot"),
+      caraBetting: document.getElementById("pageCaraBetting")
     };
 
     var ACTIVE_PAGE_KEY = 'dashboardActivePage';
@@ -5825,6 +6296,7 @@ setInterval(() => {
     navs.hasilJadwal.addEventListener("click", function(){ showPage("hasilJadwal"); });
     navs.cekNawala.addEventListener("click", function(){ showPage("cekNawala"); });
     navs.dataScreenshot.addEventListener("click", function(){ showPage("dataScreenshot"); });
+    navs.caraBetting.addEventListener("click", function(){ showPage("caraBetting"); });
 
     var savedPage = localStorage.getItem(ACTIVE_PAGE_KEY);
     showPage(pages[savedPage] ? savedPage : "prediksi");
