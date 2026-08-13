@@ -25,13 +25,11 @@
     --border-soft: rgba(255,255,255,0.12);
     --text-light: #f3ede7;
     --text-dim: #9a9aad;
-    --bubble-me: #025902;
+    --bubble-me: #005c4b;
     --bubble-me-text: #e9fff8;
     --bubble-them: #1f2229;
     --bubble-them-text: #f0f0f0;
     --danger: #e05252;
-    --input-bg: #0f0f1a;
-    --input-text: #f3ede7;
   }
   html.light-theme{
     --bg-app: #f4f3ee;
@@ -47,13 +45,11 @@
     --border-soft: rgba(0,0,0,0.12);
     --text-light: #1c1c1c;
     --text-dim: #63636b;
-    --bubble-me: #025902;
-    --bubble-me-text: #eafff0;
+    --bubble-me: #d9fdd3;
+    --bubble-me-text: #0b3d2e;
     --bubble-them: #ffffff;
     --bubble-them-text: #1c1c1c;
     --danger: #c53030;
-    --input-bg: #ffffff;
-    --input-text: #1c1c1c;
   }
   html.light-theme .bubble{ box-shadow:0 1px 2px rgba(0,0,0,0.08); }
   body{ transition:background-color .2s ease, color .2s ease; }
@@ -107,8 +103,8 @@
     transition:background-color .3s ease, box-shadow .3s ease;
   }
   .topbar .brand .dot.online{
-    background:#025902;
-    box-shadow:0 0 8px #025902;
+    background:#3ddc5b;
+    box-shadow:0 0 8px #3ddc5b;
   }
   .topbar .who{
     display:flex;
@@ -172,68 +168,16 @@
   }
   .field input{
     width:100%;
-    background:var(--input-bg);
+    background:#0f0f1a;
     border:1px solid var(--border-soft);
-    color:var(--input-text);
+    color:var(--text-light);
     padding:11px 12px;
     border-radius:10px;
     font-size:14px;
     outline:none;
   }
   .field input:focus{ border-color:var(--accent-emas); }
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus{
-    -webkit-text-fill-color:var(--input-text);
-    -webkit-box-shadow:0 0 0 1000px var(--input-bg) inset;
-    box-shadow:0 0 0 1000px var(--input-bg) inset;
-    caret-color:var(--input-text);
-    transition:background-color 9999s ease-in-out 0s;
-  }
   .field input:disabled{ opacity:0.65; cursor:not-allowed; }
-  /* ---------- Notifikasi pesan masuk (toast dalam-app) ---------- */
-  .msg-toast-wrap{
-    position:fixed;
-    top:calc(10px + env(safe-area-inset-top, 0px));
-    left:50%;
-    transform:translateX(-50%);
-    width:calc(100% - 24px);
-    max-width:420px;
-    z-index:9999;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    pointer-events:none;
-  }
-  .msg-toast{
-    pointer-events:auto;
-    display:flex;
-    align-items:flex-start;
-    gap:10px;
-    background:var(--bg-card);
-    border:1px solid var(--border-soft);
-    border-radius:14px;
-    padding:12px 14px;
-    box-shadow:0 8px 24px rgba(0,0,0,0.35);
-    cursor:pointer;
-    animation:msgToastIn .22s ease;
-  }
-  .msg-toast:active{ transform:scale(0.98); }
-  .msg-toast .mt-avatar{ flex-shrink:0; }
-  .msg-toast .mt-main{ flex:1; min-width:0; }
-  .msg-toast .mt-title{ font-weight:700; font-size:13.5px; color:var(--text-light); margin-bottom:2px; }
-  .msg-toast .mt-body{
-    font-size:12.5px; color:var(--text-dim);
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
-  .msg-toast .mt-close{
-    flex-shrink:0; background:none; border:none; color:var(--text-dim);
-    font-size:16px; line-height:1; padding:2px 4px; cursor:pointer;
-  }
-  @keyframes msgToastIn{
-    from{ opacity:0; transform:translateY(-10px); }
-    to{ opacity:1; transform:translateY(0); }
-  }
   .auth-actions{ margin-top:18px; }
   .auth-actions .btn{ width:100%; padding:11px; font-size:14px; }
   .auth-toggle{
@@ -247,7 +191,7 @@
     cursor:pointer;
     font-weight:600;
   }
-  #authToggleLink{ color:#025902; }
+  #authToggleLink{ color:#0a7a0a; }
   .auth-error{
     background:rgba(224,82,82,0.12);
     border:1px solid rgba(224,82,82,0.4);
@@ -309,9 +253,9 @@
   @keyframes dpSpin{ to{ transform:rotate(360deg); } }
 
   .auth-success-msg{
-    background:rgba(2,89,2,0.14);
-    border:1px solid rgba(2,89,2,0.5);
-    color:#025902;
+    background:rgba(127,216,143,0.12);
+    border:1px solid rgba(127,216,143,0.4);
+    color:#a9e8b4;
     font-size:12.5px;
     padding:9px 11px;
     border-radius:9px;
@@ -379,9 +323,9 @@
   }
   .add-friend-box input{
     flex:1;
-    background:var(--input-bg);
+    background:#0f0f1a;
     border:1px solid var(--border-soft);
-    color:var(--input-text);
+    color:var(--text-light);
     padding:9px 10px;
     border-radius:9px;
     font-size:13px;
@@ -393,7 +337,7 @@
     padding:2px 6px 8px;
     min-height:16px;
   }
-  .add-friend-msg.ok{ color:#025902; }
+  .add-friend-msg.ok{ color:#7fd88f; }
   .add-friend-msg.err{ color:#ff9a9a; }
 
   .list-row{
@@ -430,8 +374,8 @@
   .who .avatar{ width:34px; height:34px; font-size:13px; cursor:pointer; }
   .who-id{ display:flex; flex-direction:column; line-height:1.25; }
   .who-id .who-name{ font-size:13px; font-weight:600; color:var(--text-light); }
-  .who-status{ display:flex; align-items:center; gap:5px; font-size:11px; color:#025902; }
-  .who-status .dot{ width:7px; height:7px; border-radius:50%; background:#025902; box-shadow:0 0 5px #025902; flex-shrink:0; }
+  .who-status{ display:flex; align-items:center; gap:5px; font-size:11px; color:#7fe08f; }
+  .who-status .dot{ width:7px; height:7px; border-radius:50%; background:#3ddc5b; box-shadow:0 0 5px #3ddc5b; flex-shrink:0; }
 
   .avatar-menu-wrap{ position:relative; }
   .avatar-dropdown{
@@ -529,9 +473,9 @@
   .search-bar{ padding:10px 10px 0; }
   .search-bar input{
     width:100%;
-    background:var(--input-bg);
+    background:#0f0f1a;
     border:1px solid var(--border-soft);
-    color:var(--input-text);
+    color:var(--text-light);
     padding:9px 12px;
     border-radius:10px;
     font-size:13px;
@@ -575,9 +519,9 @@
   }
   .settings-friend-box input{
     flex:1;
-    background:var(--input-bg);
+    background:#0f0f1a;
     border:1px solid var(--border-soft);
-    color:var(--input-text);
+    color:var(--text-light);
     padding:9px 10px;
     border-radius:10px;
     font-size:13px;
@@ -590,7 +534,7 @@
     padding:12px;
     font-size:14px;
     border-radius:12px;
-    background:#025902;
+    background:linear-gradient(90deg,#25d366,#128c7e);
     border:none;
     color:#fff;
   }
@@ -644,7 +588,7 @@
   .gs-name-edit-row{ display:none; gap:8px; margin-top:8px; }
   .gs-name-edit-row.show{ display:flex; }
   .gs-name-edit-row input{
-    flex:1; background:var(--input-bg); border:1px solid var(--border-soft); color:var(--input-text);
+    flex:1; background:#0f0f1a; border:1px solid var(--border-soft); color:var(--text-light);
     padding:8px 10px; border-radius:9px; font-size:13.5px; outline:none;
   }
   .gs-name-edit-row input:focus{ border-color:var(--accent-emas); }
@@ -859,17 +803,16 @@
     display:flex;
     align-items:flex-end;
     gap:8px;
-    padding:12px 12px;
-    margin-top:2px;
+    padding:13px 12px;
     border-top:1px solid var(--border-soft);
     background:var(--bg-card);
   }
   .chat-input-row textarea{
     flex:1;
     resize:none;
-    background:var(--input-bg);
+    background:#0f0f1a;
     border:1px solid var(--border-soft);
-    color:var(--input-text);
+    color:var(--text-light);
     padding:10px 16px;
     border-radius:22px;
     font-size:13.5px;
@@ -899,7 +842,7 @@
     height:40px;
     border-radius:50%;
     border:1px solid var(--border-soft);
-    background:var(--input-bg);
+    background:#0f0f1a;
     color:var(--text-light);
     display:flex;
     align-items:center;
@@ -920,27 +863,6 @@
     -webkit-user-select:none;
     user-select:none;
   }
-  .bubble .img-msg-placeholder{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width:180px;
-    height:140px;
-    max-width:100%;
-    border-radius:10px;
-    margin-bottom:4px;
-    background:rgba(127,127,127,0.15);
-  }
-  .bubble .img-msg-placeholder::after{
-    content:"";
-    width:22px;
-    height:22px;
-    border-radius:50%;
-    border:2.5px solid rgba(127,127,127,0.4);
-    border-top-color:var(--text-dim);
-    animation:imgMsgSpin .8s linear infinite;
-  }
-  @keyframes imgMsgSpin{ to{ transform:rotate(360deg); } }
   .img-viewer-modal{
     position:fixed;
     inset:0;
@@ -1066,8 +988,8 @@
     .bubble .sender{ font-size:14px; margin-bottom:1px; }
     .bubble .time{ font-size:13px; margin-top:2px; }
 
-    .chat-input-row{ padding:10px 10px calc(12px + max(22px, env(safe-area-inset-bottom, 0px))); gap:6px; }
-    body.keyboard-open .chat-input-row{ padding-bottom:10px; }
+    .chat-input-row{ padding:11px 10px calc(13px + max(22px, env(safe-area-inset-bottom, 0px))); gap:6px; }
+    body.keyboard-open .chat-input-row{ padding-bottom:11px; }
     .chat-input-row textarea{ padding:14px 16px; font-size:16.5px; min-height:46px; }
     .send-btn-round{ width:38px; height:38px; }
     .attach-btn-round{ width:38px; height:38px; }
@@ -1080,7 +1002,6 @@
 </style>
 </head>
 <body>
-<div class="msg-toast-wrap" id="msgToastWrap"></div>
 
 <div class="topbar">
   <div class="brand"><span class="dot" id="connDot"></span> <span id="connLabel">Offline</span></div>
@@ -1477,7 +1398,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <script>
 (function(){
   "use strict";
@@ -1546,7 +1466,6 @@
   syncViewportHeight();
   const auth = firebase.auth();
   const db = firebase.database();
-  const fsdb = firebase.firestore(); // Firestore: penyimpanan nama lengkap, foto profil, foto grup, dan gambar chat
 
   // ---------------------------------------------------------------
   // Indikator status koneksi (dot logo DATA PENTING)
@@ -1594,7 +1513,7 @@
     }
     return '<div class="' + cls + '">' + initials(name) + '</div>';
   }
-  function resizeImageToDataUrl(file, maxSize, callback, quality){
+  function resizeImageToDataUrl(file, maxSize, callback){
     let reader = new FileReader();
     reader.onload = function(e){
       let img = new Image();
@@ -1605,38 +1524,13 @@
         let canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        callback(canvas.toDataURL('image/jpeg', quality || 0.82));
+        callback(canvas.toDataURL('image/jpeg', 0.82));
       };
       img.onerror = function(){ callback(null); };
       img.src = e.target.result;
     };
     reader.onerror = function(){ callback(null); };
     reader.readAsDataURL(file);
-  }
-
-  // Firestore membatasi 1 dokumen maksimal ~1MB, jadi gambar chat perlu
-  // dipastikan cukup kecil. Kalau hasil kompresi pertama masih kebesaran,
-  // coba lagi dengan ukuran/kualitas lebih rendah sampai aman.
-  const FIRESTORE_IMG_SAFE_BYTES = 700000; // sisakan ruang untuk field lain di dokumen
-  function resizeImageForChatFirestore(file, callback){
-    let attempts = [
-      { maxSize: 1000, quality: 0.82 },
-      { maxSize: 800,  quality: 0.7 },
-      { maxSize: 600,  quality: 0.6 },
-      { maxSize: 450,  quality: 0.5 }
-    ];
-    function tryAttempt(i){
-      if (i >= attempts.length){ callback(null); return; }
-      resizeImageToDataUrl(file, attempts[i].maxSize, function(dataUrl){
-        if (!dataUrl){ callback(null); return; }
-        if (dataUrl.length <= FIRESTORE_IMG_SAFE_BYTES || i === attempts.length - 1){
-          callback(dataUrl);
-        } else {
-          tryAttempt(i + 1);
-        }
-      }, attempts[i].quality);
-    }
-    tryAttempt(0);
   }
   function escapeHtml(str){
     return (str || '').replace(/[&<>"']/g, function(c){
@@ -1662,30 +1556,10 @@
   let friendsData = {};        // { uid: {name,email} } — cache awal, dipakai sebelum profil live sinkron
   let userProfiles = {};       // { uid: {name,email,photoURL,status} } — live dari users/{uid}
   let userProfileRefs = {};    // { uid: firebaseRef } — biar listener profil tidak didaftarkan dobel
-  let profileUnsubs = {};      // { uid: firestoreUnsubscribeFn } — untuk melepas listener Firestore saat logout
-  let allUsersProfileUnsub = null;
-  let groupPhotoUnsubs = {};   // { chatId: firestoreUnsubscribeFn } — foto grup dari Firestore
-  let groupPhotoCache = {};    // { chatId: photoURL }
-  let chatImageCache = {};     // { imageId: dataUrl } — cache gambar chat yang sudah diambil dari Firestore
-
-  // Ambil data gambar chat dari Firestore (chatImages/{imageId}), pakai cache
-  // supaya tidak fetch berulang untuk gambar yang sama.
-  function getChatImageUrl(imageId, callback){
-    if (!imageId) { callback(''); return; }
-    if (chatImageCache[imageId] !== undefined){ callback(chatImageCache[imageId]); return; }
-    fsdb.collection('chatImages').doc(imageId).get().then(function(doc){
-      let url = (doc.exists && doc.data().data) || '';
-      chatImageCache[imageId] = url;
-      callback(url);
-    }).catch(function(){ callback(''); });
-  }
   let incomingRequests = {};   // { fromUid: {fromName,fromEmail} }
   let chatsIndex = {};         // { chatId: {type,name,members,lastMessage,lastMessageAt} }
   let allUsersData = {};       // { uid: {name,email,photoURL} } — semua akun terdaftar, dipakai untuk pencarian pengguna baru
   let activeChatId = null;
-  let chatMsgBaseline = {};    // { chatId: lastMessageAt } — dipakai untuk mendeteksi pesan BARU (bukan pesan lama saat listener pertama kali nyala)
-  let unreadNotifCount = 0;    // jumlah notifikasi pesan yang belum dilihat (dipakai di judul tab)
-  const pageBaseTitle = document.title;
 
   // -------------------------------------------------------------
   // Ingat posisi chat terakhir (chat + grup yang sedang dibuka, dan
@@ -1800,14 +1674,11 @@
         .then(function(cred){
           let uid = cred.user.uid;
           return db.ref('users/' + uid).set({
+            name: name,
             email: email,
             status: 'Halo, saya menggunakan Data Penting Chat',
+            photoURL: '',
             createdAt: firebase.database.ServerValue.TIMESTAMP
-          }).then(function(){
-            return fsdb.collection('profiles').doc(uid).set({
-              name: name,
-              photoURL: ''
-            });
           }).then(function(){
             return db.ref('userIndex/' + emailKey(email)).set(uid);
           }).then(function(){
@@ -1914,15 +1785,12 @@
     }
     let btn = document.getElementById('btnSaveSettings');
     btn.disabled = true;
-    let rtdbUpdates = { status: newStatus || 'Halo, saya menggunakan Data Penting Chat' };
-    let profileUpdates = { name: newName };
-    if (pendingPhotoData) profileUpdates.photoURL = pendingPhotoData;
+    let updates = { name: newName, status: newStatus || 'Halo, saya menggunakan Data Penting Chat' };
+    if (pendingPhotoData) updates.photoURL = pendingPhotoData;
 
-    db.ref('users/' + currentUser.uid).update(rtdbUpdates)
-      .then(function(){ return fsdb.collection('profiles').doc(currentUser.uid).set(profileUpdates, { merge: true }); })
-      .then(function(){
+    db.ref('users/' + currentUser.uid).update(updates).then(function(){
       currentUser.name = newName;
-      currentUser.status = rtdbUpdates.status;
+      currentUser.status = updates.status;
       if (pendingPhotoData) currentUser.photoURL = pendingPhotoData;
       document.getElementById('whoName').textContent = currentUser.name;
       updateMyAvatarEls();
@@ -1967,19 +1835,26 @@
         if (onDone) onDone(targetUid);
         return;
       }
-      let updates = {};
-      updates['friends/' + currentUser.uid + '/' + targetUid] = {
-        email: targetEmail
-      };
-      updates['friends/' + targetUid + '/' + currentUser.uid] = {
-        email: currentUser.email
-      };
-      updates['friendRequests/' + targetUid + '/' + currentUser.uid] = null;
-      return db.ref().update(updates).then(function(){
-        msgEl.className = 'add-friend-msg ok';
-        msgEl.textContent = 'Berteman! Sekarang kalian bisa mulai chat.';
-        if (inputEl) inputEl.value = '';
-        if (onDone) onDone(targetUid);
+      return db.ref('users/' + targetUid).once('value').then(function(usnap){
+        let targetProfile = usnap.val() || {};
+        let updates = {};
+        updates['friends/' + currentUser.uid + '/' + targetUid] = {
+          name: targetProfile.name || 'Pengguna',
+          email: targetProfile.email || targetEmail,
+          photoURL: targetProfile.photoURL || ''
+        };
+        updates['friends/' + targetUid + '/' + currentUser.uid] = {
+          name: currentUser.name,
+          email: currentUser.email,
+          photoURL: currentUser.photoURL || ''
+        };
+        updates['friendRequests/' + targetUid + '/' + currentUser.uid] = null;
+        return db.ref().update(updates).then(function(){
+          msgEl.className = 'add-friend-msg ok';
+          msgEl.textContent = 'Berteman! Sekarang kalian bisa mulai chat.';
+          if (inputEl) inputEl.value = '';
+          if (onDone) onDone(targetUid);
+        });
       });
     }).catch(function(err){
       msgEl.className = 'add-friend-msg err';
@@ -2013,16 +1888,14 @@
     if (user){
       verifyScreen.style.display = 'none';
       db.ref('users/' + user.uid).once('value').then(function(snap){
-        let profile = snap.val() || { email: user.email };
-        return fsdb.collection('profiles').doc(user.uid).get().then(function(pdoc){
-          let pdata = pdoc.exists ? pdoc.data() : {};
-          currentUser = {
-            uid: user.uid,
-            name: pdata.name || user.email,
-            email: profile.email || user.email,
-            status: profile.status || 'Halo, saya menggunakan Data Penting Chat',
-            photoURL: pdata.photoURL || ''
-          };
+        let profile = snap.val() || { name: user.email, email: user.email };
+        currentUser = {
+          uid: user.uid,
+          name: profile.name,
+          email: profile.email || user.email,
+          status: profile.status || 'Halo, saya menggunakan Data Penting Chat',
+          photoURL: profile.photoURL || ''
+        };
         document.getElementById('whoName').textContent = currentUser.name;
         updateMyAvatarEls();
         document.getElementById('topbarWho').style.display = 'flex';
@@ -2055,8 +1928,6 @@
         initAllUsersListener();
         startInactivityWatcher();
         updateConnIndicator();
-        requestNotifPermission();
-        });
       });
     } else {
       currentUser = null;
@@ -2159,9 +2030,9 @@
     if (!user) return;
     user.sendEmailVerification({ url: window.location.href }).then(function(){
       msg.style.display = 'block';
-      msg.style.background = 'rgba(2,89,2,0.14)';
-      msg.style.borderColor = 'rgba(2,89,2,0.5)';
-      msg.style.color = '#025902';
+      msg.style.background = 'rgba(127,216,143,0.12)';
+      msg.style.borderColor = 'rgba(127,216,143,0.4)';
+      msg.style.color = '#a9e8b4';
       msg.textContent = 'Email verifikasi baru sudah dikirim.';
     }).catch(function(err){
       msg.style.display = 'block';
@@ -2299,8 +2170,6 @@
     incomingRequests = {};
     chatsIndex = {};
     allUsersData = {};
-    allUsersEmailData = {};
-    allUsersProfileData = {};
     activeChatId = null;
     restoredActiveChatOnLoad = false;
     clearSavedActiveChat();
@@ -2317,16 +2186,6 @@
     activeListenerRefs.forEach(function(r){ r.ref.off(r.event, r.cb); });
     activeListenerRefs = [];
     if (messagesListenerRef){ detachMessagesListener(); }
-    chatMsgBaseline = {};
-    clearTabTitleBadge();
-    Object.keys(profileUnsubs).forEach(function(uid){ profileUnsubs[uid](); });
-    profileUnsubs = {};
-    userProfileRefs = {};
-    userProfiles = {};
-    if (allUsersProfileUnsub){ allUsersProfileUnsub(); allUsersProfileUnsub = null; }
-    Object.keys(groupPhotoUnsubs).forEach(function(chatId){ groupPhotoUnsubs[chatId](); });
-    groupPhotoUnsubs = {};
-    groupPhotoCache = {};
   }
   function track(ref, event, cb){
     ref.on(event, cb);
@@ -2475,21 +2334,15 @@
     if (!uid || (currentUser && uid === currentUser.uid) || userProfileRefs[uid]) return;
     let ref = db.ref('users/' + uid);
     userProfileRefs[uid] = ref;
-    if (!userProfiles[uid]) userProfiles[uid] = { name: 'Pengguna', email: '', photoURL: '', status: '' };
     ref.on('value', function(snap){
       let val = snap.val();
       if (val){
-        userProfiles[uid].email = val.email || '';
-        userProfiles[uid].status = val.status || '';
-      }
-      onUserProfileChanged();
-    });
-    // Nama lengkap & foto profil disimpan di Firestore (bukan RTDB), didengarkan real-time juga.
-    profileUnsubs[uid] = fsdb.collection('profiles').doc(uid).onSnapshot(function(docSnap){
-      let val = docSnap.data();
-      if (val){
-        userProfiles[uid].name = val.name || 'Pengguna';
-        userProfiles[uid].photoURL = val.photoURL || '';
+        userProfiles[uid] = {
+          name: val.name || 'Pengguna',
+          email: val.email || '',
+          photoURL: val.photoURL || '',
+          status: val.status || ''
+        };
       }
       onUserProfileChanged();
     });
@@ -2584,8 +2437,8 @@
 
   function acceptRequest(fromUid, req){
     let updates = {};
-    updates['friends/' + currentUser.uid + '/' + fromUid] = { email: req.fromEmail };
-    updates['friends/' + fromUid + '/' + currentUser.uid] = { email: currentUser.email };
+    updates['friends/' + currentUser.uid + '/' + fromUid] = { name: req.fromName, email: req.fromEmail, photoURL: req.fromPhoto || '' };
+    updates['friends/' + fromUid + '/' + currentUser.uid] = { name: currentUser.name, email: currentUser.email, photoURL: currentUser.photoURL || '' };
     updates['friendRequests/' + currentUser.uid + '/' + fromUid] = null;
     db.ref().update(updates);
   }
@@ -2630,140 +2483,10 @@
   // Semua akun terdaftar di aplikasi (bukan cuma yang sudah berteman),
   // supaya kolom pencarian di atas daftar obrolan bisa nemuin teman
   // baru yang barusan daftar juga, bukan cuma yang sudah ditambahkan.
-  // Email/status diambil live dari RTDB (users/), nama & foto dari
-  // Firestore (profiles/), lalu digabung jadi satu objek allUsersData.
-  let allUsersEmailData = {};
-  let allUsersProfileData = {};
-  function mergeAllUsersData(){
-    allUsersData = {};
-    let uids = new Set(Object.keys(allUsersEmailData).concat(Object.keys(allUsersProfileData)));
-    uids.forEach(function(uid){
-      let e = allUsersEmailData[uid] || {};
-      let p = allUsersProfileData[uid] || {};
-      allUsersData[uid] = {
-        name: p.name || 'Pengguna',
-        email: e.email || '',
-        photoURL: p.photoURL || ''
-      };
-    });
-  }
   function initAllUsersListener(){
     track(db.ref('users'), 'value', function(snap){
-      allUsersEmailData = snap.val() || {};
-      mergeAllUsersData();
+      allUsersData = snap.val() || {};
     });
-    allUsersProfileUnsub = fsdb.collection('profiles').onSnapshot(function(qsnap){
-      let data = {};
-      qsnap.forEach(function(doc){ data[doc.id] = doc.data(); });
-      allUsersProfileData = data;
-      mergeAllUsersData();
-    });
-  }
-
-  // ===================================================================
-  // NOTIFIKASI: pesan baru masuk (toast dalam-app + notifikasi browser + suara)
-  // ===================================================================
-  function requestNotifPermission(){
-    try{
-      if ('Notification' in window && Notification.permission === 'default'){
-        Notification.requestPermission();
-      }
-    } catch(e){}
-  }
-
-  // Bunyi notifikasi singkat pakai WebAudio, tanpa perlu file audio eksternal.
-  function playNotifSound(){
-    try{
-      let Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-      let ctx = new Ctx();
-      let o = ctx.createOscillator();
-      let g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.type = 'sine';
-      o.frequency.setValueAtTime(880, ctx.currentTime);
-      g.gain.setValueAtTime(0.001, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.32);
-      o.start(ctx.currentTime);
-      o.stop(ctx.currentTime + 0.33);
-      o.onended = function(){ ctx.close(); };
-    } catch(e){}
-  }
-
-  function updateTabTitleBadge(){
-    document.title = unreadNotifCount > 0 ? '(' + unreadNotifCount + ') ' + pageBaseTitle : pageBaseTitle;
-  }
-  function clearTabTitleBadge(){
-    unreadNotifCount = 0;
-    updateTabTitleBadge();
-  }
-  document.addEventListener('visibilitychange', function(){
-    if (!document.hidden) clearTabTitleBadge();
-  });
-  window.addEventListener('focus', clearTabTitleBadge);
-
-  function showMsgToast(chatId, title, body, photoURL){
-    let wrap = document.getElementById('msgToastWrap');
-    if (!wrap) return;
-    let el = document.createElement('div');
-    el.className = 'msg-toast';
-    el.innerHTML =
-      '<div class="mt-avatar">' + avatarHtml(title, photoURL || '') + '</div>' +
-      '<div class="mt-main"><div class="mt-title"></div><div class="mt-body"></div></div>' +
-      '<button class="mt-close" aria-label="Tutup">&times;</button>';
-    el.querySelector('.mt-title').textContent = title;
-    el.querySelector('.mt-body').textContent = body;
-    el.addEventListener('click', function(e){
-      if (e.target.closest('.mt-close')){ el.remove(); return; }
-      openChat(chatId, title);
-      el.remove();
-    });
-    wrap.appendChild(el);
-    setTimeout(function(){ if (el.parentNode) el.remove(); }, 5000);
-    // Batasi maksimal 3 toast tampil bersamaan biar tidak menumpuk.
-    while (wrap.children.length > 3) wrap.removeChild(wrap.firstChild);
-  }
-
-  function showBrowserNotification(chatId, title, body){
-    try{
-      if (!('Notification' in window) || Notification.permission !== 'granted') return;
-      let n = new Notification(title, { body: body, tag: 'chat_' + chatId });
-      n.onclick = function(){
-        window.focus();
-        openChat(chatId, title);
-        n.close();
-      };
-    } catch(e){}
-  }
-
-  // Dipanggil tiap kali metadata sebuah chat berubah (lihat initChatsListener).
-  // Menentukan apakah perubahan ini adalah pesan BARU dari orang lain, lalu
-  // memicu suara + toast dalam-app + (kalau tab tidak aktif) notifikasi browser.
-  function maybeNotifyNewMessage(chatId, chat){
-    let prevAt = chatMsgBaseline[chatId];
-    let curAt = chat.lastMessageAt || 0;
-    let isFirstSnapshot = (prevAt === undefined);
-    chatMsgBaseline[chatId] = curAt;
-    if (isFirstSnapshot) return; // jangan notif untuk histori lama saat listener baru nyala
-    if (!curAt || curAt <= prevAt) return;
-    if (!chat.lastSender || chat.lastSender === currentUser.uid) return; // pesan dari diri sendiri
-    let title = chatDisplayName(chat);
-    let body = chat.lastMessage || 'Pesan baru';
-    let photoURL = '';
-    if (chat.type !== 'group'){
-      let members = chat.members || {};
-      let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
-      if (otherUid) photoURL = personInfo(otherUid).photoURL || '';
-    }
-    playNotifSound();
-    if (document.hidden){
-      unreadNotifCount++;
-      updateTabTitleBadge();
-      showBrowserNotification(chatId, title, body);
-    } else if (activeChatId !== chatId){
-      showMsgToast(chatId, title, body, photoURL);
-    }
   }
 
   // ===================================================================
@@ -2784,10 +2507,6 @@
           let val = csnap.val();
           if (val){
             chatsIndex[chatId] = Object.assign({ id: chatId }, val);
-            if (groupPhotoCache[chatId] !== undefined){
-              chatsIndex[chatId].photoURL = groupPhotoCache[chatId];
-            }
-            maybeNotifyNewMessage(chatId, chatsIndex[chatId]);
           } else {
             delete chatsIndex[chatId];
           }
@@ -2810,21 +2529,6 @@
             }
           }
         });
-        // Foto grup disimpan di Firestore (groupPhotos/{chatId}), bukan RTDB.
-        if (!groupPhotoUnsubs[chatId]){
-          groupPhotoUnsubs[chatId] = fsdb.collection('groupPhotos').doc(chatId).onSnapshot(function(doc){
-            let photoURL = (doc.exists && doc.data().photoURL) || '';
-            groupPhotoCache[chatId] = photoURL;
-            if (chatsIndex[chatId]){
-              chatsIndex[chatId].photoURL = photoURL;
-              renderChatList();
-              if (activeChatId === chatId) updateChatHeader();
-              if (groupSettingsModal && groupSettingsModal.classList.contains('show') && groupSettingsChatId === chatId){
-                populateGroupSettings();
-              }
-            }
-          });
-        }
       });
     });
   }
@@ -3030,17 +2734,6 @@
     updates['chats/' + chatId + '/messages'] = null;
     updates['chats/' + chatId + '/lastMessage'] = '';
     updates['chats/' + chatId + '/lastMessageAt'] = null;
-    // Bersihkan juga gambar terkait di Firestore, kalau chat ini sedang terbuka
-    // (datanya ada di cache messageEls). Untuk chat yang tidak sedang dibuka,
-    // gambar lama tidak otomatis ikut terhapus (batasan yang diketahui).
-    if (chatId === activeChatId){
-      Object.keys(messageEls).forEach(function(msgId){
-        let el = messageEls[msgId];
-        if (el && el.data && el.data.type === 'image' && el.data.imageId){
-          fsdb.collection('chatImages').doc(el.data.imageId).delete().catch(function(){});
-        }
-      });
-    }
     db.ref().update(updates);
     // Chat/grup tetap terbuka & tetap ada di daftar; pesan-pesannya
     // akan otomatis hilang dari layar lewat listener child_removed
@@ -3336,7 +3029,7 @@
       if (!dataUrl){ alert('Gagal memuat gambar.'); return; }
       gsPendingPhoto = dataUrl;
       document.getElementById('gsPhotoPreview').innerHTML = '<img class="avatar-img" src="' + dataUrl + '" alt="">';
-      fsdb.collection('groupPhotos').doc(groupSettingsChatId).set({ photoURL: dataUrl });
+      db.ref('chats/' + groupSettingsChatId + '/photoURL').set(dataUrl);
     });
   });
 
@@ -3362,7 +3055,6 @@
     updates['chats/' + chatId] = null;
     uids.forEach(function(uid){ updates['userChats/' + uid + '/' + chatId] = null; });
     db.ref().update(updates).then(function(){
-      fsdb.collection('groupPhotos').doc(chatId).delete().catch(function(){});
       groupSettingsModal.classList.remove('show');
       if (activeChatId === chatId){
         activeChatId = null;
@@ -3558,13 +3250,7 @@
     if (!confirm(msg)) return;
     let chatId = activeChatId;
     let updates = {};
-    ids.forEach(function(id){
-      updates['chats/' + chatId + '/messages/' + id] = null;
-      let el = messageEls[id];
-      if (el && el.data && el.data.type === 'image' && el.data.imageId){
-        fsdb.collection('chatImages').doc(el.data.imageId).delete().catch(function(){});
-      }
-    });
+    ids.forEach(function(id){ updates['chats/' + chatId + '/messages/' + id] = null; });
     if (editingMessageId && selectedIds[editingMessageId]) cancelEditMessage();
     db.ref().update(updates).then(function(){
       refreshLastMessagePreview(chatId);
@@ -3603,13 +3289,11 @@
       if (val){
         let key = Object.keys(val)[0];
         let m = val[key];
-        let preview = (m.type === 'image') ? '📷 Foto' : ((m.text || '').length > 60 ? m.text.slice(0,60) + '…' : (m.text || ''));
+        let preview = (m.text || '').length > 60 ? m.text.slice(0,60) + '…' : (m.text || '');
         updates['chats/' + chatId + '/lastMessage'] = preview;
         updates['chats/' + chatId + '/lastMessageAt'] = m.createdAt || firebase.database.ServerValue.TIMESTAMP;
-        updates['chats/' + chatId + '/lastSender'] = m.sender || null;
       } else {
         updates['chats/' + chatId + '/lastMessage'] = '';
-        updates['chats/' + chatId + '/lastSender'] = null;
       }
       db.ref().update(updates);
     });
@@ -3669,26 +3353,18 @@
     let showSender = chat && chat.type === 'group' && !isMe;
     if (showSender) ensureUserProfileSynced(m.sender);
     let senderDisplayName = showSender ? personInfo(m.sender).name || m.senderName || '' : '';
-    let isImage = m.type === 'image' && m.imageId;
+    let isImage = m.type === 'image' && m.imageData;
     row.innerHTML =
       '<div class="bubble">' +
         (showSender ? '<span class="sender">' + escapeHtml(senderDisplayName) + '</span>' : '') +
-        (isImage ? '<div class="img-msg-placeholder"></div>' : '') +
+        (isImage ? '<img class="img-msg" src="' + m.imageData + '" alt="Foto">' : '') +
         '<span class="text"></span>' +
         '<span class="time">' + fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + '</span>' +
       '</div>';
     row.querySelector('.text').textContent = isImage ? '' : (m.text || '');
     if (isImage){
-      let bubbleEl = row.querySelector('.bubble');
-      let placeholderEl = row.querySelector('.img-msg-placeholder');
-      getChatImageUrl(m.imageId, function(url){
-        if (!placeholderEl.parentNode) return; // baris sudah dihapus sebelum gambar selesai dimuat
-        let img = document.createElement('img');
-        img.className = 'img-msg';
-        img.alt = 'Foto';
-        img.src = url;
-        img.addEventListener('click', function(){ openImageViewer(url); });
-        bubbleEl.replaceChild(img, placeholderEl);
+      row.querySelector('.img-msg').addEventListener('click', function(){
+        openImageViewer(m.imageData);
       });
     }
     messagesWrap.appendChild(row);
@@ -3701,7 +3377,7 @@
     let el = messageEls[msgId];
     if (!el || !m) return;
     el.data = m;
-    let isImage = m.type === 'image' && m.imageId;
+    let isImage = m.type === 'image' && m.imageData;
     el.row.querySelector('.text').textContent = isImage ? '' : (m.text || '');
     el.row.querySelector('.time').innerHTML = fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '');
     if (editingMessageId === msgId){
@@ -3735,39 +3411,26 @@
     let file = chatPhotoInput.files && chatPhotoInput.files[0];
     chatPhotoInput.value = '';
     if (!file || !activeChatId) return;
-    resizeImageForChatFirestore(file, function(dataUrl){
-      if (!dataUrl){ alert('Gagal memuat gambar.'); return; }
+    resizeImageToDataUrl(file, 1000, function(dataUrl){
+      if (!dataUrl) return;
       sendImageMessage(dataUrl);
     });
   });
   function sendImageMessage(dataUrl){
-    let chatId = activeChatId;
-    let imgRef = fsdb.collection('chatImages').doc();
-    imgRef.set({
-      data: dataUrl,
-      chatId: chatId,
+    let msgRef = db.ref('chats/' + activeChatId + '/messages').push();
+    let payload = {
       sender: currentUser.uid,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(function(){
-      chatImageCache[imgRef.id] = dataUrl; // sudah kita punya datanya sendiri, tak perlu fetch ulang
-      let msgRef = db.ref('chats/' + chatId + '/messages').push();
-      let payload = {
-        sender: currentUser.uid,
-        senderName: currentUser.name,
-        type: 'image',
-        imageId: imgRef.id,
-        text: '',
-        createdAt: firebase.database.ServerValue.TIMESTAMP
-      };
-      let updates = {};
-      updates['chats/' + chatId + '/messages/' + msgRef.key] = payload;
-      updates['chats/' + chatId + '/lastMessage'] = '📷 Foto';
-      updates['chats/' + chatId + '/lastMessageAt'] = firebase.database.ServerValue.TIMESTAMP;
-      updates['chats/' + chatId + '/lastSender'] = currentUser.uid;
-      db.ref().update(updates);
-    }).catch(function(err){
-      alert('Gagal mengirim foto: ' + err.message);
-    });
+      senderName: currentUser.name,
+      type: 'image',
+      imageData: dataUrl,
+      text: '',
+      createdAt: firebase.database.ServerValue.TIMESTAMP
+    };
+    let updates = {};
+    updates['chats/' + activeChatId + '/messages/' + msgRef.key] = payload;
+    updates['chats/' + activeChatId + '/lastMessage'] = '📷 Foto';
+    updates['chats/' + activeChatId + '/lastMessageAt'] = firebase.database.ServerValue.TIMESTAMP;
+    db.ref().update(updates);
   }
   function openImageViewer(src){
     imgViewerImg.src = src;
@@ -3810,7 +3473,6 @@
     updates['chats/' + activeChatId + '/messages/' + msgRef.key] = payload;
     updates['chats/' + activeChatId + '/lastMessage'] = text.length > 60 ? text.slice(0,60) + '…' : text;
     updates['chats/' + activeChatId + '/lastMessageAt'] = firebase.database.ServerValue.TIMESTAMP;
-    updates['chats/' + activeChatId + '/lastSender'] = currentUser.uid;
     db.ref().update(updates);
     msgInput.value = '';
     autoGrow();
