@@ -178,6 +178,30 @@
   }
   .field input:focus{ border-color:var(--accent-emas); }
   .field input:disabled{ opacity:0.65; cursor:not-allowed; }
+  .field .pw-wrap{ position:relative; }
+  .field .pw-wrap input{ padding-right:40px; }
+  .field .pw-toggle{
+    position:absolute;
+    top:50%;
+    right:4px;
+    transform:translateY(-50%);
+    width:32px;
+    height:32px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:transparent;
+    border:none;
+    padding:0;
+    cursor:pointer;
+    color:var(--text-dim);
+    border-radius:8px;
+  }
+  .field .pw-toggle:hover{ color:var(--text-light); }
+  .field .pw-toggle svg{ width:19px; height:19px; }
+  .field .pw-toggle .eye-off{ display:none; }
+  .field .pw-toggle.showing .eye-on{ display:none; }
+  .field .pw-toggle.showing .eye-off{ display:block; }
   .auth-actions{ margin-top:18px; }
   .auth-actions .btn{ width:100%; padding:11px; font-size:14px; }
   .auth-toggle{
@@ -1047,7 +1071,13 @@
     </div>
     <div class="field">
       <label>Password</label>
-      <input type="password" id="inputPassword" placeholder="Minimal 6 karakter" autocomplete="current-password">
+      <div class="pw-wrap">
+        <input type="password" id="inputPassword" placeholder="Minimal 6 karakter" autocomplete="current-password">
+        <button type="button" class="pw-toggle" data-target="inputPassword" aria-label="Lihat/sembunyikan password">
+          <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+      </div>
     </div>
 
     <div class="auth-actions">
@@ -1262,15 +1292,33 @@
         <div class="auth-success-msg" id="changePassSuccess"></div>
         <div class="field">
           <label>Password Saat Ini</label>
-          <input type="password" id="changePassCurrent" placeholder="Password yang sedang dipakai" autocomplete="current-password">
+          <div class="pw-wrap">
+            <input type="password" id="changePassCurrent" placeholder="Password yang sedang dipakai" autocomplete="current-password">
+            <button type="button" class="pw-toggle" data-target="changePassCurrent" aria-label="Lihat/sembunyikan password">
+              <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
         </div>
         <div class="field">
           <label>Password Baru</label>
-          <input type="password" id="changePassNew" placeholder="Minimal 6 karakter" autocomplete="new-password">
+          <div class="pw-wrap">
+            <input type="password" id="changePassNew" placeholder="Minimal 6 karakter" autocomplete="new-password">
+            <button type="button" class="pw-toggle" data-target="changePassNew" aria-label="Lihat/sembunyikan password">
+              <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
         </div>
         <div class="field">
           <label>Konfirmasi Password Baru</label>
-          <input type="password" id="changePassConfirm" placeholder="Ulangi password baru" autocomplete="new-password">
+          <div class="pw-wrap">
+            <input type="password" id="changePassConfirm" placeholder="Ulangi password baru" autocomplete="new-password">
+            <button type="button" class="pw-toggle" data-target="changePassConfirm" aria-label="Lihat/sembunyikan password">
+              <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
         </div>
         <div style="display:flex; gap:8px;">
           <button class="btn small primary" id="btnChangePassword" type="button">Simpan Password</button>
@@ -1439,6 +1487,21 @@
         try { localStorage.setItem('themeMode', nowLight ? 'light' : 'dark'); } catch(e){}
       });
     }
+  })();
+
+  // ---------------------------------------------------------------
+  // Tombol mata: lihat / sembunyikan isi kolom password
+  // ---------------------------------------------------------------
+  (function initPasswordToggles(){
+    document.querySelectorAll('.pw-toggle').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var input = document.getElementById(btn.getAttribute('data-target'));
+        if (!input) return;
+        var showing = input.type === 'password';
+        input.type = showing ? 'text' : 'password';
+        btn.classList.toggle('showing', showing);
+      });
+    });
   })();
 
   // ---------------------------------------------------------------
