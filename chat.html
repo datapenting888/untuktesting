@@ -1414,7 +1414,11 @@
   };
 
   if (typeof firebase === 'undefined') {
-    document.getElementById('authScreen').innerHTML =
+    var ils = document.getElementById('initialLoadingScreen');
+    if (ils) ils.style.display = 'none';
+    var authScr = document.getElementById('authScreen');
+    authScr.style.display = 'flex';
+    authScr.innerHTML =
       '<div class="auth-card"><h1>Firebase gagal dimuat</h1><p class="sub">Cek koneksi internet / ad-blocker, lalu muat ulang halaman.</p></div>';
     return;
   }
@@ -1928,6 +1932,14 @@
         initAllUsersListener();
         startInactivityWatcher();
         updateConnIndicator();
+      }).catch(function(err){
+        // Kalau gagal ambil profil (permission denied / koneksi putus),
+        // jangan biarkan layar loading muter selamanya — tampilkan
+        // layar auth lagi supaya user tahu ada masalah dan bisa coba lagi.
+        console.error('Gagal memuat profil user:', err);
+        hideInitialLoadingScreen();
+        authScreen.style.display = 'flex';
+        appScreen.style.display = 'none';
       });
     } else {
       currentUser = null;
