@@ -3170,51 +3170,54 @@
             winAmount = nominal * odds;
         }
 
-        let bersih = 0;
+        // totalKembali = seluruh uang yang kembali ke tangan bettor (payout).
+        // bersih SELALU dihitung dari (totalKembali - modal) -- satu sumber
+        // kebenaran tunggal -- supaya nilai "Bersih" untuk status Lose Full
+        // maupun Lose 1/2 tidak pernah "nyangkut" di Rp0 (bug sebelumnya:
+        // bersih di-set terpisah per-case sehingga rawan tidak sinkron
+        // dengan totalKembali).
         let totalKembali = 0;
         let statusText = "";
         let statusColor = "#fff";
 
         switch (hasil) {
             case "winfull":
-                bersih = winAmount;
-                totalKembali = modal + bersih;
+                totalKembali = modal + winAmount;
                 statusText = "Win Full";
                 statusColor = "#00e676";
                 break;
             case "winhalf":
-                bersih = winAmount / 2;
-                totalKembali = modal + bersih;
+                totalKembali = modal + (winAmount / 2);
                 statusText = "Win 1/2";
                 statusColor = "#76ff03";
                 break;
             case "void":
-                bersih = 0;
                 totalKembali = modal;
                 statusText = "Draw / Seri";
                 statusColor = "#ffca28";
                 break;
             case "losehalf":
-                bersih = -modal / 2;
                 totalKembali = modal / 2;
                 statusText = "Lose 1/2";
                 statusColor = "#ff9800";
                 break;
             case "losefull":
-                bersih = -modal;
                 totalKembali = 0;
                 statusText = "Lose Full";
                 statusColor = "#ff5252";
                 break;
         }
 
+        let bersih = totalKembali - modal;
+
         document.getElementById('hdpResTotal').innerText = "Rp" + Math.round(totalKembali).toLocaleString('id-ID');
-        document.getElementById('hdpResModal').innerText = "Rp" + Math.round(modal).toLocaleString('id-ID');
+        let modalPrefix = odds < 0 ? "Risk: Rp" : "Modal: Rp";
+        document.getElementById('hdpResModal').innerText = modalPrefix + Math.round(modal).toLocaleString('id-ID');
 
         let bersihEl = document.getElementById('hdpResBersih');
-        let prefix = bersih >= 0 ? "Rp" : "-Rp";
+        let prefix = bersih > 0 ? "+Rp" : (bersih < 0 ? "-Rp" : "Rp");
         bersihEl.innerText = prefix + Math.round(Math.abs(bersih)).toLocaleString('id-ID');
-        bersihEl.style.color = bersih >= 0 ? "#00e676" : "#ff5252";
+        bersihEl.style.color = bersih > 0 ? "#00e676" : (bersih < 0 ? "#ff5252" : "#fff");
 
         let statusEl = document.getElementById('hdpResStatus');
         statusEl.innerText = statusText;
