@@ -1429,24 +1429,27 @@
    ============================================================ */
 #authOverlay{
   position:fixed; inset:0; z-index:99999;
-  background: radial-gradient(circle at 50% 20%, #1a1a55 0%, #0a0d1a 70%);
+  background:#000000;
   display:flex; align-items:center; justify-content:center;
   padding:20px;
 }
 .auth-box{
   width:100%; max-width:400px;
-  background: var(--bg-card, #0a0d24);
-  border:1px solid var(--border-soft, rgba(255,255,255,.15));
-  border-radius:14px;
-  padding:30px 26px;
-  box-shadow:0 10px 40px rgba(0,0,0,.5);
+  background:#0d0d14;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:32px 28px;
+  box-shadow:0 10px 50px rgba(0,0,0,.6);
 }
 .auth-brand{
-  text-align:center; font-size:26px; font-weight:800;
-  color: var(--accent-emas,#dbc36e); margin-bottom:4px; letter-spacing:.5px;
+  text-align:left; font-size:22px; font-weight:800;
+  background: linear-gradient(90deg,#ff5f6d,#ffc371,#47cf73,#35c8f0,#a55eea);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  -webkit-text-fill-color:transparent;
+  margin-bottom:24px; letter-spacing:.3px;
 }
 .auth-sub{ text-align:center; font-size:12.5px; color:#9aa3b5; margin-bottom:22px; }
-.auth-tabs{ display:flex; gap:6px; margin-bottom:18px; background:#11132a; border-radius:10px; padding:4px; }
+.auth-tabs{ display:none; }
 .auth-tab{
   flex:1; text-align:center; padding:9px 6px; border-radius:8px; cursor:pointer;
   font-size:13px; font-weight:600; color:#9aa3b5; user-select:none; transition:.15s;
@@ -1454,22 +1457,39 @@
 .auth-tab.active{ background: var(--blue,#2196d8); color:#fff; }
 .auth-panel{ display:none; }
 .auth-panel.active{ display:block; }
-.auth-field{ margin-bottom:14px; }
-.auth-field label{ display:block; font-size:12px; color:#c7cde0; margin-bottom:5px; }
+.auth-field{ margin-bottom:16px; }
+.auth-field label{ display:block; font-size:12.5px; font-weight:600; color:#a08cff; margin-bottom:7px; }
+.auth-field .input-wrap{ position:relative; }
 .auth-field input{
-  width:100%; padding:11px 12px; border-radius:8px; border:1px solid var(--border-soft,rgba(255,255,255,.15));
-  background: var(--input-bg,#e9edf3); color:#1b1f2a; font-size:14px; box-sizing:border-box;
+  width:100%; padding:12px 14px; border-radius:9px; border:1px solid rgba(255,255,255,.1);
+  background:#15151f; color:#f0f0f5; font-size:14px; box-sizing:border-box;
 }
+.auth-field input::placeholder{ color:#5c5c6e; }
+.auth-field input:focus{ outline:none; border-color:#7b7bf0; }
+.auth-field .pw-toggle{
+  position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  cursor:pointer; color:#7c7c8e; font-size:16px; user-select:none; background:none; border:none; padding:2px;
+}
+.auth-field .pw-toggle:hover{ color:#c7cde0; }
 .auth-btn{
-  width:100%; padding:12px; border:none; border-radius:8px; background: var(--blue,#2196d8);
-  color:#fff; font-weight:700; font-size:14px; cursor:pointer; margin-top:4px; transition:.15s;
+  width:100%; padding:13px; border:none; border-radius:9px;
+  background: linear-gradient(90deg,#8b5cf6,#3b82f6);
+  color:#fff; font-weight:700; font-size:14.5px; cursor:pointer; margin-top:6px; transition:.15s;
 }
 .auth-btn:hover{ filter:brightness(1.1); }
-.auth-btn.secondary{ background:var(--calm-taupe,#6e5f52); }
+.auth-btn.secondary{ background:#2a2a38; }
 .auth-btn:disabled{ opacity:.55; cursor:not-allowed; }
 .auth-link{
   display:block; text-align:center; font-size:12.5px; color:#7bb8ea; margin-top:14px; cursor:pointer; text-decoration:underline;
 }
+.auth-bottom-links{ margin-top:18px; text-align:center; }
+.auth-bottom-links .line1{ font-size:12.5px; font-weight:700; color:#e8e8ee; margin-bottom:10px; }
+.auth-bottom-links .line1 .go-daftar{ color:#5be07e; cursor:pointer; text-decoration:none; }
+.auth-bottom-links .line1 .go-daftar:hover{ text-decoration:underline; }
+.auth-bottom-links .go-forgot{ font-size:12.5px; font-weight:700; color:#e8e8ee; cursor:pointer; }
+.auth-bottom-links .go-forgot:hover{ text-decoration:underline; }
+.auth-back-link{ font-size:12.5px; color:#9aa3b5; cursor:pointer; margin-bottom:16px; display:inline-block; }
+.auth-back-link:hover{ color:#e8e8ee; }
 .auth-msg{ font-size:12.5px; text-align:center; margin-top:12px; min-height:16px; }
 .auth-msg.err{ color:#ff6b6b; }
 .auth-msg.ok{ color:#7dd88a; }
@@ -1533,8 +1553,6 @@
      ============================================================ -->
 <div id="authOverlay">
   <div class="auth-box">
-    <div class="auth-brand">UY LAB</div>
-    <div class="auth-sub">Masuk untuk mengakses dashboard</div>
 
     <div class="auth-tabs" id="authTabs">
       <div class="auth-tab active" data-tab="login">Masuk</div>
@@ -1544,31 +1562,47 @@
 
     <!-- ---------- TAB: LOGIN ---------- -->
     <div class="auth-panel active" id="authPanelLogin">
+      <div class="auth-brand">Silahkan Login</div>
       <div class="auth-field">
         <label>Email</label>
         <input type="email" id="loginEmail" placeholder="nama@email.com" autocomplete="username">
       </div>
       <div class="auth-field">
         <label>Password</label>
-        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+        <div class="input-wrap">
+          <input type="password" id="loginPassword" placeholder="Minimal 6 karakter" autocomplete="current-password">
+          <button type="button" class="pw-toggle" data-target="loginPassword">&#128065;</button>
+        </div>
       </div>
       <button class="auth-btn" id="btnLoginSubmit">Masuk</button>
       <div class="auth-msg" id="loginMsg"></div>
+      <div class="auth-bottom-links">
+        <div class="line1">Belum punya akun? <span class="go-daftar" data-tab="register">Daftar di sini</span></div>
+        <span class="go-forgot" data-tab="forgot">Lupa password?</span>
+      </div>
     </div>
 
     <!-- ---------- TAB: DAFTAR ---------- -->
     <div class="auth-panel" id="authPanelRegister">
+      <span class="auth-back-link" data-tab="login">&larr; Kembali ke Login</span>
+      <div class="auth-brand">Buat Akun Baru</div>
       <div class="auth-field">
         <label>Email</label>
         <input type="email" id="regEmail" placeholder="nama@email.com" autocomplete="username">
       </div>
       <div class="auth-field">
         <label>Password</label>
-        <input type="password" id="regPassword" placeholder="Minimal 6 karakter" autocomplete="new-password">
+        <div class="input-wrap">
+          <input type="password" id="regPassword" placeholder="Minimal 6 karakter" autocomplete="new-password">
+          <button type="button" class="pw-toggle" data-target="regPassword">&#128065;</button>
+        </div>
       </div>
       <div class="auth-field">
         <label>Ulangi Password</label>
-        <input type="password" id="regPassword2" placeholder="Ulangi password" autocomplete="new-password">
+        <div class="input-wrap">
+          <input type="password" id="regPassword2" placeholder="Ulangi password" autocomplete="new-password">
+          <button type="button" class="pw-toggle" data-target="regPassword2">&#128065;</button>
+        </div>
       </div>
       <button class="auth-btn" id="btnRegisterSubmit">Daftar Akun</button>
       <div class="auth-msg" id="regMsg"></div>
@@ -1576,6 +1610,8 @@
 
     <!-- ---------- TAB: LUPA PASSWORD (OTP) ---------- -->
     <div class="auth-panel" id="authPanelForgot">
+      <span class="auth-back-link" data-tab="login">&larr; Kembali ke Login</span>
+      <div class="auth-brand">Lupa Password</div>
 
       <!-- Step 1: minta OTP -->
       <div id="forgotStep1">
@@ -1597,7 +1633,10 @@
         </div>
         <div class="auth-field">
           <label>Password Baru</label>
-          <input type="password" id="forgotNewPass" placeholder="Minimal 6 karakter" autocomplete="new-password">
+          <div class="input-wrap">
+            <input type="password" id="forgotNewPass" placeholder="Minimal 6 karakter" autocomplete="new-password">
+            <button type="button" class="pw-toggle" data-target="forgotNewPass">&#128065;</button>
+          </div>
         </div>
         <button class="auth-btn" id="btnResetPass">Reset Password</button>
         <button class="auth-btn secondary" id="btnKirimUlangOtp" style="margin-top:8px;">Kirim Ulang Kode OTP</button>
@@ -9356,12 +9395,7 @@ window.hitungBetting = hitungBetting;
      ============================================================ -->
 <script>
 (function(){
-  if (!authApp || !authDB) {
-    console.error('[Auth] Firebase Auth/Database belum siap.');
-    return;
-  }
-
-  // ---------- Util ----------
+  // ---------- Util (tidak butuh Firebase) ----------
   function emailToKey(email){
     // Key Firebase RTDB tidak boleh mengandung . # $ [ ]
     return email.trim().toLowerCase().replace(/[.#$\[\]]/g, '_');
@@ -9374,21 +9408,54 @@ window.hitungBetting = hitungBetting;
     return String(Math.floor(100000 + Math.random() * 900000)); // 6 digit
   }
 
-  // ---------- Tab switching ----------
+  // ---------- Tab switching (selalu aktif, tidak tergantung Firebase) ----------
   const authTabs = document.querySelectorAll('.auth-tab');
   const authPanels = {
     login: document.getElementById('authPanelLogin'),
     register: document.getElementById('authPanelRegister'),
     forgot: document.getElementById('authPanelForgot')
   };
+  function gotoAuthTab(tabName){
+    authTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tabName));
+    Object.values(authPanels).forEach(p => p.classList.remove('active'));
+    authPanels[tabName].classList.add('active');
+  }
   authTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      authTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      Object.values(authPanels).forEach(p => p.classList.remove('active'));
-      authPanels[tab.dataset.tab].classList.add('active');
+    tab.addEventListener('click', () => gotoAuthTab(tab.dataset.tab));
+  });
+  // Link teks "Daftar di sini" / "Lupa password?" / "Kembali ke Login"
+  document.querySelectorAll('.go-daftar, .go-forgot, .auth-back-link').forEach(el => {
+    el.addEventListener('click', () => gotoAuthTab(el.dataset.tab));
+  });
+  // Tombol mata untuk lihat/sembunyikan password (selalu aktif)
+  document.querySelectorAll('.pw-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.target);
+      if (!input) return;
+      const showing = input.type === 'text';
+      input.type = showing ? 'password' : 'text';
+      btn.style.opacity = showing ? '1' : '.6';
     });
   });
+
+  // ---------- Dari sini butuh Firebase Auth/Database ----------
+  if (!authApp || !authDB) {
+    console.error('[Auth] Firebase Auth/Database belum siap (cek koneksi internet / ad-blocker / buka lewat server, bukan dobel-klik file).');
+    ['loginMsg','regMsg','forgotStep1Msg'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) setMsg(el, 'Gagal terhubung ke server. Cek koneksi internet lalu muat ulang halaman.');
+    });
+    return;
+  }
+
+  // ---------- Daftar email yang OTOMATIS jadi admin ----------
+  // Tambahkan email lain di sini kalau mau lebih dari satu admin.
+  const ADMIN_EMAILS = [
+    'rikismb888@gmail.com'
+  ];
+  function isAdminEmail(email){
+    return ADMIN_EMAILS.includes((email || '').trim().toLowerCase());
+  }
 
   // ---------- LOGIN ----------
   const loginMsg = document.getElementById('loginMsg');
@@ -9414,11 +9481,12 @@ window.hitungBetting = hitungBetting;
     setMsg(regMsg, 'Memproses...', true);
     authApp.createUserWithEmailAndPassword(email, pass)
       .then(cred => {
-        // Simpan role default "user". Untuk jadikan admin, ubah manual
-        // field role di Firebase Console: users/{uid}/role = "admin".
+        // Role otomatis "admin" kalau emailnya ada di daftar ADMIN_EMAILS,
+        // selain itu default "user". Untuk jadikan admin tambahan, cukup
+        // tambahkan emailnya ke daftar ADMIN_EMAILS di atas.
         return authDB.ref('users/' + cred.user.uid).set({
           email: email,
-          role: 'user',
+          role: isAdminEmail(email) ? 'admin' : 'user',
           createdAt: Date.now()
         });
       })
@@ -9507,10 +9575,7 @@ window.hitungBetting = hitungBetting;
         document.getElementById('forgotStep2').style.display = 'none';
         document.getElementById('forgotOtp').value = '';
         document.getElementById('forgotNewPass').value = '';
-        authTabs.forEach(t => t.classList.remove('active'));
-        Object.values(authPanels).forEach(p => p.classList.remove('active'));
-        document.querySelector('.auth-tab[data-tab="login"]').classList.add('active');
-        authPanels.login.classList.add('active');
+        gotoAuthTab('login');
       })
       .catch(err => setMsg(forgotStep2Msg, err.message || 'Gagal reset password.'));
   });
@@ -9539,9 +9604,18 @@ window.hitungBetting = hitungBetting;
 
   authApp.onAuthStateChanged(user => {
     if (user) {
-      authDB.ref('users/' + user.uid).once('value').then(snap => {
+      const userRef = authDB.ref('users/' + user.uid);
+      userRef.once('value').then(snap => {
         const data = snap.val() || {};
-        const role = data.role || 'user';
+        let role = data.role || 'user';
+
+        // Penyelarasan otomatis: kalau email ini termasuk ADMIN_EMAILS
+        // tapi role di database belum "admin" (mis. akun didaftarkan
+        // sebelum email ditambahkan ke ADMIN_EMAILS), naikkan otomatis.
+        if (isAdminEmail(user.email) && role !== 'admin') {
+          role = 'admin';
+          userRef.update({ email: user.email, role: 'admin' });
+        }
 
         document.getElementById('userBadgeEmail').textContent = user.email || '';
         const rolePill = document.getElementById('userBadgeRole');
