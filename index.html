@@ -9438,6 +9438,25 @@ window.hitungBetting = hitungBetting;
     });
   });
 
+  // Tekan Enter di kolom input langsung submit form yang bersangkutan
+  function enterSubmits(inputIds, buttonId){
+    inputIds.forEach(id => {
+      const input = document.getElementById(id);
+      if (!input) return;
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const btn = document.getElementById(buttonId);
+          if (btn) btn.click();
+        }
+      });
+    });
+  }
+  enterSubmits(['loginEmail', 'loginPassword'], 'btnLoginSubmit');
+  enterSubmits(['regEmail', 'regPassword', 'regPassword2'], 'btnRegisterSubmit');
+  enterSubmits(['forgotEmail'], 'btnKirimOtp');
+  enterSubmits(['forgotOtp', 'forgotNewPass'], 'btnResetPass');
+
   // ---------- Dari sini butuh Firebase Auth/Database ----------
   if (!authApp || !authDB) {
     console.error('[Auth] Firebase Auth/Database belum siap (cek koneksi internet / ad-blocker / buka lewat server, bukan dobel-klik file).');
