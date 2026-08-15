@@ -1503,6 +1503,16 @@
     </span>
     <span class="label label-sm">PERHITUNGAN BOLA PNG</span>
   </div>
+  <div class="nav-item" id="navBolaOdds">
+    <span class="icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 7l2.9 2.1-1.1 3.4H10.2l-1.1-3.4L12 7z" fill="currentColor"/>
+        <path d="M12 3v4M12 17v4M4.2 9l3.9 1.5M15.9 10.5L19.8 9M6.5 17.5l2.6-3.2M14.9 14.3l2.6 3.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="label label-sm">PERHITUNGAN BOLA ODDS</span>
+  </div>
   <div class="nav-item" id="navHasilJadwal">
     <span class="icon">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -1714,6 +1724,1851 @@
       </div>
     </div>
   </div>
+</div>
+
+<div id="pageBolaOdds" style="display:none;">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Odds</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0b130f;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @property --angle {
+            syntax: '<angle>';
+            inherits: false;
+            initial-value: 0deg;
+        }
+
+        @keyframes spin-border {
+            to { --angle: 360deg; }
+        }
+
+        @keyframes pulse-glow {
+            0%, 15% { opacity: 0; }
+            35%, 65% { opacity: 1; }
+            85%, 100% { opacity: 0; }
+        }
+
+        .glow-border {
+            position: relative;
+        }
+
+        .glow-border::before,
+        .glow-border::after {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            padding: 2px;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: spin-border 3.5s linear infinite, pulse-glow 3.5s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+            filter: drop-shadow(0 0 4px rgba(0, 230, 118, 0.7));
+        }
+
+        /* Ular 1: mulai dari atas */
+        .glow-border::before {
+            background: conic-gradient(from var(--angle),
+                transparent 0deg,
+                transparent 250deg,
+                rgba(0, 176, 255, 0) 285deg,
+                #00b0ff 315deg,
+                #00e676 340deg,
+                #76ff03 360deg);
+        }
+
+        /* Ular 2: mulai dari bawah (offset 180deg), hilang-timbul berlawanan fase */
+        .glow-border::after {
+            background: conic-gradient(from calc(var(--angle) + 180deg),
+                transparent 0deg,
+                transparent 250deg,
+                rgba(0, 176, 255, 0) 285deg,
+                #00b0ff 315deg,
+                #00e676 340deg,
+                #76ff03 360deg);
+            animation-delay: 1.75s, 1.75s;
+            filter: drop-shadow(0 0 4px rgba(0, 176, 255, 0.7));
+        }
+
+        /* Header Title */
+        .main-header {
+            text-align: center;
+            background-color: #111d16;
+            border: 1px solid #1e3828;
+            border-radius: 30px;
+            padding: 12px 20px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            font-size: 19px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Step Guide Grid */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .step-card {
+            background-color: #111d16;
+            border: 1px solid #1e3828;
+            border-radius: 12px;
+            padding: 15px;
+            position: relative;
+        }
+
+        .step-badge {
+            background-color: #76ff03;
+            color: #000;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 17px;
+            margin-bottom: 10px;
+        }
+
+        .step-card h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .step-card p {
+            font-size: 16px;
+            color: #a0b0a5;
+            line-height: 1.4;
+        }
+
+        /* Menu Navigation Tabs */
+        .menu-tabs {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        @media(max-width: 900px) {
+            .menu-tabs {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .tab-btn {
+                font-size: 15px;
+                white-space: normal;
+            }
+        }
+
+        @media(max-width: 768px) {
+            .menu-tabs {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .tab-btn {
+                font-size: 15px;
+                white-space: normal;
+            }
+        }
+
+        .tab-btn {
+            background-color: #111d16;
+            border: 1px solid #1e3828;
+            border-radius: 10px;
+            padding: 10px 8px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 13px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #00b0ff, #00e676);
+            color: #000;
+            border: none;
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+        }
+
+        /* Main Content Layout */
+        .content-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 20px;
+        }
+
+        @media(max-width: 900px) {
+            .content-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: grid;
+        }
+
+        /* Calculator Panel */
+        .calc-panel {
+            background-color: #111d16;
+            border: 1px solid #1e3828;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .calc-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .calc-title span {
+            background-color: #76ff03;
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 17px;
+        }
+
+        .calc-subtitle {
+            font-size: 16px;
+            color: #a0b0a5;
+            margin-bottom: 15px;
+            margin-left: 34px;
+        }
+
+        /* Tag pills */
+        .tag-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tag-row-spread {
+            justify-content: space-between;
+        }
+
+        .tag-pill {
+            background-color: #76ff03;
+            color: #000;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .tag-pill-outline {
+            background-color: #0d1711;
+            border: 1px solid #1e3828;
+            color: #fff;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .info-boxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .info-box {
+            background-color: #0d1711;
+            border: 1px solid #1e3828;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .info-box h5 {
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+
+        .info-box p, .info-box ul {
+            font-size: 15px;
+            color: #a0b0a5;
+            line-height: 1.5;
+        }
+
+        .info-box ul {
+            padding-left: 16px;
+        }
+
+        .input-group-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(118, 255, 3, 0.15);
+            border-radius: 14px;
+            padding: 12px 16px;
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 18px;
+            font-weight: normal !important;
+            outline: none;
+            text-align: left;
+            appearance: none;
+            transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .input-group input:not(:placeholder-shown) {
+            color: #fff;
+            font-weight: bold !important;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .input-group select {
+            text-align: center;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2376ff03' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 34px;
+        }
+
+        .input-group select option {
+            color: #000 !important;
+            background-color: #fff !important;
+            font-weight: bold !important;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: rgba(118, 255, 3, 0.5);
+            background-color: rgba(255, 255, 255, 0.04);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 4fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-calc-full {
+            width: 100%;
+            background: linear-gradient(90deg, #76ff03, #00e676);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            text-align: left;
+            padding-left: 15px;
+            margin-bottom: 10px;
+        }
+
+        .secondary-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-calc {
+            background: linear-gradient(90deg, #76ff03, #00e676);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            text-align: left;
+            padding-left: 15px;
+        }
+
+        .btn-reset,
+        .btn-outline {
+            background-color: #0d1711;
+            color: #ff5252;
+            border: 1px solid #ff5252;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 12px;
+        }
+
+        .btn-reset:hover,
+        .btn-outline:hover {
+            background-color: #ff5252;
+            color: #fff;
+        }
+
+        .btn-example {
+            background-color: #0d1711;
+            color: #a0b0a5;
+            border: 1px solid #1e3828;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 12px;
+        }
+
+        .btn-example:hover {
+            background-color: #1e3828;
+            color: #fff;
+        }
+
+        /* Result Panel */
+        .result-panel {
+            background-color: #111d16;
+            border: 1px solid #1e3828;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .result-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #76ff03;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .result-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #d4ffb0, #76ff03 55%, #2e7d0a);
+            box-shadow: 0 0 8px rgba(118, 255, 3, 0.8);
+            flex-shrink: 0;
+        }
+
+        .result-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .result-card {
+            background-color: #0d1711;
+            border: 1px solid #1e3828;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .result-card .label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #00e676;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .result-card .value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        /* ===== HDP / Over Under (Tab 5) ===== */
+        .calc-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .calc-title-row .calc-title {
+            margin-bottom: 0;
+        }
+
+        .badge-accent {
+            font-size: 14px;
+            font-weight: bold;
+            color: #76ff03;
+            background-color: rgba(118, 255, 3, 0.08);
+            border: 1px solid rgba(118, 255, 3, 0.25);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .hint-text {
+            font-size: 13px;
+            color: #00b0ff;
+            margin-top: 6px;
+        }
+
+        .input-prefix-wrap {
+            position: relative;
+        }
+
+        .input-prefix {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(118, 255, 3, 0.6);
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .input-prefix-wrap input.has-prefix {
+            padding-left: 40px;
+        }
+
+        .result-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .result-header-row .result-header {
+            margin-bottom: 0;
+        }
+
+        .total-kembali-box {
+            background: linear-gradient(135deg, rgba(118, 255, 3, 0.08), rgba(0, 176, 255, 0.06));
+            border: 1px solid rgba(118, 255, 3, 0.25);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .total-kembali-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #76ff03;
+            margin-bottom: 6px;
+        }
+
+        .total-kembali-value {
+            font-size: 30px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .hdp-result-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .hdp-result-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #0d1711;
+            border: 1px solid #1e3828;
+            border-radius: 10px;
+            padding: 12px 16px;
+        }
+
+        .hdp-row-label {
+            font-size: 15px;
+            font-weight: bold;
+            color: #a0b0a5;
+        }
+
+        .hdp-row-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .hdp-footnote {
+            font-size: 13px;
+            color: #00b0ff;
+            background-color: rgba(0, 176, 255, 0.06);
+            border: 1px solid rgba(0, 176, 255, 0.2);
+            border-radius: 10px;
+            padding: 10px 14px;
+            line-height: 1.5;
+        }
+
+        .btn-clear-result {
+            background-color: #0d1711;
+            color: #ff5252;
+            border: 1px solid #ff5252;
+            border-radius: 8px;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .placeholder-box {
+            text-align: center;
+            color: #a0b0a5;
+            font-size: 17px;
+            padding: 40px 10px;
+        }
+
+        /* Detail Perhitungan (Parlay) */
+        .result-detail-box {
+            background-color: #0d1711;
+            border: 1px solid #1e3828;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .result-detail-title {
+            font-size: 15px;
+            color: #a0b0a5;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .result-detail-heading {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .result-detail-list {
+            font-size: 16px;
+            color: #cfe9d6;
+            line-height: 1.8;
+        }
+
+        .result-detail-divider {
+            border-top: 1px solid #1e3828;
+            margin: 10px 0;
+        }
+
+        .result-detail-formula {
+            font-size: 16px;
+            color: #00e676;
+            font-weight: bold;
+        }
+
+        /* Parlay dynamic match rows */
+        .parlay-matches-wrap {
+            margin-bottom: 15px;
+        }
+
+        .parlay-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 40px;
+            gap: 10px;
+            align-items: end;
+            margin-bottom: 15px;
+        }
+
+        .parlay-row .input-group {
+            margin-bottom: 0;
+        }
+
+        .btn-remove-match {
+            background-color: #1a0d0d;
+            border: 1px solid #ff5252;
+            color: #ff5252;
+            border-radius: 8px;
+            height: 40px;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-remove-match:hover {
+            background-color: #ff5252;
+            color: #fff;
+        }
+
+        .btn-add-match {
+            width: 100%;
+            background-color: #0d1711;
+            border: 1px dashed #76ff03;
+            color: #76ff03;
+            border-radius: 8px;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: 0.2s;
+        }
+
+        .btn-add-match:hover {
+            background-color: #16241a;
+        }
+            * { font-weight: bold !important; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="main-header glow-border">
+        Bantuan Untuk Perhitungan ODDS
+    </div>
+
+    <!-- Steps -->
+    <div class="steps-grid">
+        <div class="step-card glow-border">
+            <div class="step-badge">1</div>
+            <h4>Pilih Menu</h4>
+            <p>Pilih jenis kalkulator yang ingin digunakan.</p>
+        </div>
+        <div class="step-card glow-border">
+            <div class="step-badge">2</div>
+            <h4>Baca Arahan</h4>
+            <p>Lihat penjelasan singkat dan contohnya.</p>
+        </div>
+        <div class="step-card glow-border">
+            <div class="step-badge">3</div>
+            <h4>Isi Data</h4>
+            <p>Masukkan modal, odds, atau angka yang diperlukan.</p>
+        </div>
+        <div class="step-card glow-border">
+            <div class="step-badge">4</div>
+            <h4>Hasil Hasil</h4>
+            <p>Hasil langsung tampil jelas di panel kanan.</p>
+        </div>
+    </div>
+
+    <!-- Menu Tabs -->
+    <div class="menu-tabs">
+        <button class="tab-btn active" id="tabBtn1" onclick="switchTab(1)">1. Single Bet</button>
+        <button class="tab-btn" id="tabBtn2" onclick="switchTab(2)">2. Parlay</button>
+        <button class="tab-btn" id="tabBtn3" onclick="switchTab(3)">3. Target Profit / KEI</button>
+        <button class="tab-btn" id="tabBtn4" onclick="switchTab(4)">4. Cash Out</button>
+        <button class="tab-btn" id="tabBtn5" onclick="switchTab(5)">5. HDP / Over Under</button>
+        <button class="tab-btn" id="tabBtn6" onclick="switchTab(6)">6. Kalkulator 1X2</button>
+    </div>
+
+    <!-- ============ TAB 1: SINGLE BET ============ -->
+    <div class="content-layout tab-panel active" id="panel1">
+        <div class="calc-panel glow-border">
+            <div class="calc-title">
+                <span>1</span> Single Bet (Taruhan Tunggal)
+            </div>
+            <div class="calc-subtitle">Untuk 1 pertandingan atau 1 pilihan saja.</div>
+
+            <div class="tag-row tag-row-spread">
+                <div class="tag-pill">Arahan Single Bet</div>
+                <div class="tag-pill-outline">Cocok untuk 1 tiket</div>
+            </div>
+
+            <div class="info-boxes">
+                <div class="info-box">
+                    <h5>Apa itu?</h5>
+                    <p>Anda hanya memasang taruhan pada 1 pertandingan atau 1 pilihan saja.</p>
+                </div>
+                <div class="info-box">
+                    <h5>Apa yang dihitung?</h5>
+                    <ul>
+                        <li>Uang yang diterima jika menang.</li>
+                        <li>Keuntungan bersih yang didapat.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-boxes">
+                <div class="info-box">
+                    <h5>Contoh</h5>
+                    <p>Modal: Rp100.000, Odds: 1.80<br>Uang diterima: Rp180.000<br>Profit: Rp80.000</p>
+                </div>
+                <div class="info-box">
+                    <h5>Rumus Cepat</h5>
+                    <p>Payout = Modal x Odds<br>Profit = Payout - Modal</p>
+                </div>
+            </div>
+
+            <div class="input-group-grid">
+                <div class="input-group">
+                    <label>Modal / Stake</label>
+                    <input type="number" id="sbModalInput" placeholder="100000">
+                </div>
+                <div class="input-group">
+                    <label>Odds</label>
+                    <input type="number" id="sbOddsInput" placeholder="1.80" step="0.01">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Hasil Tiket</label>
+                <select id="sbHasilTiket">
+                    <option value="menang">Menang</option>
+                    <option value="kalah">Kalah</option>
+                    <option value="void">Void / Refund</option>
+                    <option value="halfwin">Half Win</option>
+                    <option value="halflose">Half Lose</option>
+                    <option value="cashout">Cash Out</option>
+                </select>
+            </div>
+
+            <button class="btn-calc-full" onclick="hitungSingleBet()">Hitung</button>
+            <div class="secondary-buttons">
+                <button class="btn-example" onclick="contohSingleBet()">Contoh</button>
+                <button class="btn-reset" onclick="resetSingleBet()">Reset</button>
+            </div>
+        </div>
+
+        <div class="result-panel glow-border">
+            <div>
+                <div class="result-header">
+                    <span class="result-dot"></span> Panel Hasil
+                </div>
+                <div class="result-cards">
+                    <div class="result-card">
+                        <div class="label">MODAL</div>
+                        <div class="value" id="sbResModal">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">ODDS AKHIR</div>
+                        <div class="value" id="sbResOdds">0.000</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PAYOUT</div>
+                        <div class="value" id="sbResPayout">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PROFIT / LOSS</div>
+                        <div class="value" id="sbResProfit">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">STATUS</div>
+                        <div class="value" id="sbResStatus">Bersih</div>
+                    </div>
+                </div>
+                <div class="result-detail-box" id="sbDetailBox" style="display:none;">
+                    <div class="result-detail-title">DETAIL PERHITUNGAN</div>
+                    <div class="result-detail-heading">Rincian</div>
+                    <div class="result-detail-list" id="sbDetailList"></div>
+                    <div class="result-detail-divider"></div>
+                    <div class="result-detail-formula" id="sbDetailFormula"></div>
+                </div>
+            </div>
+            <button class="btn-clear-result" onclick="resetSingleBet()">Bersihkan Hasil</button>
+        </div>
+    </div>
+
+    <!-- ============ TAB 2: PARLAY ============ -->
+    <div class="content-layout tab-panel" id="panel2">
+        <div class="calc-panel glow-border">
+            <div class="calc-title">
+                <span>2</span> Parlay
+            </div>
+            <div class="calc-subtitle">Untuk menggabungkan 2 atau lebih taruhan.</div>
+
+            <div class="tag-row tag-row-spread">
+                <div class="tag-pill">Arahan Parlay</div>
+                <div class="tag-pill-outline">Semua harus menang</div>
+            </div>
+
+            <div class="info-boxes">
+                <div class="info-box">
+                    <h5>Apa itu?</h5>
+                    <p>Anda menggabungkan 2 atau lebih taruhan menjadi satu tiket. Semua pilihan harus benar agar tiket menang.</p>
+                </div>
+                <div class="info-box">
+                    <h5>Apa yang dihitung?</h5>
+                    <ul>
+                        <li>Total odds gabungan.</li>
+                        <li>Total uang yang diterima.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-boxes">
+                <div class="info-box">
+                    <h5>Contoh</h5>
+                    <p>Odds 1: 1.80, Odds 2: 2.00, Odds 3: 1.50<br>Total odds = 5.40<br>Modal Rp100k &rarr; Payout Rp540k</p>
+                </div>
+                <div class="info-box">
+                    <h5>Rumus Cepat</h5>
+                    <p>Total Odds = odds1 x odds2 ...<br>Payout = Modal x Total Odds</p>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Modal / Stake</label>
+                <input type="number" id="plModalInput" placeholder="10000">
+            </div>
+
+            <div class="parlay-matches-wrap" id="parlayMatches">
+                <div class="parlay-row" id="parlayRow0">
+                    <div class="input-group">
+                        <label>Odds</label>
+                        <input type="number" class="parlay-odds-input" step="0.01" placeholder="1.95">
+                    </div>
+                    <div class="input-group">
+                        <label>Hasil</label>
+                        <select class="parlay-hasil-select">
+                            <option value="win">Win</option>
+                            <option value="lose">Lose</option>
+                            <option value="void">Void</option>
+                            <option value="hwin">H-Win</option>
+                            <option value="hlose">H-Lose</option>
+                        </select>
+                    </div>
+                    <button class="btn-remove-match" onclick="removeParlayMatch(0)">x</button>
+                </div>
+                <div class="parlay-row" id="parlayRow1">
+                    <div class="input-group">
+                        <label>Odds</label>
+                        <input type="number" class="parlay-odds-input" step="0.01" placeholder="2.5">
+                    </div>
+                    <div class="input-group">
+                        <label>Hasil</label>
+                        <select class="parlay-hasil-select">
+                            <option value="win">Win</option>
+                            <option value="lose">Lose</option>
+                            <option value="void">Void</option>
+                            <option value="hwin">H-Win</option>
+                            <option value="hlose">H-Lose</option>
+                        </select>
+                    </div>
+                    <button class="btn-remove-match" onclick="removeParlayMatch(1)">x</button>
+                </div>
+            </div>
+
+            <button class="btn-add-match" onclick="addParlayMatch()">+ Tambah Match</button>
+
+            <button class="btn-calc-full" onclick="hitungParlay()">Hitung Parlay</button>
+            <div class="secondary-buttons">
+                <button class="btn-example" onclick="contohParlay()">Contoh</button>
+                <button class="btn-reset" onclick="resetParlay()">Reset</button>
+            </div>
+        </div>
+
+        <div class="result-panel glow-border">
+            <div>
+                <div class="result-header">
+                    <span class="result-dot"></span> Panel Hasil
+                </div>
+                <div class="result-cards">
+                    <div class="result-card">
+                        <div class="label">MODAL</div>
+                        <div class="value" id="plResModal">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">ODDS AKHIR</div>
+                        <div class="value" id="plResOdds">0.000</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PAYOUT</div>
+                        <div class="value" id="plResPayout">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PROFIT / LOSS</div>
+                        <div class="value" id="plResProfit">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">STATUS</div>
+                        <div class="value" id="plResStatus">Bersih</div>
+                    </div>
+                </div>
+                <div class="result-detail-box" id="plDetailBox" style="display:none;">
+                    <div class="result-detail-title">DETAIL PERHITUNGAN</div>
+                    <div class="result-detail-heading">Rincian</div>
+                    <div class="result-detail-list" id="plDetailList"></div>
+                    <div class="result-detail-divider"></div>
+                    <div class="result-detail-formula" id="plDetailFormula"></div>
+                </div>
+            </div>
+            <button class="btn-clear-result" onclick="resetParlay()">Bersihkan Hasil</button>
+        </div>
+    </div>
+
+    <!-- ============ TAB 3: TARGET PROFIT / KEI ============ -->
+    <div class="content-layout tab-panel" id="panel3">
+        <!-- Calculator Input Area -->
+        <div class="calc-panel glow-border">
+            <div class="calc-title">
+                <span>3</span> Target Profit / KEI
+            </div>
+
+            <div class="info-boxes">
+                <div class="info-box">
+                    <h5>Apa itu?</h5>
+                    <p>Dipakai jika sudah menentukan target untung, tapi belum tahu modalnya berapa.</p>
+                </div>
+                <div class="info-box">
+                    <h5>Contoh</h5>
+                    <p>Odds: 1.85, Target: 100k<br>Modal = Rp117.647<br>Total diterima = Rp217.647</p>
+                </div>
+            </div>
+
+            <div class="input-group-grid">
+                <div class="input-group">
+                    <label>Odds</label>
+                    <input type="number" id="oddsInput" placeholder="1.85" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Target Profit</label>
+                    <input type="number" id="targetInput" placeholder="100000">
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-calc" onclick="hitungModal()">Hitung Modal</button>
+                <button class="btn-reset" onclick="resetForm()">Reset</button>
+            </div>
+        </div>
+
+        <!-- Result Panel -->
+        <div class="result-panel glow-border">
+            <div>
+                <div class="result-header">
+                    <span class="result-dot"></span> Panel Hasil
+                </div>
+                <div class="result-cards">
+                    <div class="result-card">
+                        <div class="label">MODAL</div>
+                        <div class="value" id="resModal">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">ODDS AKHIR</div>
+                        <div class="value" id="resOdds">0.000</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PAYOUT</div>
+                        <div class="value" id="resPayout">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PROFIT / LOSS</div>
+                        <div class="value" id="resProfit">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">STATUS</div>
+                        <div class="value" id="resStatus">Bersih</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-clear-result" onclick="resetForm()">Bersihkan Hasil</button>
+        </div>
+    </div>
+
+    <!-- ============ TAB 4: CASH OUT ============ -->
+    <div class="content-layout tab-panel" id="panel4">
+        <div class="calc-panel glow-border">
+            <div class="calc-title"><span>4</span> Cash Out</div>
+
+            <div class="input-group-grid">
+                <div class="input-group">
+                    <label>Modal / Stake</label>
+                    <input type="number" id="coModalInput" placeholder="100000">
+                </div>
+                <div class="input-group">
+                    <label>Nominal Cash Out</label>
+                    <input type="number" id="coCashOutInput" placeholder="120000">
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-calc" onclick="hitungCashOut()">Hitung</button>
+                <button class="btn-reset" onclick="resetCashOut()">Reset</button>
+            </div>
+        </div>
+
+        <div class="result-panel glow-border">
+            <div>
+                <div class="result-header">
+                    <span class="result-dot"></span> Panel Hasil
+                </div>
+                <div class="result-cards">
+                    <div class="result-card">
+                        <div class="label">MODAL</div>
+                        <div class="value" id="coResModal">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">ODDS AKHIR</div>
+                        <div class="value" id="coResOdds">0.000</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PAYOUT</div>
+                        <div class="value" id="coResPayout">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PROFIT / LOSS</div>
+                        <div class="value" id="coResProfit">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">STATUS</div>
+                        <div class="value" id="coResStatus">Bersih</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-clear-result" onclick="resetCashOut()">Bersihkan Hasil</button>
+        </div>
+    </div>
+
+    <!-- ============ TAB 5: HDP / OVER UNDER ============ -->
+    <div class="content-layout tab-panel" id="panel5">
+        <div class="calc-panel glow-border">
+            <div class="calc-title-row">
+                <div class="calc-title"><span>5</span> HDP / Over Under</div>
+                <div class="badge-accent">Indo Odds</div>
+            </div>
+
+            <div class="input-group">
+                <label>Odds</label>
+                <input type="number" id="hdpOddsInput" placeholder="Contoh: 0.95 atau -1.15" step="0.01">
+                <div class="hint-text">Gunakan minus jika odds kei, contoh: -1.15</div>
+            </div>
+
+            <div class="input-group">
+                <label>Status Hasil</label>
+                <select id="hdpHasilTiket">
+                    <option value="winfull">Win Full</option>
+                    <option value="winhalf">Win 1/2</option>
+                    <option value="void">Draw / Seri</option>
+                    <option value="losehalf">Lose 1/2</option>
+                    <option value="losefull">Lose Full</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Nominal Betting</label>
+                <div class="input-prefix-wrap">
+                    <span class="input-prefix">Rp</span>
+                    <input type="number" id="hdpNominalInput" class="has-prefix" placeholder="100.000">
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-calc" onclick="hitungHdp()">Hitung HDP / O-U</button>
+                <button class="btn-reset" onclick="resetHdp()">Reset</button>
+            </div>
+        </div>
+
+        <div class="result-panel glow-border">
+            <div>
+                <div class="result-header-row">
+                    <div class="result-header">
+                        <span class="result-dot"></span> Hasil HDP
+                    </div>
+                    <div class="badge-accent">Live Result</div>
+                </div>
+
+                <div class="total-kembali-box">
+                    <div class="total-kembali-label">Total Kembali</div>
+                    <div class="total-kembali-value" id="hdpResTotal">Rp0</div>
+                </div>
+
+                <div class="hdp-result-rows">
+                    <div class="hdp-result-row">
+                        <span class="hdp-row-label">Modal / Risk</span>
+                        <span class="hdp-row-value" id="hdpResModal">Rp0</span>
+                    </div>
+                    <div class="hdp-result-row">
+                        <span class="hdp-row-label">Bersih</span>
+                        <span class="hdp-row-value" id="hdpResBersih">Rp0</span>
+                    </div>
+                    <div class="hdp-result-row">
+                        <span class="hdp-row-label">Status</span>
+                        <span class="hdp-row-value" id="hdpResStatus">Win Full</span>
+                    </div>
+                </div>
+
+                <div class="hdp-footnote">Untuk odds negatif, sistem membaca nilai tersebut sebagai risk. Contoh odds -1.15 berarti risk dihitung dari nominal x 1.15.</div>
+            </div>
+            <button class="btn-clear-result" onclick="resetHdp()">Bersihkan Hasil</button>
+        </div>
+    </div>
+
+    <!-- ============ TAB 6: KALKULATOR 1X2 ============ -->
+    <div class="content-layout tab-panel" id="panel6">
+        <div class="calc-panel glow-border">
+            <div class="calc-title-row">
+                <div class="calc-title"><span>6</span> Kalkulator 1X2</div>
+                <div class="badge-accent">Decimal Odds</div>
+            </div>
+
+            <div class="input-group-grid">
+                <div class="input-group">
+                    <label>Odds Pertandingan</label>
+                    <input type="number" id="oneXTwoOddsInput" placeholder="Contoh: 1.85" step="0.01">
+                    <div class="hint-text">Gunakan format decimal odds, contoh: 1.85, 2.00, 3.50</div>
+                </div>
+                <div class="input-group">
+                    <label>Status Hasil</label>
+                    <select id="oneXTwoHasilTiket">
+                        <option value="winfull">Win Full</option>
+                        <option value="draw">Draw / Refund</option>
+                        <option value="losefull">Lose Full</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Nominal Betting</label>
+                <div class="input-prefix-wrap">
+                    <span class="input-prefix">Rp</span>
+                    <input type="number" id="oneXTwoNominalInput" class="has-prefix" placeholder="100.000">
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-calc" onclick="hitung1X2()">Hitung 1X2</button>
+                <button class="btn-reset" onclick="reset1X2()">Reset</button>
+            </div>
+        </div>
+
+        <div class="result-panel glow-border">
+            <div>
+                <div class="result-header-row">
+                    <div class="result-header">
+                        <span class="result-dot"></span> Hasil 1X2
+                    </div>
+                    <div class="badge-accent">Live Result</div>
+                </div>
+
+                <div class="total-kembali-box">
+                    <div class="total-kembali-label">Total Kembali</div>
+                    <div class="total-kembali-value" id="oneXTwoResTotal">Rp0</div>
+                </div>
+
+                <div class="hdp-result-rows">
+                    <div class="hdp-result-row">
+                        <span class="hdp-row-label">Modal</span>
+                        <span class="hdp-row-value" id="oneXTwoResModal">Rp0</span>
+                    </div>
+                    <div class="hdp-result-row">
+                        <span class="hdp-row-label">Kemenangan Bersih</span>
+                        <span class="hdp-row-value" id="oneXTwoResBersih">Rp0</span>
+                    </div>
+                    <div class="hdp-result-row">
+                        <span class="hdp-row-label">Status</span>
+                        <span class="hdp-row-value" id="oneXTwoResStatus">Win Full</span>
+                    </div>
+                </div>
+
+                <div class="hdp-footnote">Jika status Draw / Refund dipilih, total kembali sama dengan modal awal.</div>
+            </div>
+            <button class="btn-clear-result" onclick="reset1X2()">Bersihkan Hasil</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    /* ===== TAB SWITCHING ===== */
+    function switchTab(tabNum) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+        document.getElementById('tabBtn' + tabNum).classList.add('active');
+        document.getElementById('panel' + tabNum).classList.add('active');
+    }
+
+    /* ===== TAB 1: SINGLE BET ===== */
+    function hitungSingleBet() {
+        let modal = parseFloat(document.getElementById('sbModalInput').value);
+        let odds = parseFloat(document.getElementById('sbOddsInput').value);
+        let hasil = document.getElementById('sbHasilTiket').value;
+
+        if (isNaN(modal) || isNaN(odds) || modal <= 0 || odds <= 0) {
+            alert("Masukkan angka yang valid!");
+            return;
+        }
+
+        let payout = 0;
+        let profit = 0;
+        let statusText = "";
+        let statusColor = "#fff";
+
+        switch (hasil) {
+            case "menang":
+                // Payout = Modal x Odds | Profit = Payout - Modal
+                payout = modal * odds;
+                profit = payout - modal;
+                statusText = "MENANG";
+                statusColor = "#00e676";
+                break;
+            case "kalah":
+                payout = 0;
+                profit = -modal;
+                statusText = "KALAH";
+                statusColor = "#ff5252";
+                break;
+            case "void":
+                payout = modal;
+                profit = 0;
+                statusText = "VOID / REFUND";
+                statusColor = "#ffca28";
+                break;
+            case "halfwin":
+                payout = modal + (modal * (odds - 1)) / 2;
+                profit = payout - modal;
+                statusText = "HALF WIN";
+                statusColor = "#76ff03";
+                break;
+            case "halflose":
+                payout = modal / 2;
+                profit = payout - modal;
+                statusText = "HALF LOSE";
+                statusColor = "#ff9800";
+                break;
+            case "cashout":
+                statusText = "GUNAKAN MENU CASH OUT";
+                statusColor = "#00b0ff";
+                break;
+        }
+
+        document.getElementById('sbResModal').innerText = "Rp " + Math.round(modal).toLocaleString('id-ID');
+        document.getElementById('sbResOdds').innerText = odds.toFixed(3);
+
+        let profitEl = document.getElementById('sbResProfit');
+        if (hasil === "cashout") {
+            document.getElementById('sbResPayout').innerText = "-";
+            profitEl.innerText = "-";
+            profitEl.style.color = "#fff";
+        } else {
+            document.getElementById('sbResPayout').innerText = "Rp " + Math.round(payout).toLocaleString('id-ID');
+            let prefix = profit >= 0 ? "Rp " : "-Rp ";
+            profitEl.innerText = prefix + Math.round(Math.abs(profit)).toLocaleString('id-ID');
+            profitEl.style.color = profit >= 0 ? "#00e676" : "#ff5252";
+        }
+
+        let statusEl = document.getElementById('sbResStatus');
+        statusEl.innerText = statusText;
+        statusEl.style.color = statusColor;
+
+        // Detail Perhitungan
+        let hasilLabel = {
+            menang: "WIN",
+            kalah: "LOSE",
+            void: "VOID",
+            halfwin: "H-WIN",
+            halflose: "H-LOSE",
+            cashout: "CASH OUT"
+        };
+        document.getElementById('sbDetailList').innerHTML = `Match 1: ${hasilLabel[hasil]}`;
+
+        let modalFmt = Math.round(modal).toLocaleString('id-ID');
+        let formulaText = "";
+        if (hasil === "cashout") {
+            formulaText = "Gunakan menu Cash Out untuk menghitung tiket ini.";
+        } else {
+            let payoutFmt = Math.round(payout).toLocaleString('id-ID');
+            formulaText = `Hitung: Rp ${modalFmt} x ${odds.toFixed(3)} = Rp ${payoutFmt}`;
+        }
+        document.getElementById('sbDetailFormula').innerText = formulaText;
+        document.getElementById('sbDetailBox').style.display = "block";
+    }
+
+    function contohSingleBet() {
+        document.getElementById('sbModalInput').value = 100000;
+        document.getElementById('sbOddsInput').value = 1.80;
+        document.getElementById('sbHasilTiket').value = "menang";
+        hitungSingleBet();
+    }
+
+    function resetSingleBet() {
+        document.getElementById('sbModalInput').value = "";
+        document.getElementById('sbOddsInput').value = "";
+        document.getElementById('sbHasilTiket').value = "menang";
+        document.getElementById('sbResModal').innerText = "Rp 0";
+        document.getElementById('sbResOdds').innerText = "0.000";
+        document.getElementById('sbResPayout').innerText = "Rp 0";
+        let profitEl = document.getElementById('sbResProfit');
+        profitEl.innerText = "Rp 0";
+        profitEl.style.color = "#fff";
+        let statusEl = document.getElementById('sbResStatus');
+        statusEl.innerText = "Bersih";
+        statusEl.style.color = "#fff";
+
+        document.getElementById('sbDetailBox').style.display = "none";
+        document.getElementById('sbDetailList').innerHTML = "";
+        document.getElementById('sbDetailFormula').innerText = "";
+    }
+
+    /* ===== TAB 5: HDP / OVER UNDER ===== */
+    function hitungHdp() {
+        let odds = parseFloat(document.getElementById('hdpOddsInput').value);
+        let nominal = parseFloat(document.getElementById('hdpNominalInput').value);
+        let hasil = document.getElementById('hdpHasilTiket').value;
+
+        if (isNaN(odds) || odds === 0 || isNaN(nominal) || nominal <= 0) {
+            alert("Masukkan angka yang valid!");
+            return;
+        }
+
+        // Konversi Odds Indo: odds negatif dibaca sebagai risk (modal = nominal x |odds|),
+        // odds positif berarti nominal langsung menjadi modal.
+        let modal, winAmount;
+        if (odds < 0) {
+            modal = nominal * Math.abs(odds);
+            winAmount = nominal;
+        } else {
+            modal = nominal;
+            winAmount = nominal * odds;
+        }
+
+        let bersih = 0;
+        let totalKembali = 0;
+        let statusText = "";
+        let statusColor = "#fff";
+
+        switch (hasil) {
+            case "winfull":
+                bersih = winAmount;
+                totalKembali = modal + bersih;
+                statusText = "Win Full";
+                statusColor = "#00e676";
+                break;
+            case "winhalf":
+                bersih = winAmount / 2;
+                totalKembali = modal + bersih;
+                statusText = "Win 1/2";
+                statusColor = "#76ff03";
+                break;
+            case "void":
+                bersih = 0;
+                totalKembali = modal;
+                statusText = "Draw / Seri";
+                statusColor = "#ffca28";
+                break;
+            case "losehalf":
+                bersih = -modal / 2;
+                totalKembali = modal / 2;
+                statusText = "Lose 1/2";
+                statusColor = "#ff9800";
+                break;
+            case "losefull":
+                bersih = -modal;
+                totalKembali = 0;
+                statusText = "Lose Full";
+                statusColor = "#ff5252";
+                break;
+        }
+
+        document.getElementById('hdpResTotal').innerText = "Rp" + Math.round(totalKembali).toLocaleString('id-ID');
+        document.getElementById('hdpResModal').innerText = "Rp" + Math.round(modal).toLocaleString('id-ID');
+
+        let bersihEl = document.getElementById('hdpResBersih');
+        let prefix = bersih >= 0 ? "Rp" : "-Rp";
+        bersihEl.innerText = prefix + Math.round(Math.abs(bersih)).toLocaleString('id-ID');
+        bersihEl.style.color = bersih >= 0 ? "#00e676" : "#ff5252";
+
+        let statusEl = document.getElementById('hdpResStatus');
+        statusEl.innerText = statusText;
+        statusEl.style.color = statusColor;
+    }
+
+    function resetHdp() {
+        document.getElementById('hdpOddsInput').value = "";
+        document.getElementById('hdpNominalInput').value = "";
+        document.getElementById('hdpHasilTiket').value = "winfull";
+        document.getElementById('hdpResTotal').innerText = "Rp0";
+        document.getElementById('hdpResModal').innerText = "Rp0";
+        let bersihEl = document.getElementById('hdpResBersih');
+        bersihEl.innerText = "Rp0";
+        bersihEl.style.color = "#fff";
+        let statusEl = document.getElementById('hdpResStatus');
+        statusEl.innerText = "Win Full";
+        statusEl.style.color = "#fff";
+    }
+
+    /* ===== TAB 6: KALKULATOR 1X2 ===== */
+    function hitung1X2() {
+        let odds = parseFloat(document.getElementById('oneXTwoOddsInput').value);
+        let modal = parseFloat(document.getElementById('oneXTwoNominalInput').value);
+        let hasil = document.getElementById('oneXTwoHasilTiket').value;
+
+        if (isNaN(odds) || odds <= 0 || isNaN(modal) || modal <= 0) {
+            alert("Masukkan angka yang valid!");
+            return;
+        }
+
+        let bersih = 0;
+        let totalKembali = 0;
+        let statusText = "";
+        let statusColor = "#fff";
+
+        switch (hasil) {
+            case "winfull":
+                totalKembali = modal * odds;
+                bersih = totalKembali - modal;
+                statusText = "Win Full";
+                statusColor = "#00e676";
+                break;
+            case "draw":
+                totalKembali = modal;
+                bersih = 0;
+                statusText = "Draw / Refund";
+                statusColor = "#ffca28";
+                break;
+            case "losefull":
+                totalKembali = 0;
+                bersih = -modal;
+                statusText = "Lose Full";
+                statusColor = "#ff5252";
+                break;
+        }
+
+        document.getElementById('oneXTwoResTotal').innerText = "Rp" + Math.round(totalKembali).toLocaleString('id-ID');
+        document.getElementById('oneXTwoResModal').innerText = "Rp" + Math.round(modal).toLocaleString('id-ID');
+
+        let bersihEl = document.getElementById('oneXTwoResBersih');
+        let prefix = bersih >= 0 ? "Rp" : "-Rp";
+        bersihEl.innerText = prefix + Math.round(Math.abs(bersih)).toLocaleString('id-ID');
+        bersihEl.style.color = bersih >= 0 ? "#00e676" : "#ff5252";
+
+        let statusEl = document.getElementById('oneXTwoResStatus');
+        statusEl.innerText = statusText;
+        statusEl.style.color = statusColor;
+    }
+
+    function reset1X2() {
+        document.getElementById('oneXTwoOddsInput').value = "";
+        document.getElementById('oneXTwoNominalInput').value = "";
+        document.getElementById('oneXTwoHasilTiket').value = "winfull";
+        document.getElementById('oneXTwoResTotal').innerText = "Rp0";
+        document.getElementById('oneXTwoResModal').innerText = "Rp0";
+        let bersihEl = document.getElementById('oneXTwoResBersih');
+        bersihEl.innerText = "Rp0";
+        bersihEl.style.color = "#fff";
+        let statusEl = document.getElementById('oneXTwoResStatus');
+        statusEl.innerText = "Win Full";
+        statusEl.style.color = "#fff";
+    }
+
+    /* ===== TAB 2: PARLAY ===== */
+    let parlayMatchCounter = 2; // baris 0 dan 1 sudah ada di HTML
+
+    function addParlayMatch(oddsVal, hasilVal) {
+        let idx = parlayMatchCounter++;
+        let wrap = document.getElementById('parlayMatches');
+        let row = document.createElement('div');
+        row.className = 'parlay-row';
+        row.id = 'parlayRow' + idx;
+        row.innerHTML = `
+            <div class="input-group">
+                <label>Odds</label>
+                <input type="number" class="parlay-odds-input" step="0.01" value="${oddsVal !== undefined ? oddsVal : ''}">
+            </div>
+            <div class="input-group">
+                <label>Hasil</label>
+                <select class="parlay-hasil-select">
+                    <option value="win">Win</option>
+                    <option value="lose">Lose</option>
+                    <option value="void">Void</option>
+                    <option value="hwin">H-Win</option>
+                    <option value="hlose">H-Lose</option>
+                </select>
+            </div>
+            <button class="btn-remove-match" onclick="removeParlayMatch(${idx})">x</button>
+        `;
+        wrap.appendChild(row);
+        if (hasilVal) {
+            row.querySelector('.parlay-hasil-select').value = hasilVal;
+        }
+    }
+
+    function removeParlayMatch(idx) {
+        let row = document.getElementById('parlayRow' + idx);
+        if (row) row.remove();
+    }
+
+    function hitungParlay() {
+        let modal = parseFloat(document.getElementById('plModalInput').value);
+        if (isNaN(modal) || modal <= 0) {
+            alert("Masukkan modal yang valid!");
+            return;
+        }
+
+        let rows = document.querySelectorAll('#parlayMatches .parlay-row');
+        if (rows.length < 2) {
+            alert("Parlay membutuhkan minimal 2 pertandingan!");
+            return;
+        }
+
+        let totalOdds = 1;
+        let adaLose = false;
+        let legs = [];
+
+        for (let row of rows) {
+            let odds = parseFloat(row.querySelector('.parlay-odds-input').value);
+            let hasil = row.querySelector('.parlay-hasil-select').value;
+
+            if (isNaN(odds) || odds <= 0) {
+                alert("Masukkan odds yang valid di semua pertandingan!");
+                return;
+            }
+            legs.push({ odds, hasil });
+        }
+
+        // Total odds = perkalian seluruh odds (mengikuti "Rumus Cepat": Total Odds = odds1 x odds2 ...)
+        // Hasil tiap leg menentukan kontribusinya terhadap total odds:
+        // Win -> odds penuh | Void -> dianggap 1 (dikeluarkan dari perhitungan)
+        // H-Win -> (odds + 1) / 2 | H-Lose -> faktor 0.5 | Lose -> seluruh tiket kalah
+        legs.forEach(leg => {
+            switch (leg.hasil) {
+                case "win":
+                    totalOdds *= leg.odds;
+                    break;
+                case "void":
+                    totalOdds *= 1;
+                    break;
+                case "hwin":
+                    totalOdds *= (leg.odds + 1) / 2;
+                    break;
+                case "hlose":
+                    totalOdds *= 0.5;
+                    break;
+                case "lose":
+                    adaLose = true;
+                    break;
+            }
+        });
+
+        let payout, profit, statusText, statusColor;
+
+        if (adaLose) {
+            totalOdds = 0;
+            payout = 0;
+            profit = -modal;
+            statusText = "KALAH";
+            statusColor = "#ff5252";
+        } else {
+            payout = modal * totalOdds;
+            profit = payout - modal;
+            if (profit > 0) {
+                statusText = "MENANG";
+                statusColor = "#00e676";
+            } else if (profit < 0) {
+                statusText = "RUGI";
+                statusColor = "#ff5252";
+            } else {
+                statusText = "IMPAS";
+                statusColor = "#ffca28";
+            }
+        }
+
+        document.getElementById('plResModal').innerText = "Rp " + Math.round(modal).toLocaleString('id-ID');
+        document.getElementById('plResOdds').innerText = totalOdds.toFixed(3);
+        document.getElementById('plResPayout').innerText = "Rp " + Math.round(payout).toLocaleString('id-ID');
+
+        let profitEl = document.getElementById('plResProfit');
+        let prefix = profit >= 0 ? "Rp " : "-Rp ";
+        profitEl.innerText = prefix + Math.round(Math.abs(profit)).toLocaleString('id-ID');
+        profitEl.style.color = profit >= 0 ? "#00e676" : "#ff5252";
+
+        let statusEl = document.getElementById('plResStatus');
+        statusEl.innerText = statusText;
+        statusEl.style.color = statusColor;
+
+        // Detail Perhitungan
+        let hasilLabel = {
+            win: "WIN",
+            lose: "LOSE",
+            void: "VOID",
+            hwin: "H-WIN",
+            hlose: "H-LOSE"
+        };
+        let listHtml = legs.map((leg, i) => `Match ${i + 1}: ${hasilLabel[leg.hasil]}`).join("<br>");
+        document.getElementById('plDetailList').innerHTML = listHtml;
+
+        let modalFmt = Math.round(modal).toLocaleString('id-ID');
+        let payoutFmt = Math.round(payout).toLocaleString('id-ID');
+        document.getElementById('plDetailFormula').innerText =
+            `Hitung: Rp ${modalFmt} x ${totalOdds.toFixed(3)} = Rp ${payoutFmt}`;
+        document.getElementById('plDetailBox').style.display = "block";
+    }
+
+    function contohParlay() {
+        document.getElementById('plModalInput').value = 100000;
+        document.getElementById('parlayMatches').innerHTML = '';
+        parlayMatchCounter = 0;
+        addParlayMatch(1.80, "win");
+        addParlayMatch(2.00, "win");
+        addParlayMatch(1.50, "win");
+        hitungParlay();
+    }
+
+    function resetParlay() {
+        document.getElementById('plModalInput').value = "";
+        document.getElementById('parlayMatches').innerHTML = '';
+        parlayMatchCounter = 0;
+        addParlayMatch("", "win");
+        addParlayMatch("", "win");
+
+        document.getElementById('plResModal').innerText = "Rp 0";
+        document.getElementById('plResOdds').innerText = "0.000";
+        document.getElementById('plResPayout').innerText = "Rp 0";
+        let profitEl = document.getElementById('plResProfit');
+        profitEl.innerText = "Rp 0";
+        profitEl.style.color = "#fff";
+        let statusEl = document.getElementById('plResStatus');
+        statusEl.innerText = "Bersih";
+        statusEl.style.color = "#fff";
+
+        document.getElementById('plDetailBox').style.display = "none";
+        document.getElementById('plDetailList').innerHTML = "";
+        document.getElementById('plDetailFormula').innerText = "";
+    }
+
+    /* ===== TAB 4: CASH OUT ===== */
+    function hitungCashOut() {
+        let modal = parseFloat(document.getElementById('coModalInput').value);
+        let cashOut = parseFloat(document.getElementById('coCashOutInput').value);
+
+        if (isNaN(modal) || isNaN(cashOut) || modal <= 0 || cashOut < 0) {
+            alert("Masukkan angka yang valid!");
+            return;
+        }
+
+        // Nominal Cash Out = uang yang diterima sekarang (payout)
+        let payout = cashOut;
+        let profit = payout - modal;
+
+        document.getElementById('coResModal').innerText = "Rp " + Math.round(modal).toLocaleString('id-ID');
+        // Cash Out tidak memiliki konsep "odds akhir" seperti taruhan biasa,
+        // karena nominal cash out sudah ditentukan langsung oleh bandar/platform.
+        document.getElementById('coResOdds').innerText = "0.000";
+        document.getElementById('coResPayout').innerText = "Rp " + Math.round(payout).toLocaleString('id-ID');
+
+        let profitEl = document.getElementById('coResProfit');
+        let prefix = profit >= 0 ? "Rp " : "-Rp ";
+        profitEl.innerText = prefix + Math.round(Math.abs(profit)).toLocaleString('id-ID');
+        profitEl.style.color = profit >= 0 ? "#00e676" : "#ff5252";
+
+        // Status Cash Out selalu menandakan transaksi sudah selesai/terkunci,
+        // terlepas dari untung atau rugi (sesuai sifat cash out itu sendiri).
+        let statusEl = document.getElementById('coResStatus');
+        statusEl.innerText = "CASHOUT SELESAI";
+        statusEl.style.color = "#ffffff";
+    }
+
+    function resetCashOut() {
+        document.getElementById('coModalInput').value = "";
+        document.getElementById('coCashOutInput').value = "";
+        document.getElementById('coResModal').innerText = "Rp 0";
+        document.getElementById('coResOdds').innerText = "0.000";
+        document.getElementById('coResPayout').innerText = "Rp 0";
+        let profitEl = document.getElementById('coResProfit');
+        profitEl.innerText = "Rp 0";
+        profitEl.style.color = "#fff";
+        let statusEl = document.getElementById('coResStatus');
+        statusEl.innerText = "Bersih";
+        statusEl.style.color = "#fff";
+    }
+
+    /* ===== TAB 3: TARGET PROFIT / KEI ===== */
+    function hitungModal() {
+        let odds = parseFloat(document.getElementById('oddsInput').value);
+        let target = parseFloat(document.getElementById('targetInput').value);
+
+        if (isNaN(odds) || isNaN(target) || odds <= 0) {
+            alert("Masukkan angka yang valid!");
+            return;
+        }
+
+        let modal = 0;
+        let payout = 0;
+
+        // Logika perhitungan Odds Minus (KEI negatif) atau Odds Lebih dari 1.00
+        if (odds < 1.00) {
+            // Contoh odds minus misal -0.85
+            let absOdds = Math.abs(odds);
+            modal = target * absOdds;
+            payout = modal + target;
+        } else {
+            // Odds normal (decimal odds misal 1.85, profit = modal * (odds - 1))
+            // Target Profit = Modal * (Odds - 1) => Modal = Target / (Odds - 1)
+            // Asumsi sederhana berdasarkan contoh: Odds 1.85, Target 100k -> Modal 117.647
+            modal = target / (odds - 1);
+            payout = modal + target;
+        }
+
+        // Format ke Rupiah
+        document.getElementById('resModal').innerText = "Rp " + Math.round(modal).toLocaleString('id-ID');
+        document.getElementById('resOdds').innerText = odds.toFixed(3);
+        document.getElementById('resPayout').innerText = "Rp " + Math.round(payout).toLocaleString('id-ID');
+        document.getElementById('resProfit').innerText = "Rp " + Math.round(target).toLocaleString('id-ID');
+        document.getElementById('resStatus').innerText = "MODAL DIBUTUHKAN";
+    }
+
+    function resetForm() {
+        document.getElementById('oddsInput').value = "";
+        document.getElementById('targetInput').value = "";
+        document.getElementById('resModal').innerText = "Rp 0";
+        document.getElementById('resOdds').innerText = "0.000";
+        document.getElementById('resPayout').innerText = "Rp 0";
+        document.getElementById('resProfit').innerText = "Rp 0";
+        document.getElementById('resStatus').innerText = "Bersih";
+    }
+</script>
+
+</body>
+</html>
+
 </div>
 
 <div id="pageHasilJadwal" style="display:none;">
@@ -6263,6 +8118,7 @@ setInterval(() => {
       png: document.getElementById("navPng"),
       idn: document.getElementById("navIdn"),
       bola: document.getElementById("navBola"),
+      bolaOdds: document.getElementById("navBolaOdds"),
       hasilJadwal: document.getElementById("navHasilJadwal"),
       cekNawala: document.getElementById("navCekNawala"),
       dataScreenshot: document.getElementById("navDataScreenshot"),
@@ -6273,6 +8129,7 @@ setInterval(() => {
       png: document.getElementById("pagePng"),
       idn: document.getElementById("pageIdn"),
       bola: document.getElementById("pageBola"),
+      bolaOdds: document.getElementById("pageBolaOdds"),
       hasilJadwal: document.getElementById("pageHasilJadwal"),
       cekNawala: document.getElementById("pageCekNawala"),
       dataScreenshot: document.getElementById("pageDataScreenshot"),
@@ -6293,6 +8150,7 @@ setInterval(() => {
     navs.png.addEventListener("click", function(){ showPage("png"); });
     navs.idn.addEventListener("click", function(){ showPage("idn"); });
     navs.bola.addEventListener("click", function(){ showPage("bola"); });
+    navs.bolaOdds.addEventListener("click", function(){ showPage("bolaOdds"); });
     navs.hasilJadwal.addEventListener("click", function(){ showPage("hasilJadwal"); });
     navs.cekNawala.addEventListener("click", function(){ showPage("cekNawala"); });
     navs.dataScreenshot.addEventListener("click", function(){ showPage("dataScreenshot"); });
