@@ -29,7 +29,6 @@
     --text-light: #f3ede7;
   }
   *{ box-sizing: border-box; }
-  html{ overflow-x:hidden; }
   body{
     margin:0;
     font-family: 'Segoe UI', Arial, sans-serif;
@@ -37,7 +36,6 @@
     color: var(--text-light);
     display:flex;
     min-height:100vh;
-    overflow-x:hidden;
   }
 
   /* ---------------- Sidebar / Menu Dashboard ---------------- */
@@ -979,13 +977,11 @@
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  min-width: 0;
 }
 
 .ds-scope .container {
   max-width: 100%;
   margin: auto;
-  align-self: center;
   background: linear-gradient(180deg, var(--ds-surface) 0%, var(--ds-bg-mid) 100%);
   padding: 36px 40px 44px;
   border-radius: 18px;
@@ -997,7 +993,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-width: 0;
 }
 
 .ds-scope .container::before {
@@ -1194,7 +1189,6 @@
   border: 1px solid var(--ds-border);
   flex: 1;
   min-height: 200px;
-  min-width: 0;
 }
 .ds-scope .table-scroll thead th {
   position: sticky;
@@ -1429,230 +1423,10 @@
     font-weight: bold;
     cursor: pointer;
 }
-
-/* ============================================================
-   AUTH GATE — Login / Daftar / Lupa Password (OTP Email)
-   ============================================================ */
-#authOverlay{
-  position:fixed; inset:0; z-index:99999;
-  background:#000000;
-  display:flex; align-items:center; justify-content:center;
-  padding:20px;
-}
-.auth-box{
-  width:100%; max-width:400px;
-  background:#0d0d14;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:16px;
-  padding:32px 28px;
-  box-shadow:0 10px 50px rgba(0,0,0,.6);
-}
-.auth-brand{
-  text-align:left; font-size:22px; font-weight:800;
-  background: linear-gradient(90deg,#ff5f6d,#ffc371,#47cf73,#35c8f0,#a55eea);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-  -webkit-text-fill-color:transparent;
-  margin-bottom:24px; letter-spacing:.3px;
-}
-.auth-sub{ text-align:center; font-size:12.5px; color:#9aa3b5; margin-bottom:22px; }
-.auth-tabs{ display:none; }
-.auth-tab{
-  flex:1; text-align:center; padding:9px 6px; border-radius:8px; cursor:pointer;
-  font-size:13px; font-weight:600; color:#9aa3b5; user-select:none; transition:.15s;
-}
-.auth-tab.active{ background: var(--blue,#2196d8); color:#fff; }
-.auth-panel{ display:none; }
-.auth-panel.active{ display:block; }
-.auth-field{ margin-bottom:16px; }
-.auth-field label{ display:block; font-size:12.5px; font-weight:600; color:#a08cff; margin-bottom:7px; }
-.auth-field .input-wrap{ position:relative; }
-.auth-field input{
-  width:100%; padding:12px 14px; border-radius:9px; border:1px solid rgba(255,255,255,.1);
-  background:#15151f; color:#f0f0f5; font-size:14px; box-sizing:border-box;
-}
-.auth-field input::placeholder{ color:#5c5c6e; }
-.auth-field input:focus{ outline:none; border-color:#7b7bf0; }
-.auth-field .pw-toggle{
-  position:absolute; right:12px; top:50%; transform:translateY(-50%);
-  cursor:pointer; color:#7c7c8e; font-size:16px; user-select:none; background:none; border:none; padding:2px;
-}
-.auth-field .pw-toggle:hover{ color:#c7cde0; }
-.auth-btn{
-  width:100%; padding:13px; border:none; border-radius:9px;
-  background: linear-gradient(90deg,#8b5cf6,#3b82f6);
-  color:#fff; font-weight:700; font-size:14.5px; cursor:pointer; margin-top:6px; transition:.15s;
-}
-.auth-btn:hover{ filter:brightness(1.1); }
-.auth-btn.secondary{ background:#2a2a38; }
-.auth-btn:disabled{ opacity:.55; cursor:not-allowed; }
-.auth-link{
-  display:block; text-align:center; font-size:12.5px; color:#7bb8ea; margin-top:14px; cursor:pointer; text-decoration:underline;
-}
-.auth-bottom-links{ margin-top:18px; text-align:center; }
-.auth-bottom-links .line1{ font-size:12.5px; font-weight:700; color:#e8e8ee; margin-bottom:10px; }
-.auth-bottom-links .line1 .go-daftar{ color:#5be07e; cursor:pointer; text-decoration:none; }
-.auth-bottom-links .line1 .go-daftar:hover{ text-decoration:underline; }
-.auth-bottom-links .go-forgot{ font-size:12.5px; font-weight:700; color:#e8e8ee; cursor:pointer; }
-.auth-bottom-links .go-forgot:hover{ text-decoration:underline; }
-.auth-back-link{ font-size:12.5px; color:#9aa3b5; cursor:pointer; margin-bottom:16px; display:inline-block; }
-.auth-back-link:hover{ color:#e8e8ee; }
-.auth-msg{ font-size:12.5px; text-align:center; margin-top:12px; min-height:16px; }
-.auth-msg.err{ color:#ff6b6b; }
-.auth-msg.ok{ color:#7dd88a; }
-.auth-otp-info{ font-size:12px; color:#9aa3b5; text-align:center; margin-bottom:14px; line-height:1.5; }
-#appShell{ display:none; width:100%; min-height:100vh; }
-#appShell.shell-visible{ display:flex; }
-.user-badge{
-  display:flex; align-items:center; justify-content:space-between; gap:8px;
-  background:#11132a; border-radius:8px; padding:8px 10px; margin:10px 0 14px;
-  font-size:11.5px; color:#c7cde0;
-}
-.user-badge .role-pill{
-  font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; text-transform:uppercase;
-}
-.role-pill.admin{ background:var(--pink,#e91e63); color:#fff; }
-.role-pill.user{ background:var(--calm-teal,#3e6a63); color:#fff; }
-.user-badge .btn-logout{
-  background:none; border:1px solid var(--border-soft,rgba(255,255,255,.2)); color:#f3ede7;
-  font-size:10.5px; padding:4px 8px; border-radius:6px; cursor:pointer;
-}
-.user-badge .btn-logout:hover{ background:rgba(255,255,255,.08); }
 </style>
 
 </head>
 <body>
-
-<!-- ============================================================
-     FIREBASE APP + AUTH (dimuat di paling atas supaya gerbang
-     login bisa langsung jalan sebelum konten dashboard tampil)
-     ============================================================ -->
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
-<script>
-  // Config sama persis dengan yang dipakai modul "Result & Jadwal Pasaran"
-  // di bawah, supaya satu project Firebase untuk semuanya (Auth + Database).
-  const firebaseConfig = {
-    apiKey: "AIzaSyB_FppKNjBtmP4aOd4v5JVERC-e2cjqt-s",
-    authDomain: "datapenting888-94bc6.firebaseapp.com",
-    databaseURL: "https://datapenting888-94bc6-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "datapenting888-94bc6",
-    storageBucket: "datapenting888-94bc6.firebasestorage.app",
-    messagingSenderId: "384090086406",
-    appId: "1:384090086406:web:c111526d2f4202d502b787"
-  };
-  if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-  const authApp = (typeof firebase !== 'undefined') ? firebase.auth() : null;
-  const authDB  = (typeof firebase !== 'undefined') ? firebase.database() : null;
-
-  // ---- Backend OTP email (Vercel) ----
-  // Ganti path di bawah kalau nama endpoint di backend Vercel-mu berbeda.
-  const OTP_BACKEND_BASE   = "https://untuktesting.vercel.app";
-  const OTP_SEND_URL       = OTP_BACKEND_BASE + "/api/send-otp";
-  const OTP_RESET_PASS_URL = OTP_BACKEND_BASE + "/api/reset-password";
-</script>
-
-<!-- ============================================================
-     AUTH OVERLAY — Login / Daftar / Lupa Password (Kode OTP Email)
-     ============================================================ -->
-<div id="authOverlay">
-  <div class="auth-box">
-
-    <div class="auth-tabs" id="authTabs">
-      <div class="auth-tab active" data-tab="login">Masuk</div>
-      <div class="auth-tab" data-tab="register">Daftar</div>
-      <div class="auth-tab" data-tab="forgot">Lupa Password</div>
-    </div>
-
-    <!-- ---------- TAB: LOGIN ---------- -->
-    <div class="auth-panel active" id="authPanelLogin">
-      <div class="auth-brand">Silahkan Login</div>
-      <div class="auth-field">
-        <label>Email</label>
-        <input type="email" id="loginEmail" placeholder="nama@email.com" autocomplete="username">
-      </div>
-      <div class="auth-field">
-        <label>Password</label>
-        <div class="input-wrap">
-          <input type="password" id="loginPassword" placeholder="Minimal 6 karakter" autocomplete="current-password">
-          <button type="button" class="pw-toggle" data-target="loginPassword">&#128065;</button>
-        </div>
-      </div>
-      <button class="auth-btn" id="btnLoginSubmit">Masuk</button>
-      <div class="auth-msg" id="loginMsg"></div>
-      <div class="auth-bottom-links">
-        <div class="line1">Belum punya akun? <span class="go-daftar" data-tab="register">Daftar di sini</span></div>
-        <span class="go-forgot" data-tab="forgot">Lupa password?</span>
-      </div>
-    </div>
-
-    <!-- ---------- TAB: DAFTAR ---------- -->
-    <div class="auth-panel" id="authPanelRegister">
-      <span class="auth-back-link" data-tab="login">&larr; Kembali ke Login</span>
-      <div class="auth-brand">Buat Akun Baru</div>
-      <div class="auth-field">
-        <label>Email</label>
-        <input type="email" id="regEmail" placeholder="nama@email.com" autocomplete="username">
-      </div>
-      <div class="auth-field">
-        <label>Password</label>
-        <div class="input-wrap">
-          <input type="password" id="regPassword" placeholder="Minimal 6 karakter" autocomplete="new-password">
-          <button type="button" class="pw-toggle" data-target="regPassword">&#128065;</button>
-        </div>
-      </div>
-      <div class="auth-field">
-        <label>Ulangi Password</label>
-        <div class="input-wrap">
-          <input type="password" id="regPassword2" placeholder="Ulangi password" autocomplete="new-password">
-          <button type="button" class="pw-toggle" data-target="regPassword2">&#128065;</button>
-        </div>
-      </div>
-      <button class="auth-btn" id="btnRegisterSubmit">Daftar Akun</button>
-      <div class="auth-msg" id="regMsg"></div>
-    </div>
-
-    <!-- ---------- TAB: LUPA PASSWORD (OTP) ---------- -->
-    <div class="auth-panel" id="authPanelForgot">
-      <span class="auth-back-link" data-tab="login">&larr; Kembali ke Login</span>
-      <div class="auth-brand">Lupa Password</div>
-
-      <!-- Step 1: minta OTP -->
-      <div id="forgotStep1">
-        <div class="auth-otp-info">Masukkan email akunmu, kami akan kirim kode OTP 6 digit ke email tersebut.</div>
-        <div class="auth-field">
-          <label>Email</label>
-          <input type="email" id="forgotEmail" placeholder="nama@email.com" autocomplete="username">
-        </div>
-        <button class="auth-btn" id="btnKirimOtp">Kirim Kode OTP</button>
-        <div class="auth-msg" id="forgotStep1Msg"></div>
-      </div>
-
-      <!-- Step 2: masukkan OTP + password baru -->
-      <div id="forgotStep2" style="display:none;">
-        <div class="auth-otp-info">Kode OTP sudah dikirim ke <b id="forgotEmailShown"></b>. Berlaku 10 menit.</div>
-        <div class="auth-field">
-          <label>Kode OTP</label>
-          <input type="text" id="forgotOtp" maxlength="6" placeholder="123456" inputmode="numeric">
-        </div>
-        <div class="auth-field">
-          <label>Password Baru</label>
-          <div class="input-wrap">
-            <input type="password" id="forgotNewPass" placeholder="Minimal 6 karakter" autocomplete="new-password">
-            <button type="button" class="pw-toggle" data-target="forgotNewPass">&#128065;</button>
-          </div>
-        </div>
-        <button class="auth-btn" id="btnResetPass">Reset Password</button>
-        <button class="auth-btn secondary" id="btnKirimUlangOtp" style="margin-top:8px;">Kirim Ulang Kode OTP</button>
-        <div class="auth-msg" id="forgotStep2Msg"></div>
-      </div>
-
-    </div>
-
-  </div>
-</div>
 
 <!--
   Peringatan Perubahan Zona Waktu (DST) — muncul otomatis setiap tanggal
@@ -1687,14 +1461,8 @@
   <div class="dst-markets" id="dstWarningMarketsMaret"></div>
 </div>
 
-<div id="appShell">
 <div class="sidebar">
   <div class="brand"><span class="uy">UY</span> <span class="lab">LAB</span> <span class="brand-tag">By GOLAN</span></div>
-  <div class="user-badge">
-    <span id="userBadgeEmail" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px;"></span>
-    <span class="role-pill" id="userBadgeRole">user</span>
-    <button class="btn-logout" id="btnLogout">Keluar</button>
-  </div>
   <hr class="brand-divider">
   <div class="menu-caption">MENU DASBOARD</div>
   <div class="nav-item active" id="navPrediksi">
@@ -1745,7 +1513,7 @@
     </span>
     <span class="label label-sm">PERHITUNGAN BOLA ODDS</span>
   </div>
-  <div class="nav-item" id="navHasilJadwal" data-role="admin">
+  <div class="nav-item" id="navHasilJadwal">
     <span class="icon">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <rect x="3" y="4" width="18" height="17" rx="2" stroke="currentColor" stroke-width="2"/>
@@ -1780,7 +1548,7 @@
     otomatis antar perangkat/browser, dan otomatis terhapus sendiri setelah
     3 minggu.
   -->
-  <div class="nav-item" id="navDataScreenshot" data-role="admin">
+  <div class="nav-item" id="navDataScreenshot">
     <span class="icon">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
@@ -4879,20 +4647,26 @@
 
 </div>
 </div>
-</div><!-- /#appShell -->
 
 <!-- Firebase Realtime Database: sinkronisasi data "Result & Jadwal Pasaran" antar perangkat -->
-<!-- Catatan: firebase-app-compat.js & firebaseConfig sudah dimuat & di-init
-     di bagian AUTH GATE paling atas <body> (variabel firebaseConfig, authApp,
-     authDB). Di sini tinggal pakai ulang koneksi yang sama. -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
 <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB_FppKNjBtmP4aOd4v5JVERC-e2cjqt-s",
+    authDomain: "datapenting888-94bc6.firebaseapp.com",
+    databaseURL: "https://datapenting888-94bc6-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "datapenting888-94bc6",
+    storageBucket: "datapenting888-94bc6.firebasestorage.app",
+    messagingSenderId: "384090086406",
+    appId: "1:384090086406:web:c111526d2f4202d502b787"
+  };
   let hasilDB = null;
   if (typeof firebase === 'undefined') {
     console.error('[Firebase] SDK gagal dimuat dari CDN (script firebase-app-compat.js / firebase-database-compat.js tidak jalan). Cek koneksi internet, ad-blocker, atau buka file lewat server lokal bukan langsung dobel-klik file.');
   } else {
     try {
-      if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+      firebase.initializeApp(firebaseConfig);
       hasilDB = firebase.database();
       console.log('[Firebase] Terhubung. Cek data langsung:', hasilDB.ref('resultJadwalPasaran').toString());
       hasilDB.ref('.info/connected').on('value', (snap) => {
@@ -5808,81 +5582,39 @@ setInterval(() => {
     <h1><span>CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA</span></h1>
   </div>
 
-  <style>
-    /* Kontainer "CEK NAWALA" dibuat senada dan selebar menu PERHITUNGAN BOLA
-       PNG (kartu gelap+emas dengan lebar dibatasi), supaya tidak melebar
-       penuh mengikuti layar pada monitor lebar. Lihat ".bola-scope .container"
-       / ".ds-scope .container" untuk gaya aslinya. */
-    .cn-scope{
-      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-      padding: 40px 20px;
-      background: radial-gradient(1200px 600px at 15% -10%, #1b1440 0%, transparent 60%),
-                  radial-gradient(1000px 500px at 110% 10%, #101c3a 0%, transparent 55%),
-                  linear-gradient(180deg, #0a0d1a 0%, #12162a 100%);
-      background-attachment: fixed;
-      border-radius: 8px;
-    }
-    .cn-scope .container{
-      max-width: 100%;
-      margin: auto;
-      background: linear-gradient(180deg, #161b31 0%, #12162a 100%);
-      padding: 36px 40px 44px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-      position: relative;
-      overflow: hidden;
-    }
-    .cn-scope .container::before{
-      content:"";
-      position:absolute; top:0; left:0; right:0; height:3px;
-      background: linear-gradient(120deg, #f6e7a8 0%, #d9b45a 45%, #a7782c 100%);
-      box-shadow: 0 0 14px rgba(217,180,90,0.5);
-      border-radius: 18px 18px 0 0;
-    }
-    .cn-scope .container > *{ position:relative; z-index:1; }
-    @media (max-width:720px){
-      .cn-scope .container{ padding: 24px 18px 30px; }
-    }
-  </style>
+  <div class="panel" style="padding:16px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
+      <span style="font-family:'Bree Serif', serif; color:#dcdce3; font-size:14.5px;">
+        Menampilkan situs Cek Nawala langsung di dalam dashboard.
+      </span>
+      <!--
+        Kalau iframe di bawah gagal tampil (kosong/blank), biasanya karena
+        situs tujuan memblokir tampilan embed (iframe). Tombol ini jadi
+        cadangan supaya tetap bisa dibuka di tab baru.
+        Ganti href="..." di sini SEKALIGUS id="cekNawalaFrame" src="..." di bawah
+        kalau alamat nawala.asia berubah / tidak berfungsi lagi.
+      -->
+      <a href="https://www.nawala.asia/" target="_blank" rel="noopener noreferrer"
+         title="Buka di tab baru"
+         style="font-family:'Bree Serif', serif; font-size:16px; color:#a78bfa; text-decoration:none; opacity:0.5; padding:4px; line-height:1;">
+        &#8599;
+      </a>
+    </div>
 
-  <div class="panel" style="padding:0; background:transparent;">
-    <div class="cn-scope">
-      <div class="container">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
-          <span style="font-family:'Bree Serif', serif; color:#dcdce3; font-size:14.5px;">
-            Menampilkan situs Cek Nawala langsung di dalam dashboard.
-          </span>
-          <!--
-            Kalau iframe di bawah gagal tampil (kosong/blank), biasanya karena
-            situs tujuan memblokir tampilan embed (iframe). Tombol ini jadi
-            cadangan supaya tetap bisa dibuka di tab baru.
-            Ganti href="..." di sini SEKALIGUS id="cekNawalaFrame" src="..." di bawah
-            kalau alamat nawala.asia berubah / tidak berfungsi lagi.
-          -->
-          <a href="https://www.nawala.asia/" target="_blank" rel="noopener noreferrer"
-             title="Buka di tab baru"
-             style="font-family:'Bree Serif', serif; font-size:16px; color:#a78bfa; text-decoration:none; opacity:0.5; padding:4px; line-height:1;">
-            &#8599;
-          </a>
-        </div>
-
-        <!--
-          Tinggi kontainer iframe di bawah ini DIATUR LEWAT JAVASCRIPT (lihat fungsi
-          resizeCekNawalaFrame di bawah), bukan lewat CSS flex/vh statis. Ini supaya
-          kontainernya selalu memanjang penuh sampai ke bagian bawah layar (bukan
-          makin kecil), berapa pun tinggi layar/konten di atasnya.
-        -->
-        <div id="cekNawalaWrap" style="position:relative; width:100%; height:70vh; min-height:420px; border-radius:10px; overflow:hidden; border:1px solid var(--border-soft); background:#0a0d1a;">
-          <iframe
-            id="cekNawalaFrame"
-            src="https://www.nawala.asia/"
-            title="Cek Nawala"
-            style="width:100%; height:100%; border:0; display:block; background:#fff;"
-            referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
-        </div>
-      </div>
+    <!--
+      Tinggi kontainer iframe di bawah ini DIATUR LEWAT JAVASCRIPT (lihat fungsi
+      resizeCekNawalaFrame di bawah), bukan lewat CSS flex/vh statis. Ini supaya
+      kontainernya selalu memanjang penuh sampai ke bagian bawah layar (bukan
+      makin kecil), berapa pun tinggi layar/konten di atasnya.
+    -->
+    <div id="cekNawalaWrap" style="position:relative; width:100%; height:70vh; min-height:420px; border-radius:10px; overflow:hidden; border:1px solid var(--border-soft); background:#0a0d1a;">
+      <iframe
+        id="cekNawalaFrame"
+        src="https://www.nawala.asia/"
+        title="Cek Nawala"
+        style="width:100%; height:100%; border:0; display:block; background:#fff;"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
     </div>
   </div>
 </div>
@@ -5966,40 +5698,13 @@ setInterval(() => {
   </div>
 
   <style>
-    /* Kontainer "CARA BETTING TOGEL" dibuat senada dengan menu PERHITUNGAN
-       BOLA PNG (kartu gelap+emas, dibungkus .panel dengan margin & padding
-       yang sama persis). Lihat ".bola-scope .container" untuk gaya aslinya. */
-    .cbt-scope{
-      font-family:Arial, Helvetica, sans-serif;
-      margin:0;
-      padding:40px 20px;
-      background: radial-gradient(1200px 600px at 15% -10%, #1b1440 0%, transparent 60%),
-                  radial-gradient(1000px 500px at 110% 10%, #101c3a 0%, transparent 55%),
-                  linear-gradient(180deg, #0a0d1a 0%, #12162a 100%);
-      background-attachment: fixed;
-      border-radius: 8px;
-    }
+    .cbt-scope{ font-family:Arial, Helvetica, sans-serif; margin:20px 16px 16px; }
     .cbt-panel{
-      max-width: 100%;
-      margin: 0 auto;
-      background: linear-gradient(180deg, #161b31 0%, #12162a 100%);
-      border:1px solid rgba(255,255,255,0.08);
-      border-radius:18px;
-      padding:36px 40px 44px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-      position:relative;
-      overflow:hidden;
-    }
-    .cbt-panel::before{
-      content:"";
-      position:absolute; top:0; left:0; right:0; height:3px;
-      background: linear-gradient(120deg, #f6e7a8 0%, #d9b45a 45%, #a7782c 100%);
-      box-shadow: 0 0 14px rgba(217,180,90,0.5);
-      border-radius: 18px 18px 0 0;
-    }
-    .cbt-panel > *{ position:relative; z-index:1; }
-    @media (max-width:720px){
-      .cbt-panel{ padding:24px 18px 30px; }
+      background:#0a0d1a;
+      border:1px solid rgba(237,224,212,0.2);
+      border-radius:15px;
+      padding:20px;
+      box-shadow: 0 0 30px rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06);
     }
     .cbt-header{
       display:flex;
@@ -6176,24 +5881,22 @@ setInterval(() => {
     .cbt-copybtn:hover{ background-color:#4d2680; }
   </style>
 
-  <div class="panel" style="padding:0; background:transparent;">
-    <div class="cbt-scope">
-      <div class="cbt-panel">
-        <div class="cbt-select">
-          <button type="button" class="cbt-toggle" id="cbtToggle">
-            <span id="cbtLabel">-- Ketuk untuk memilih --</span>
-            <span class="caret">&#9660;</span>
-          </button>
-          <div class="cbt-list" id="cbtList">
-            <div class="cbt-search-wrap">
-              <input type="text" class="cbt-search" id="cbtSearch" placeholder="Cari panduan..." autocomplete="off">
-            </div>
-            <div class="cbt-items" id="cbtItems"></div>
+  <div class="cbt-scope">
+    <div class="cbt-panel">
+      <div class="cbt-select">
+        <button type="button" class="cbt-toggle" id="cbtToggle">
+          <span id="cbtLabel">-- Ketuk untuk memilih --</span>
+          <span class="caret">&#9660;</span>
+        </button>
+        <div class="cbt-list" id="cbtList">
+          <div class="cbt-search-wrap">
+            <input type="text" class="cbt-search" id="cbtSearch" placeholder="Cari panduan..." autocomplete="off">
           </div>
+          <div class="cbt-items" id="cbtItems"></div>
         </div>
-
-        <div class="cbt-content" id="cbtContent"></div>
       </div>
+
+      <div class="cbt-content" id="cbtContent"></div>
     </div>
   </div>
 
@@ -9462,279 +9165,5 @@ function hitungBetting(event) {
 window.hitungBetting = hitungBetting;
 })();
 </script>
-
-<!-- ============================================================
-     AUTH LOGIC — Login / Daftar / Lupa Password (Kode OTP Email)
-     Menggunakan Firebase Authentication (email/password) untuk akun,
-     dan Firebase Realtime Database (path "users/{uid}") untuk role
-     (admin/user). Kode OTP dibuat & disimpan di path "otpReset/{key}",
-     lalu dikirim ke email lewat backend Vercel (untuktesting.vercel.app).
-     ============================================================ -->
-<script>
-(function(){
-  // ---------- Util (tidak butuh Firebase) ----------
-  function emailToKey(email){
-    // Key Firebase RTDB tidak boleh mengandung . # $ [ ]
-    return email.trim().toLowerCase().replace(/[.#$\[\]]/g, '_');
-  }
-  function setMsg(el, text, ok){
-    el.textContent = text || '';
-    el.className = 'auth-msg' + (text ? (ok ? ' ok' : ' err') : '');
-  }
-  function buatKodeOtp(){
-    return String(Math.floor(100000 + Math.random() * 900000)); // 6 digit
-  }
-
-  // ---------- Tab switching (selalu aktif, tidak tergantung Firebase) ----------
-  const authTabs = document.querySelectorAll('.auth-tab');
-  const authPanels = {
-    login: document.getElementById('authPanelLogin'),
-    register: document.getElementById('authPanelRegister'),
-    forgot: document.getElementById('authPanelForgot')
-  };
-  function gotoAuthTab(tabName){
-    authTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tabName));
-    Object.values(authPanels).forEach(p => p.classList.remove('active'));
-    authPanels[tabName].classList.add('active');
-  }
-  authTabs.forEach(tab => {
-    tab.addEventListener('click', () => gotoAuthTab(tab.dataset.tab));
-  });
-  // Link teks "Daftar di sini" / "Lupa password?" / "Kembali ke Login"
-  document.querySelectorAll('.go-daftar, .go-forgot, .auth-back-link').forEach(el => {
-    el.addEventListener('click', () => gotoAuthTab(el.dataset.tab));
-  });
-  // Tombol mata untuk lihat/sembunyikan password (selalu aktif)
-  document.querySelectorAll('.pw-toggle').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const input = document.getElementById(btn.dataset.target);
-      if (!input) return;
-      const showing = input.type === 'text';
-      input.type = showing ? 'password' : 'text';
-      btn.style.opacity = showing ? '1' : '.6';
-    });
-  });
-
-  // Tekan Enter di kolom input langsung submit form yang bersangkutan
-  function enterSubmits(inputIds, buttonId){
-    inputIds.forEach(id => {
-      const input = document.getElementById(id);
-      if (!input) return;
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          const btn = document.getElementById(buttonId);
-          if (btn) btn.click();
-        }
-      });
-    });
-  }
-  enterSubmits(['loginEmail', 'loginPassword'], 'btnLoginSubmit');
-  enterSubmits(['regEmail', 'regPassword', 'regPassword2'], 'btnRegisterSubmit');
-  enterSubmits(['forgotEmail'], 'btnKirimOtp');
-  enterSubmits(['forgotOtp', 'forgotNewPass'], 'btnResetPass');
-
-  // ---------- Dari sini butuh Firebase Auth/Database ----------
-  if (!authApp || !authDB) {
-    console.error('[Auth] Firebase Auth/Database belum siap (cek koneksi internet / ad-blocker / buka lewat server, bukan dobel-klik file).');
-    ['loginMsg','regMsg','forgotStep1Msg'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) setMsg(el, 'Gagal terhubung ke server. Cek koneksi internet lalu muat ulang halaman.');
-    });
-    return;
-  }
-
-  // ---------- Daftar email yang OTOMATIS jadi admin ----------
-  // Tambahkan email lain di sini kalau mau lebih dari satu admin.
-  const ADMIN_EMAILS = [
-    'rikismb888@gmail.com'
-  ];
-  function isAdminEmail(email){
-    return ADMIN_EMAILS.includes((email || '').trim().toLowerCase());
-  }
-
-  // ---------- LOGIN ----------
-  const loginMsg = document.getElementById('loginMsg');
-  document.getElementById('btnLoginSubmit').addEventListener('click', () => {
-    const email = document.getElementById('loginEmail').value.trim();
-    const pass  = document.getElementById('loginPassword').value;
-    if (!email || !pass) { setMsg(loginMsg, 'Email & password wajib diisi.'); return; }
-    setMsg(loginMsg, 'Memproses...', true);
-    authApp.signInWithEmailAndPassword(email, pass)
-      .then(() => { setMsg(loginMsg, 'Berhasil masuk...', true); })
-      .catch(err => { setMsg(loginMsg, terjemahErrorAuth(err)); });
-  });
-
-  // ---------- DAFTAR ----------
-  const regMsg = document.getElementById('regMsg');
-  document.getElementById('btnRegisterSubmit').addEventListener('click', () => {
-    const email = document.getElementById('regEmail').value.trim();
-    const pass  = document.getElementById('regPassword').value;
-    const pass2 = document.getElementById('regPassword2').value;
-    if (!email || !pass || !pass2) { setMsg(regMsg, 'Semua kolom wajib diisi.'); return; }
-    if (pass.length < 6) { setMsg(regMsg, 'Password minimal 6 karakter.'); return; }
-    if (pass !== pass2) { setMsg(regMsg, 'Password tidak sama.'); return; }
-    setMsg(regMsg, 'Memproses...', true);
-    authApp.createUserWithEmailAndPassword(email, pass)
-      .then(cred => {
-        // Role otomatis "admin" kalau emailnya ada di daftar ADMIN_EMAILS,
-        // selain itu default "user". Untuk jadikan admin tambahan, cukup
-        // tambahkan emailnya ke daftar ADMIN_EMAILS di atas.
-        return authDB.ref('users/' + cred.user.uid).set({
-          email: email,
-          role: isAdminEmail(email) ? 'admin' : 'user',
-          createdAt: Date.now()
-        });
-      })
-      .then(() => { setMsg(regMsg, 'Akun berhasil dibuat, sedang masuk...', true); })
-      .catch(err => { setMsg(regMsg, terjemahErrorAuth(err)); });
-  });
-
-  // ---------- LUPA PASSWORD (OTP) ----------
-  const forgotStep1Msg = document.getElementById('forgotStep1Msg');
-  const forgotStep2Msg = document.getElementById('forgotStep2Msg');
-  let forgotEmailAktif = '';
-
-  function kirimOtp(email){
-    const key = emailToKey(email);
-    const otp = buatKodeOtp();
-    const payload = { otp: otp, email: email, createdAt: Date.now(), expiresAt: Date.now() + 10*60*1000 };
-    return authDB.ref('otpReset/' + key).set(payload)
-      .then(() => fetch(OTP_SEND_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, otp: otp })
-      }))
-      .then(res => {
-        if (!res.ok) throw new Error('Gagal mengirim email OTP (server backend error).');
-        return true;
-      });
-  }
-
-  document.getElementById('btnKirimOtp').addEventListener('click', () => {
-    const email = document.getElementById('forgotEmail').value.trim();
-    if (!email) { setMsg(forgotStep1Msg, 'Masukkan email terlebih dahulu.'); return; }
-    setMsg(forgotStep1Msg, 'Mengirim kode OTP...', true);
-    kirimOtp(email)
-      .then(() => {
-        forgotEmailAktif = email;
-        document.getElementById('forgotEmailShown').textContent = email;
-        document.getElementById('forgotStep1').style.display = 'none';
-        document.getElementById('forgotStep2').style.display = 'block';
-        setMsg(forgotStep1Msg, '');
-        setMsg(forgotStep2Msg, 'Kode OTP terkirim. Cek inbox/spam email.', true);
-      })
-      .catch(err => { setMsg(forgotStep1Msg, err.message || 'Gagal mengirim OTP.'); });
-  });
-
-  document.getElementById('btnKirimUlangOtp').addEventListener('click', () => {
-    if (!forgotEmailAktif) return;
-    setMsg(forgotStep2Msg, 'Mengirim ulang kode OTP...', true);
-    kirimOtp(forgotEmailAktif)
-      .then(() => setMsg(forgotStep2Msg, 'Kode OTP baru sudah dikirim.', true))
-      .catch(err => setMsg(forgotStep2Msg, err.message || 'Gagal mengirim ulang OTP.'));
-  });
-
-  document.getElementById('btnResetPass').addEventListener('click', () => {
-    const otpInput = document.getElementById('forgotOtp').value.trim();
-    const newPass = document.getElementById('forgotNewPass').value;
-    if (!otpInput || !newPass) { setMsg(forgotStep2Msg, 'Kode OTP & password baru wajib diisi.'); return; }
-    if (newPass.length < 6) { setMsg(forgotStep2Msg, 'Password minimal 6 karakter.'); return; }
-
-    setMsg(forgotStep2Msg, 'Memverifikasi kode OTP...', true);
-    const key = emailToKey(forgotEmailAktif);
-    authDB.ref('otpReset/' + key).once('value')
-      .then(snap => {
-        const data = snap.val();
-        if (!data) throw new Error('Kode OTP tidak ditemukan, kirim ulang OTP.');
-        if (Date.now() > data.expiresAt) throw new Error('Kode OTP sudah kedaluwarsa, kirim ulang OTP.');
-        if (String(data.otp) !== otpInput) throw new Error('Kode OTP salah.');
-
-        // Verifikasi OTP dilakukan di client (untuk cek cepat), TAPI proses
-        // ganti password akun Firebase HARUS lewat backend (Admin SDK),
-        // karena client tidak berhak ubah password akun yang belum login.
-        // Backend di untuktesting.vercel.app WAJIB verifikasi ulang OTP ini
-        // sebelum memanggil admin.auth().updateUser(uid,{password:newPass}).
-        return fetch(OTP_RESET_PASS_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: forgotEmailAktif, otp: otpInput, newPassword: newPass })
-        });
-      })
-      .then(res => {
-        if (!res.ok) throw new Error('Gagal reset password di server.');
-        return authDB.ref('otpReset/' + key).remove();
-      })
-      .then(() => {
-        setMsg(forgotStep2Msg, 'Password berhasil direset! Silakan masuk dengan password baru.', true);
-        document.getElementById('forgotStep1').style.display = 'block';
-        document.getElementById('forgotStep2').style.display = 'none';
-        document.getElementById('forgotOtp').value = '';
-        document.getElementById('forgotNewPass').value = '';
-        gotoAuthTab('login');
-      })
-      .catch(err => setMsg(forgotStep2Msg, err.message || 'Gagal reset password.'));
-  });
-
-  function terjemahErrorAuth(err){
-    const map = {
-      'auth/invalid-email': 'Format email tidak valid.',
-      'auth/user-not-found': 'Akun tidak ditemukan.',
-      'auth/wrong-password': 'Password salah.',
-      'auth/email-already-in-use': 'Email sudah terdaftar.',
-      'auth/weak-password': 'Password terlalu lemah (minimal 6 karakter).',
-      'auth/invalid-credential': 'Email atau password salah.',
-      'auth/too-many-requests': 'Terlalu banyak percobaan, coba lagi nanti.'
-    };
-    return map[err.code] || (err.message || 'Terjadi kesalahan.');
-  }
-
-  // ---------- LOGOUT ----------
-  document.getElementById('btnLogout').addEventListener('click', () => {
-    authApp.signOut();
-  });
-
-  // ---------- GERBANG AUTH: tampil/sembunyi berdasarkan status login ----------
-  const authOverlay = document.getElementById('authOverlay');
-  const appShell = document.getElementById('appShell');
-
-  authApp.onAuthStateChanged(user => {
-    if (user) {
-      const userRef = authDB.ref('users/' + user.uid);
-      userRef.once('value').then(snap => {
-        const data = snap.val() || {};
-        let role = data.role || 'user';
-
-        // Penyelarasan otomatis: kalau email ini termasuk ADMIN_EMAILS
-        // tapi role di database belum "admin" (mis. akun didaftarkan
-        // sebelum email ditambahkan ke ADMIN_EMAILS), naikkan otomatis.
-        if (isAdminEmail(user.email) && role !== 'admin') {
-          role = 'admin';
-          userRef.update({ email: user.email, role: 'admin' });
-        }
-
-        document.getElementById('userBadgeEmail').textContent = user.email || '';
-        const rolePill = document.getElementById('userBadgeRole');
-        rolePill.textContent = role;
-        rolePill.className = 'role-pill ' + (role === 'admin' ? 'admin' : 'user');
-
-        // Sembunyikan menu yang butuh role admin kalau user biasa.
-        // (default saat ini: RESULT & JADWAL PASARAN + DATA SCREENSHOT
-        // ditandai data-role="admin" — tinggal tambah/kurangi sesuai kebutuhan)
-        document.querySelectorAll('[data-role="admin"]').forEach(el => {
-          el.style.display = (role === 'admin') ? '' : 'none';
-        });
-
-        authOverlay.style.display = 'none';
-        appShell.classList.add('shell-visible');
-      });
-    } else {
-      appShell.classList.remove('shell-visible');
-      authOverlay.style.display = 'flex';
-    }
-  });
-})();
-</script>
-
 </body>
 </html>
