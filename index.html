@@ -29,6 +29,7 @@
     --text-light: #f3ede7;
   }
   *{ box-sizing: border-box; }
+  html{ overflow-x:hidden; }
   body{
     margin:0;
     font-family: 'Segoe UI', Arial, sans-serif;
@@ -36,6 +37,7 @@
     color: var(--text-light);
     display:flex;
     min-height:100vh;
+    overflow-x:hidden;
   }
 
   /* ---------------- Sidebar / Menu Dashboard ---------------- */
@@ -977,6 +979,7 @@
   border-radius: 8px;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .ds-scope .container {
@@ -994,6 +997,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-width: 0;
 }
 
 .ds-scope .container::before {
@@ -1190,6 +1194,7 @@
   border: 1px solid var(--ds-border);
   flex: 1;
   min-height: 200px;
+  min-width: 0;
 }
 .ds-scope .table-scroll thead th {
   position: sticky;
