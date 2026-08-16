@@ -218,6 +218,17 @@
   @media (max-width:480px){
     .topbar h1 span{ font-size:15px; letter-spacing:1.5px; padding-right:40px; }
   }
+  /* Topbar menu CARA BETTING TOGEL, DATA SCREENSHOT & CEK NAWALA dibuat
+     sama lebar dan center dengan container kartu di bawahnya (max-width
+     1040px), senada dengan menu PERHITUNGAN BOLA PNG, supaya topbar tidak
+     terlihat lebih lebar daripada kontennya. */
+  #pageCaraBetting .topbar,
+  #pageDataScreenshot .topbar,
+  #pageCekNawala .topbar{
+    max-width:1040px;
+    margin-left:auto;
+    margin-right:auto;
+  }
   .panel{
     margin: 14px 16px;
     background: var(--bg-panel);
@@ -982,6 +993,7 @@
 .ds-scope .container {
   max-width: 1040px;
   margin: auto;
+  align-self: center;
   background: linear-gradient(180deg, var(--ds-surface) 0%, var(--ds-bg-mid) 100%);
   padding: 36px 40px 44px;
   border-radius: 18px;
