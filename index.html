@@ -1491,157 +1491,6 @@
   font-size:10.5px; padding:4px 8px; border-radius:6px; cursor:pointer;
 }
 .user-badge .btn-logout:hover{ background:rgba(255,255,255,.08); }
-
-/* =====================================================================
-   Menu "CEK NAWALA" — di-scope lewat class ".nw-scope" (sama seperti
-   ".bola-scope" pada menu PERHITUNGAN BOLA PNG dan ".ds-scope" pada menu
-   DATA SCREENSHOT) supaya style di bawah ini TIDAK bocor/bentrok ke menu
-   lain. Palet warna & nuansa gelap+emas sengaja dibuat senada dengan
-   ".bola-scope" agar terlihat konsisten di seluruh dashboard.
-   ===================================================================== */
-.nw-scope {
-  --nw-bg-deep: #0a0d1a;
-  --nw-bg-mid: #12162a;
-  --nw-surface: #161b31;
-  --nw-surface-alt: #1c2138;
-  --nw-border: rgba(255,255,255,0.08);
-  --nw-border-soft: rgba(255,255,255,0.05);
-  --nw-text-primary: #f5f3f8;
-  --nw-text-muted: #9297b3;
-  --nw-shadow: 0 20px 60px rgba(0,0,0,0.45);
-  --nw-gold-light: #f6e7a8;
-  --nw-gold: #d9b45a;
-  --nw-gold-deep: #a7782c;
-  --nw-gold-dim: rgba(217,180,90,0.15);
-  --nw-gold-gradient: linear-gradient(120deg, var(--nw-gold-light) 0%, var(--nw-gold) 45%, var(--nw-gold-deep) 100%);
-}
-.nw-scope, .nw-scope * { box-sizing: border-box; }
-.nw-scope {
-  font-family: 'Inter', sans-serif;
-  color: var(--nw-text-primary);
-}
-.nw-scope .container {
-  max-width: 100%;
-  margin: auto;
-  background: linear-gradient(180deg, var(--nw-surface) 0%, var(--nw-bg-mid) 100%);
-  padding: 36px 40px 44px;
-  border-radius: 18px;
-  border: 1px solid var(--nw-border);
-  box-shadow: var(--nw-shadow);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-.nw-scope .container::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: var(--nw-gold-gradient);
-  box-shadow: 0 0 14px rgba(217,180,90,0.5);
-  border-radius: 18px 18px 0 0;
-}
-.nw-scope .container::after {
-  content: "";
-  position: absolute;
-  bottom: -60px; right: -60px;
-  width: 220px; height: 220px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(217,180,90,0.10) 0%, transparent 70%);
-  pointer-events: none;
-}
-.nw-scope .container > * { position: relative; z-index: 1; }
-.nw-scope .eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--nw-gold-light);
-  background: rgba(217,180,90,0.08);
-  border: 1px solid rgba(217,180,90,0.35);
-  padding: 5px 12px;
-  border-radius: 999px;
-  margin-bottom: 18px;
-  width: fit-content;
-}
-.nw-scope .eyebrow::before {
-  content: "";
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--nw-gold);
-  box-shadow: 0 0 8px var(--nw-gold);
-}
-.nw-scope h2 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: clamp(22px, 2.4vw, 30px);
-  background: var(--nw-gold-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  position: relative;
-  padding-bottom: 20px;
-  margin: 0 0 24px;
-  letter-spacing: -0.01em;
-  filter: drop-shadow(0 0 18px rgba(217,180,90,0.18));
-}
-.nw-scope h2::after {
-  content: "";
-  position: absolute;
-  left: 0; bottom: 0;
-  width: 100%; height: 8px;
-  background:
-    linear-gradient(90deg, transparent 0%, var(--nw-gold) 100%) bottom / 100% 1px no-repeat,
-    radial-gradient(circle at 0 0, var(--nw-gold-light) 0 3px, transparent 4px) left bottom no-repeat;
-  opacity: 0.9;
-}
-.nw-scope .nw-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-.nw-scope .nw-desc {
-  font-size: 14.5px;
-  color: var(--nw-text-muted);
-  line-height: 1.5;
-}
-.nw-scope .nw-openlink {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px; height: 34px;
-  border-radius: 8px;
-  font-size: 16px;
-  color: var(--nw-gold-light);
-  background: rgba(217,180,90,0.08);
-  border: 1px solid rgba(217,180,90,0.35);
-  text-decoration: none;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
-  flex: none;
-}
-.nw-scope .nw-openlink:hover { filter: brightness(1.1); box-shadow: 0 8px 20px rgba(217,180,90,0.25); transform: translateY(-1px); }
-.nw-scope .nw-frame-wrap {
-  position: relative;
-  width: 100%;
-  height: 70vh;
-  min-height: 420px;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--nw-border);
-  background: var(--nw-bg-deep);
-}
-@media (max-width: 720px) {
-  .nw-scope .container { padding: 24px 18px 30px; }
-}
 </style>
 
 </head>
@@ -5914,46 +5763,39 @@ setInterval(() => {
     <h1><span>CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA</span></h1>
   </div>
 
-  <div class="panel" style="padding:0; background:transparent;">
-    <div class="nw-scope">
-      <div class="container">
-        <span class="eyebrow">LAPAK GOLAN</span>
-        <h2>CEK NAWALA</h2>
+  <div class="panel" style="padding:16px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
+      <span style="font-family:'Bree Serif', serif; color:#dcdce3; font-size:14.5px;">
+        Menampilkan situs Cek Nawala langsung di dalam dashboard.
+      </span>
+      <!--
+        Kalau iframe di bawah gagal tampil (kosong/blank), biasanya karena
+        situs tujuan memblokir tampilan embed (iframe). Tombol ini jadi
+        cadangan supaya tetap bisa dibuka di tab baru.
+        Ganti href="..." di sini SEKALIGUS id="cekNawalaFrame" src="..." di bawah
+        kalau alamat nawala.asia berubah / tidak berfungsi lagi.
+      -->
+      <a href="https://www.nawala.asia/" target="_blank" rel="noopener noreferrer"
+         title="Buka di tab baru"
+         style="font-family:'Bree Serif', serif; font-size:16px; color:#a78bfa; text-decoration:none; opacity:0.5; padding:4px; line-height:1;">
+        &#8599;
+      </a>
+    </div>
 
-        <div class="nw-toolbar">
-          <span class="nw-desc">
-            Menampilkan situs Cek Nawala langsung di dalam dashboard.
-          </span>
-          <!--
-            Kalau iframe di bawah gagal tampil (kosong/blank), biasanya karena
-            situs tujuan memblokir tampilan embed (iframe). Tombol ini jadi
-            cadangan supaya tetap bisa dibuka di tab baru.
-            Ganti href="..." di sini SEKALIGUS id="cekNawalaFrame" src="..." di bawah
-            kalau alamat nawala.asia berubah / tidak berfungsi lagi.
-          -->
-          <a href="https://www.nawala.asia/" target="_blank" rel="noopener noreferrer"
-             title="Buka di tab baru"
-             class="nw-openlink">
-            &#8599;
-          </a>
-        </div>
-
-        <!--
-          Tinggi kontainer iframe di bawah ini DIATUR LEWAT JAVASCRIPT (lihat fungsi
-          resizeCekNawalaFrame di bawah), bukan lewat CSS flex/vh statis. Ini supaya
-          kontainernya selalu memanjang penuh sampai ke bagian bawah layar (bukan
-          makin kecil), berapa pun tinggi layar/konten di atasnya.
-        -->
-        <div id="cekNawalaWrap" class="nw-frame-wrap">
-          <iframe
-            id="cekNawalaFrame"
-            src="https://www.nawala.asia/"
-            title="Cek Nawala"
-            style="width:100%; height:100%; border:0; display:block; background:#fff;"
-            referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
-        </div>
-      </div>
+    <!--
+      Tinggi kontainer iframe di bawah ini DIATUR LEWAT JAVASCRIPT (lihat fungsi
+      resizeCekNawalaFrame di bawah), bukan lewat CSS flex/vh statis. Ini supaya
+      kontainernya selalu memanjang penuh sampai ke bagian bawah layar (bukan
+      makin kecil), berapa pun tinggi layar/konten di atasnya.
+    -->
+    <div id="cekNawalaWrap" style="position:relative; width:100%; height:70vh; min-height:420px; border-radius:10px; overflow:hidden; border:1px solid var(--border-soft); background:#0a0d1a;">
+      <iframe
+        id="cekNawalaFrame"
+        src="https://www.nawala.asia/"
+        title="Cek Nawala"
+        style="width:100%; height:100%; border:0; display:block; background:#fff;"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
     </div>
   </div>
 </div>
@@ -5975,7 +5817,6 @@ setInterval(() => {
   <div class="panel" style="padding:0; background:transparent;">
     <div class="ds-scope">
       <div class="container">
-        <span class="eyebrow">LAPAK GOLAN</span>
         <h2>DATA REKENING &amp; BUKTI SCREENSHOT</h2>
 
         <div class="controls">
@@ -6038,104 +5879,13 @@ setInterval(() => {
   </div>
 
   <style>
-    /* =====================================================================
-       Menu "CARA BETTING TOGEL" — kontainer ".cbt-panel" dibuat senada dengan
-       ".container" pada menu PERHITUNGAN BOLA PNG (".bola-scope") supaya
-       tampilannya konsisten: nuansa gelap + aksen emas, garis gradasi emas
-       di bagian atas, dan efek glow di pojok kanan bawah.
-       ===================================================================== */
-    .cbt-scope{
-      --cbt-bg-deep: #0a0d1a;
-      --cbt-bg-mid: #12162a;
-      --cbt-surface: #161b31;
-      --cbt-border: rgba(255,255,255,0.08);
-      --cbt-text-primary: #f5f3f8;
-      --cbt-text-muted: #9297b3;
-      --cbt-gold-light: #f6e7a8;
-      --cbt-gold: #d9b45a;
-      --cbt-gold-deep: #a7782c;
-      --cbt-gold-gradient: linear-gradient(120deg, var(--cbt-gold-light) 0%, var(--cbt-gold) 45%, var(--cbt-gold-deep) 100%);
-      font-family:Arial, Helvetica, sans-serif;
-      margin:20px 16px 16px;
-    }
+    .cbt-scope{ font-family:Arial, Helvetica, sans-serif; margin:20px 16px 16px; }
     .cbt-panel{
-      background: linear-gradient(180deg, var(--cbt-surface) 0%, var(--cbt-bg-mid) 100%);
-      border:1px solid var(--cbt-border);
-      border-radius:18px;
-      padding:36px 40px 44px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-      position:relative;
-      overflow:hidden;
-    }
-    .cbt-panel::before{
-      content:"";
-      position:absolute;
-      top:0; left:0; right:0;
-      height:3px;
-      background: var(--cbt-gold-gradient);
-      box-shadow: 0 0 14px rgba(217,180,90,0.5);
-      border-radius: 18px 18px 0 0;
-    }
-    .cbt-panel::after{
-      content:"";
-      position:absolute;
-      bottom:-60px; right:-60px;
-      width:220px; height:220px;
-      border-radius:50%;
-      background: radial-gradient(circle, rgba(217,180,90,0.10) 0%, transparent 70%);
-      pointer-events:none;
-    }
-    .cbt-panel > * { position:relative; z-index:1; }
-    .cbt-eyebrow{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      font-family:'JetBrains Mono', monospace;
-      font-weight:700;
-      font-size:13px;
-      letter-spacing:0.16em;
-      text-transform:uppercase;
-      color: var(--cbt-gold-light);
-      background: rgba(217,180,90,0.08);
-      border:1px solid rgba(217,180,90,0.35);
-      padding:5px 12px;
-      border-radius:999px;
-      margin-bottom:18px;
-      width:fit-content;
-    }
-    .cbt-eyebrow::before{
-      content:"";
-      width:6px; height:6px;
-      border-radius:50%;
-      background: var(--cbt-gold);
-      box-shadow: 0 0 8px var(--cbt-gold);
-    }
-    .cbt-page-title{
-      font-family:'Space Grotesk', sans-serif;
-      font-weight:700;
-      font-size:clamp(22px, 2.4vw, 30px);
-      background: var(--cbt-gold-gradient);
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-      position:relative;
-      padding-bottom:20px;
-      margin:0 0 24px;
-      letter-spacing:-0.01em;
-      filter: drop-shadow(0 0 18px rgba(217,180,90,0.18));
-    }
-    .cbt-page-title::after{
-      content:"";
-      position:absolute;
-      left:0; bottom:0;
-      width:100%; height:8px;
-      background:
-        linear-gradient(90deg, transparent 0%, var(--cbt-gold) 100%) bottom / 100% 1px no-repeat,
-        radial-gradient(circle at 0 0, var(--cbt-gold-light) 0 3px, transparent 4px) left bottom no-repeat;
-      opacity:0.9;
-    }
-    @media (max-width:720px){
-      .cbt-panel{ padding:24px 18px 30px; }
+      background:#0a0d1a;
+      border:1px solid rgba(237,224,212,0.2);
+      border-radius:15px;
+      padding:20px;
+      box-shadow: 0 0 30px rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06);
     }
     .cbt-header{
       display:flex;
@@ -6189,20 +5939,14 @@ setInterval(() => {
       justify-content:space-between;
       gap:10px;
       background: rgba(255,255,255,0.03);
-      border:1px solid rgba(217,180,90,0.35);
+      border:1px solid rgba(122,140,255,0.35);
       border-radius:8px;
       padding:12px 16px;
-      color: var(--cbt-text-primary, var(--text-light));
+      color: var(--text-light);
       font-size:15px;
       font-weight:700;
       cursor:pointer;
       font-family:Arial, Helvetica, sans-serif;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-    }
-    .cbt-toggle:focus, .cbt-toggle.open{
-      outline:none;
-      border-color: var(--cbt-gold, #d9b45a);
-      box-shadow: 0 0 0 3px rgba(217,180,90,0.15);
     }
     .cbt-toggle .caret{
       font-size:12px;
@@ -6237,17 +5981,13 @@ setInterval(() => {
       width:100%;
       box-sizing:border-box;
       background: rgba(255,255,255,0.05);
-      border:1px solid rgba(217,180,90,0.35);
+      border:1px solid rgba(122,140,255,0.35);
       border-radius:6px;
       padding:8px 10px;
-      color: var(--cbt-text-primary, var(--text-light));
+      color: var(--text-light);
       font-size:14px;
       font-family:Arial, Helvetica, sans-serif;
       outline:none;
-    }
-    .cbt-search:focus{
-      border-color: var(--cbt-gold, #d9b45a);
-      box-shadow: 0 0 0 3px rgba(217,180,90,0.15);
     }
     .cbt-search::placeholder{ color: rgba(255,255,255,0.4); }
     .cbt-item.empty{
@@ -6265,7 +6005,7 @@ setInterval(() => {
       text-overflow:ellipsis;
     }
     .cbt-item:hover{ background: rgba(255,255,255,0.06); }
-    .cbt-item.active{ background: var(--cbt-gold-gradient, #d9b45a); color:#1c1608; }
+    .cbt-item.active{ background:#2f6fed; color:#fff; }
     .cbt-item.placeholder{
       color: rgba(255,255,255,0.4);
       cursor:default;
@@ -6306,8 +6046,8 @@ setInterval(() => {
     .cbt-content .cbt-white-bold{ color:#fff; font-weight:700; }
     .cbt-copybtn{
       display:block;
-      background: var(--cbt-gold-gradient, #d9b45a);
-      color:#1c1608;
+      background-color:#3a1b5e;
+      color:#ffffff;
       border:none;
       width:100%;
       max-width:280px;
@@ -6316,18 +6056,14 @@ setInterval(() => {
       font-weight:bold;
       font-size:14.5px;
       cursor:pointer;
-      box-shadow: 0 8px 24px rgba(217,180,90,0.25);
-      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+      transition:0.3s;
       margin:10px 0 16px;
     }
-    .cbt-copybtn:hover{ filter:brightness(1.08); box-shadow: 0 10px 30px rgba(217,180,90,0.35); transform: translateY(-1px); }
+    .cbt-copybtn:hover{ background-color:#4d2680; }
   </style>
 
   <div class="cbt-scope">
     <div class="cbt-panel">
-      <span class="cbt-eyebrow">LAPAK GOLAN</span>
-      <h2 class="cbt-page-title">CARA BETTING TOGEL</h2>
-
       <div class="cbt-select">
         <button type="button" class="cbt-toggle" id="cbtToggle">
           <span id="cbtLabel">-- Ketuk untuk memilih --</span>
