@@ -5837,7 +5837,6 @@ setInterval(() => {
     }
     .cn-scope .container > *{ position:relative; z-index:1; }
     @media (max-width:720px){
-      .cn-scope{ padding: 24px 12px; }
       .cn-scope .container{ padding: 24px 18px 30px; }
     }
   </style>
@@ -5962,14 +5961,13 @@ setInterval(() => {
   </div>
 
   <style>
-    /* Kontainer "CARA BETTING TOGEL" dibuat senada dan selebar menu
-       PERHITUNGAN BOLA PNG (kartu gelap+emas dengan lebar dibatasi), supaya
-       tidak melebar penuh mengikuti layar pada monitor lebar. Lihat
-       ".bola-scope .container" / ".ds-scope .container" untuk gaya aslinya. */
+    /* Kontainer "CARA BETTING TOGEL" dibuat senada dengan menu PERHITUNGAN
+       BOLA PNG (kartu gelap+emas, dibungkus .panel dengan margin & padding
+       yang sama persis). Lihat ".bola-scope .container" untuk gaya aslinya. */
     .cbt-scope{
       font-family:Arial, Helvetica, sans-serif;
       margin:0;
-      padding:32px 20px;
+      padding:40px 20px;
       background: radial-gradient(1200px 600px at 15% -10%, #1b1440 0%, transparent 60%),
                   radial-gradient(1000px 500px at 110% 10%, #101c3a 0%, transparent 55%),
                   linear-gradient(180deg, #0a0d1a 0%, #12162a 100%);
@@ -5996,7 +5994,6 @@ setInterval(() => {
     }
     .cbt-panel > *{ position:relative; z-index:1; }
     @media (max-width:720px){
-      .cbt-scope{ padding:20px 12px; }
       .cbt-panel{ padding:24px 18px 30px; }
     }
     .cbt-header{
@@ -6174,22 +6171,24 @@ setInterval(() => {
     .cbt-copybtn:hover{ background-color:#4d2680; }
   </style>
 
-  <div class="cbt-scope">
-    <div class="cbt-panel">
-      <div class="cbt-select">
-        <button type="button" class="cbt-toggle" id="cbtToggle">
-          <span id="cbtLabel">-- Ketuk untuk memilih --</span>
-          <span class="caret">&#9660;</span>
-        </button>
-        <div class="cbt-list" id="cbtList">
-          <div class="cbt-search-wrap">
-            <input type="text" class="cbt-search" id="cbtSearch" placeholder="Cari panduan..." autocomplete="off">
+  <div class="panel" style="padding:0; background:transparent;">
+    <div class="cbt-scope">
+      <div class="cbt-panel">
+        <div class="cbt-select">
+          <button type="button" class="cbt-toggle" id="cbtToggle">
+            <span id="cbtLabel">-- Ketuk untuk memilih --</span>
+            <span class="caret">&#9660;</span>
+          </button>
+          <div class="cbt-list" id="cbtList">
+            <div class="cbt-search-wrap">
+              <input type="text" class="cbt-search" id="cbtSearch" placeholder="Cari panduan..." autocomplete="off">
+            </div>
+            <div class="cbt-items" id="cbtItems"></div>
           </div>
-          <div class="cbt-items" id="cbtItems"></div>
         </div>
-      </div>
 
-      <div class="cbt-content" id="cbtContent"></div>
+        <div class="cbt-content" id="cbtContent"></div>
+      </div>
     </div>
   </div>
 
