@@ -1429,27 +1429,24 @@
    ============================================================ */
 #authOverlay{
   position:fixed; inset:0; z-index:99999;
-  background:#000000;
+  background: radial-gradient(circle at 50% 20%, #1a1a55 0%, #0a0d1a 70%);
   display:flex; align-items:center; justify-content:center;
   padding:20px;
 }
 .auth-box{
   width:100%; max-width:400px;
-  background:#0d0d14;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:16px;
-  padding:32px 28px;
-  box-shadow:0 10px 50px rgba(0,0,0,.6);
+  background: var(--bg-card, #0a0d24);
+  border:1px solid var(--border-soft, rgba(255,255,255,.15));
+  border-radius:14px;
+  padding:30px 26px;
+  box-shadow:0 10px 40px rgba(0,0,0,.5);
 }
 .auth-brand{
-  text-align:left; font-size:22px; font-weight:800;
-  background: linear-gradient(90deg,#ff5f6d,#ffc371,#47cf73,#35c8f0,#a55eea);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-  -webkit-text-fill-color:transparent;
-  margin-bottom:24px; letter-spacing:.3px;
+  text-align:center; font-size:26px; font-weight:800;
+  color: var(--accent-emas,#dbc36e); margin-bottom:4px; letter-spacing:.5px;
 }
 .auth-sub{ text-align:center; font-size:12.5px; color:#9aa3b5; margin-bottom:22px; }
-.auth-tabs{ display:none; }
+.auth-tabs{ display:flex; gap:6px; margin-bottom:18px; background:#11132a; border-radius:10px; padding:4px; }
 .auth-tab{
   flex:1; text-align:center; padding:9px 6px; border-radius:8px; cursor:pointer;
   font-size:13px; font-weight:600; color:#9aa3b5; user-select:none; transition:.15s;
@@ -1457,39 +1454,22 @@
 .auth-tab.active{ background: var(--blue,#2196d8); color:#fff; }
 .auth-panel{ display:none; }
 .auth-panel.active{ display:block; }
-.auth-field{ margin-bottom:16px; }
-.auth-field label{ display:block; font-size:12.5px; font-weight:600; color:#a08cff; margin-bottom:7px; }
-.auth-field .input-wrap{ position:relative; }
+.auth-field{ margin-bottom:14px; }
+.auth-field label{ display:block; font-size:12px; color:#c7cde0; margin-bottom:5px; }
 .auth-field input{
-  width:100%; padding:12px 14px; border-radius:9px; border:1px solid rgba(255,255,255,.1);
-  background:#15151f; color:#f0f0f5; font-size:14px; box-sizing:border-box;
+  width:100%; padding:11px 12px; border-radius:8px; border:1px solid var(--border-soft,rgba(255,255,255,.15));
+  background: var(--input-bg,#e9edf3); color:#1b1f2a; font-size:14px; box-sizing:border-box;
 }
-.auth-field input::placeholder{ color:#5c5c6e; }
-.auth-field input:focus{ outline:none; border-color:#7b7bf0; }
-.auth-field .pw-toggle{
-  position:absolute; right:12px; top:50%; transform:translateY(-50%);
-  cursor:pointer; color:#7c7c8e; font-size:16px; user-select:none; background:none; border:none; padding:2px;
-}
-.auth-field .pw-toggle:hover{ color:#c7cde0; }
 .auth-btn{
-  width:100%; padding:13px; border:none; border-radius:9px;
-  background: linear-gradient(90deg,#8b5cf6,#3b82f6);
-  color:#fff; font-weight:700; font-size:14.5px; cursor:pointer; margin-top:6px; transition:.15s;
+  width:100%; padding:12px; border:none; border-radius:8px; background: var(--blue,#2196d8);
+  color:#fff; font-weight:700; font-size:14px; cursor:pointer; margin-top:4px; transition:.15s;
 }
 .auth-btn:hover{ filter:brightness(1.1); }
-.auth-btn.secondary{ background:#2a2a38; }
+.auth-btn.secondary{ background:var(--calm-taupe,#6e5f52); }
 .auth-btn:disabled{ opacity:.55; cursor:not-allowed; }
 .auth-link{
   display:block; text-align:center; font-size:12.5px; color:#7bb8ea; margin-top:14px; cursor:pointer; text-decoration:underline;
 }
-.auth-bottom-links{ margin-top:18px; text-align:center; }
-.auth-bottom-links .line1{ font-size:12.5px; font-weight:700; color:#e8e8ee; margin-bottom:10px; }
-.auth-bottom-links .line1 .go-daftar{ color:#5be07e; cursor:pointer; text-decoration:none; }
-.auth-bottom-links .line1 .go-daftar:hover{ text-decoration:underline; }
-.auth-bottom-links .go-forgot{ font-size:12.5px; font-weight:700; color:#e8e8ee; cursor:pointer; }
-.auth-bottom-links .go-forgot:hover{ text-decoration:underline; }
-.auth-back-link{ font-size:12.5px; color:#9aa3b5; cursor:pointer; margin-bottom:16px; display:inline-block; }
-.auth-back-link:hover{ color:#e8e8ee; }
 .auth-msg{ font-size:12.5px; text-align:center; margin-top:12px; min-height:16px; }
 .auth-msg.err{ color:#ff6b6b; }
 .auth-msg.ok{ color:#7dd88a; }
@@ -1511,6 +1491,157 @@
   font-size:10.5px; padding:4px 8px; border-radius:6px; cursor:pointer;
 }
 .user-badge .btn-logout:hover{ background:rgba(255,255,255,.08); }
+
+/* =====================================================================
+   Menu "CEK NAWALA" — di-scope lewat class ".nw-scope" (sama seperti
+   ".bola-scope" pada menu PERHITUNGAN BOLA PNG dan ".ds-scope" pada menu
+   DATA SCREENSHOT) supaya style di bawah ini TIDAK bocor/bentrok ke menu
+   lain. Palet warna & nuansa gelap+emas sengaja dibuat senada dengan
+   ".bola-scope" agar terlihat konsisten di seluruh dashboard.
+   ===================================================================== */
+.nw-scope {
+  --nw-bg-deep: #0a0d1a;
+  --nw-bg-mid: #12162a;
+  --nw-surface: #161b31;
+  --nw-surface-alt: #1c2138;
+  --nw-border: rgba(255,255,255,0.08);
+  --nw-border-soft: rgba(255,255,255,0.05);
+  --nw-text-primary: #f5f3f8;
+  --nw-text-muted: #9297b3;
+  --nw-shadow: 0 20px 60px rgba(0,0,0,0.45);
+  --nw-gold-light: #f6e7a8;
+  --nw-gold: #d9b45a;
+  --nw-gold-deep: #a7782c;
+  --nw-gold-dim: rgba(217,180,90,0.15);
+  --nw-gold-gradient: linear-gradient(120deg, var(--nw-gold-light) 0%, var(--nw-gold) 45%, var(--nw-gold-deep) 100%);
+}
+.nw-scope, .nw-scope * { box-sizing: border-box; }
+.nw-scope {
+  font-family: 'Inter', sans-serif;
+  color: var(--nw-text-primary);
+}
+.nw-scope .container {
+  max-width: 100%;
+  margin: auto;
+  background: linear-gradient(180deg, var(--nw-surface) 0%, var(--nw-bg-mid) 100%);
+  padding: 36px 40px 44px;
+  border-radius: 18px;
+  border: 1px solid var(--nw-border);
+  box-shadow: var(--nw-shadow);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.nw-scope .container::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--nw-gold-gradient);
+  box-shadow: 0 0 14px rgba(217,180,90,0.5);
+  border-radius: 18px 18px 0 0;
+}
+.nw-scope .container::after {
+  content: "";
+  position: absolute;
+  bottom: -60px; right: -60px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(217,180,90,0.10) 0%, transparent 70%);
+  pointer-events: none;
+}
+.nw-scope .container > * { position: relative; z-index: 1; }
+.nw-scope .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--nw-gold-light);
+  background: rgba(217,180,90,0.08);
+  border: 1px solid rgba(217,180,90,0.35);
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+  width: fit-content;
+}
+.nw-scope .eyebrow::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--nw-gold);
+  box-shadow: 0 0 8px var(--nw-gold);
+}
+.nw-scope h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(22px, 2.4vw, 30px);
+  background: var(--nw-gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+  padding-bottom: 20px;
+  margin: 0 0 24px;
+  letter-spacing: -0.01em;
+  filter: drop-shadow(0 0 18px rgba(217,180,90,0.18));
+}
+.nw-scope h2::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 8px;
+  background:
+    linear-gradient(90deg, transparent 0%, var(--nw-gold) 100%) bottom / 100% 1px no-repeat,
+    radial-gradient(circle at 0 0, var(--nw-gold-light) 0 3px, transparent 4px) left bottom no-repeat;
+  opacity: 0.9;
+}
+.nw-scope .nw-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.nw-scope .nw-desc {
+  font-size: 14.5px;
+  color: var(--nw-text-muted);
+  line-height: 1.5;
+}
+.nw-scope .nw-openlink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  font-size: 16px;
+  color: var(--nw-gold-light);
+  background: rgba(217,180,90,0.08);
+  border: 1px solid rgba(217,180,90,0.35);
+  text-decoration: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  flex: none;
+}
+.nw-scope .nw-openlink:hover { filter: brightness(1.1); box-shadow: 0 8px 20px rgba(217,180,90,0.25); transform: translateY(-1px); }
+.nw-scope .nw-frame-wrap {
+  position: relative;
+  width: 100%;
+  height: 70vh;
+  min-height: 420px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--nw-border);
+  background: var(--nw-bg-deep);
+}
+@media (max-width: 720px) {
+  .nw-scope .container { padding: 24px 18px 30px; }
+}
 </style>
 
 </head>
@@ -1553,6 +1684,8 @@
      ============================================================ -->
 <div id="authOverlay">
   <div class="auth-box">
+    <div class="auth-brand">UY LAB</div>
+    <div class="auth-sub">Masuk untuk mengakses dashboard</div>
 
     <div class="auth-tabs" id="authTabs">
       <div class="auth-tab active" data-tab="login">Masuk</div>
@@ -1562,47 +1695,31 @@
 
     <!-- ---------- TAB: LOGIN ---------- -->
     <div class="auth-panel active" id="authPanelLogin">
-      <div class="auth-brand">Silahkan Login</div>
       <div class="auth-field">
         <label>Email</label>
         <input type="email" id="loginEmail" placeholder="nama@email.com" autocomplete="username">
       </div>
       <div class="auth-field">
         <label>Password</label>
-        <div class="input-wrap">
-          <input type="password" id="loginPassword" placeholder="Minimal 6 karakter" autocomplete="current-password">
-          <button type="button" class="pw-toggle" data-target="loginPassword">&#128065;</button>
-        </div>
+        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
       </div>
       <button class="auth-btn" id="btnLoginSubmit">Masuk</button>
       <div class="auth-msg" id="loginMsg"></div>
-      <div class="auth-bottom-links">
-        <div class="line1">Belum punya akun? <span class="go-daftar" data-tab="register">Daftar di sini</span></div>
-        <span class="go-forgot" data-tab="forgot">Lupa password?</span>
-      </div>
     </div>
 
     <!-- ---------- TAB: DAFTAR ---------- -->
     <div class="auth-panel" id="authPanelRegister">
-      <span class="auth-back-link" data-tab="login">&larr; Kembali ke Login</span>
-      <div class="auth-brand">Buat Akun Baru</div>
       <div class="auth-field">
         <label>Email</label>
         <input type="email" id="regEmail" placeholder="nama@email.com" autocomplete="username">
       </div>
       <div class="auth-field">
         <label>Password</label>
-        <div class="input-wrap">
-          <input type="password" id="regPassword" placeholder="Minimal 6 karakter" autocomplete="new-password">
-          <button type="button" class="pw-toggle" data-target="regPassword">&#128065;</button>
-        </div>
+        <input type="password" id="regPassword" placeholder="Minimal 6 karakter" autocomplete="new-password">
       </div>
       <div class="auth-field">
         <label>Ulangi Password</label>
-        <div class="input-wrap">
-          <input type="password" id="regPassword2" placeholder="Ulangi password" autocomplete="new-password">
-          <button type="button" class="pw-toggle" data-target="regPassword2">&#128065;</button>
-        </div>
+        <input type="password" id="regPassword2" placeholder="Ulangi password" autocomplete="new-password">
       </div>
       <button class="auth-btn" id="btnRegisterSubmit">Daftar Akun</button>
       <div class="auth-msg" id="regMsg"></div>
@@ -1610,8 +1727,6 @@
 
     <!-- ---------- TAB: LUPA PASSWORD (OTP) ---------- -->
     <div class="auth-panel" id="authPanelForgot">
-      <span class="auth-back-link" data-tab="login">&larr; Kembali ke Login</span>
-      <div class="auth-brand">Lupa Password</div>
 
       <!-- Step 1: minta OTP -->
       <div id="forgotStep1">
@@ -1633,10 +1748,7 @@
         </div>
         <div class="auth-field">
           <label>Password Baru</label>
-          <div class="input-wrap">
-            <input type="password" id="forgotNewPass" placeholder="Minimal 6 karakter" autocomplete="new-password">
-            <button type="button" class="pw-toggle" data-target="forgotNewPass">&#128065;</button>
-          </div>
+          <input type="password" id="forgotNewPass" placeholder="Minimal 6 karakter" autocomplete="new-password">
         </div>
         <button class="auth-btn" id="btnResetPass">Reset Password</button>
         <button class="auth-btn secondary" id="btnKirimUlangOtp" style="margin-top:8px;">Kirim Ulang Kode OTP</button>
@@ -5802,39 +5914,46 @@ setInterval(() => {
     <h1><span>CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA</span></h1>
   </div>
 
-  <div class="panel" style="padding:16px;">
-    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
-      <span style="font-family:'Bree Serif', serif; color:#dcdce3; font-size:14.5px;">
-        Menampilkan situs Cek Nawala langsung di dalam dashboard.
-      </span>
-      <!--
-        Kalau iframe di bawah gagal tampil (kosong/blank), biasanya karena
-        situs tujuan memblokir tampilan embed (iframe). Tombol ini jadi
-        cadangan supaya tetap bisa dibuka di tab baru.
-        Ganti href="..." di sini SEKALIGUS id="cekNawalaFrame" src="..." di bawah
-        kalau alamat nawala.asia berubah / tidak berfungsi lagi.
-      -->
-      <a href="https://www.nawala.asia/" target="_blank" rel="noopener noreferrer"
-         title="Buka di tab baru"
-         style="font-family:'Bree Serif', serif; font-size:16px; color:#a78bfa; text-decoration:none; opacity:0.5; padding:4px; line-height:1;">
-        &#8599;
-      </a>
-    </div>
+  <div class="panel" style="padding:0; background:transparent;">
+    <div class="nw-scope">
+      <div class="container">
+        <span class="eyebrow">LAPAK GOLAN</span>
+        <h2>CEK NAWALA</h2>
 
-    <!--
-      Tinggi kontainer iframe di bawah ini DIATUR LEWAT JAVASCRIPT (lihat fungsi
-      resizeCekNawalaFrame di bawah), bukan lewat CSS flex/vh statis. Ini supaya
-      kontainernya selalu memanjang penuh sampai ke bagian bawah layar (bukan
-      makin kecil), berapa pun tinggi layar/konten di atasnya.
-    -->
-    <div id="cekNawalaWrap" style="position:relative; width:100%; height:70vh; min-height:420px; border-radius:10px; overflow:hidden; border:1px solid var(--border-soft); background:#0a0d1a;">
-      <iframe
-        id="cekNawalaFrame"
-        src="https://www.nawala.asia/"
-        title="Cek Nawala"
-        style="width:100%; height:100%; border:0; display:block; background:#fff;"
-        referrerpolicy="no-referrer-when-downgrade">
-      </iframe>
+        <div class="nw-toolbar">
+          <span class="nw-desc">
+            Menampilkan situs Cek Nawala langsung di dalam dashboard.
+          </span>
+          <!--
+            Kalau iframe di bawah gagal tampil (kosong/blank), biasanya karena
+            situs tujuan memblokir tampilan embed (iframe). Tombol ini jadi
+            cadangan supaya tetap bisa dibuka di tab baru.
+            Ganti href="..." di sini SEKALIGUS id="cekNawalaFrame" src="..." di bawah
+            kalau alamat nawala.asia berubah / tidak berfungsi lagi.
+          -->
+          <a href="https://www.nawala.asia/" target="_blank" rel="noopener noreferrer"
+             title="Buka di tab baru"
+             class="nw-openlink">
+            &#8599;
+          </a>
+        </div>
+
+        <!--
+          Tinggi kontainer iframe di bawah ini DIATUR LEWAT JAVASCRIPT (lihat fungsi
+          resizeCekNawalaFrame di bawah), bukan lewat CSS flex/vh statis. Ini supaya
+          kontainernya selalu memanjang penuh sampai ke bagian bawah layar (bukan
+          makin kecil), berapa pun tinggi layar/konten di atasnya.
+        -->
+        <div id="cekNawalaWrap" class="nw-frame-wrap">
+          <iframe
+            id="cekNawalaFrame"
+            src="https://www.nawala.asia/"
+            title="Cek Nawala"
+            style="width:100%; height:100%; border:0; display:block; background:#fff;"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -5856,6 +5975,7 @@ setInterval(() => {
   <div class="panel" style="padding:0; background:transparent;">
     <div class="ds-scope">
       <div class="container">
+        <span class="eyebrow">LAPAK GOLAN</span>
         <h2>DATA REKENING &amp; BUKTI SCREENSHOT</h2>
 
         <div class="controls">
@@ -5918,13 +6038,104 @@ setInterval(() => {
   </div>
 
   <style>
-    .cbt-scope{ font-family:Arial, Helvetica, sans-serif; margin:20px 16px 16px; }
+    /* =====================================================================
+       Menu "CARA BETTING TOGEL" — kontainer ".cbt-panel" dibuat senada dengan
+       ".container" pada menu PERHITUNGAN BOLA PNG (".bola-scope") supaya
+       tampilannya konsisten: nuansa gelap + aksen emas, garis gradasi emas
+       di bagian atas, dan efek glow di pojok kanan bawah.
+       ===================================================================== */
+    .cbt-scope{
+      --cbt-bg-deep: #0a0d1a;
+      --cbt-bg-mid: #12162a;
+      --cbt-surface: #161b31;
+      --cbt-border: rgba(255,255,255,0.08);
+      --cbt-text-primary: #f5f3f8;
+      --cbt-text-muted: #9297b3;
+      --cbt-gold-light: #f6e7a8;
+      --cbt-gold: #d9b45a;
+      --cbt-gold-deep: #a7782c;
+      --cbt-gold-gradient: linear-gradient(120deg, var(--cbt-gold-light) 0%, var(--cbt-gold) 45%, var(--cbt-gold-deep) 100%);
+      font-family:Arial, Helvetica, sans-serif;
+      margin:20px 16px 16px;
+    }
     .cbt-panel{
-      background:#0a0d1a;
-      border:1px solid rgba(237,224,212,0.2);
-      border-radius:15px;
-      padding:20px;
-      box-shadow: 0 0 30px rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06);
+      background: linear-gradient(180deg, var(--cbt-surface) 0%, var(--cbt-bg-mid) 100%);
+      border:1px solid var(--cbt-border);
+      border-radius:18px;
+      padding:36px 40px 44px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+      position:relative;
+      overflow:hidden;
+    }
+    .cbt-panel::before{
+      content:"";
+      position:absolute;
+      top:0; left:0; right:0;
+      height:3px;
+      background: var(--cbt-gold-gradient);
+      box-shadow: 0 0 14px rgba(217,180,90,0.5);
+      border-radius: 18px 18px 0 0;
+    }
+    .cbt-panel::after{
+      content:"";
+      position:absolute;
+      bottom:-60px; right:-60px;
+      width:220px; height:220px;
+      border-radius:50%;
+      background: radial-gradient(circle, rgba(217,180,90,0.10) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .cbt-panel > * { position:relative; z-index:1; }
+    .cbt-eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-family:'JetBrains Mono', monospace;
+      font-weight:700;
+      font-size:13px;
+      letter-spacing:0.16em;
+      text-transform:uppercase;
+      color: var(--cbt-gold-light);
+      background: rgba(217,180,90,0.08);
+      border:1px solid rgba(217,180,90,0.35);
+      padding:5px 12px;
+      border-radius:999px;
+      margin-bottom:18px;
+      width:fit-content;
+    }
+    .cbt-eyebrow::before{
+      content:"";
+      width:6px; height:6px;
+      border-radius:50%;
+      background: var(--cbt-gold);
+      box-shadow: 0 0 8px var(--cbt-gold);
+    }
+    .cbt-page-title{
+      font-family:'Space Grotesk', sans-serif;
+      font-weight:700;
+      font-size:clamp(22px, 2.4vw, 30px);
+      background: var(--cbt-gold-gradient);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      position:relative;
+      padding-bottom:20px;
+      margin:0 0 24px;
+      letter-spacing:-0.01em;
+      filter: drop-shadow(0 0 18px rgba(217,180,90,0.18));
+    }
+    .cbt-page-title::after{
+      content:"";
+      position:absolute;
+      left:0; bottom:0;
+      width:100%; height:8px;
+      background:
+        linear-gradient(90deg, transparent 0%, var(--cbt-gold) 100%) bottom / 100% 1px no-repeat,
+        radial-gradient(circle at 0 0, var(--cbt-gold-light) 0 3px, transparent 4px) left bottom no-repeat;
+      opacity:0.9;
+    }
+    @media (max-width:720px){
+      .cbt-panel{ padding:24px 18px 30px; }
     }
     .cbt-header{
       display:flex;
@@ -5978,14 +6189,20 @@ setInterval(() => {
       justify-content:space-between;
       gap:10px;
       background: rgba(255,255,255,0.03);
-      border:1px solid rgba(122,140,255,0.35);
+      border:1px solid rgba(217,180,90,0.35);
       border-radius:8px;
       padding:12px 16px;
-      color: var(--text-light);
+      color: var(--cbt-text-primary, var(--text-light));
       font-size:15px;
       font-weight:700;
       cursor:pointer;
       font-family:Arial, Helvetica, sans-serif;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .cbt-toggle:focus, .cbt-toggle.open{
+      outline:none;
+      border-color: var(--cbt-gold, #d9b45a);
+      box-shadow: 0 0 0 3px rgba(217,180,90,0.15);
     }
     .cbt-toggle .caret{
       font-size:12px;
@@ -6020,13 +6237,17 @@ setInterval(() => {
       width:100%;
       box-sizing:border-box;
       background: rgba(255,255,255,0.05);
-      border:1px solid rgba(122,140,255,0.35);
+      border:1px solid rgba(217,180,90,0.35);
       border-radius:6px;
       padding:8px 10px;
-      color: var(--text-light);
+      color: var(--cbt-text-primary, var(--text-light));
       font-size:14px;
       font-family:Arial, Helvetica, sans-serif;
       outline:none;
+    }
+    .cbt-search:focus{
+      border-color: var(--cbt-gold, #d9b45a);
+      box-shadow: 0 0 0 3px rgba(217,180,90,0.15);
     }
     .cbt-search::placeholder{ color: rgba(255,255,255,0.4); }
     .cbt-item.empty{
@@ -6044,7 +6265,7 @@ setInterval(() => {
       text-overflow:ellipsis;
     }
     .cbt-item:hover{ background: rgba(255,255,255,0.06); }
-    .cbt-item.active{ background:#2f6fed; color:#fff; }
+    .cbt-item.active{ background: var(--cbt-gold-gradient, #d9b45a); color:#1c1608; }
     .cbt-item.placeholder{
       color: rgba(255,255,255,0.4);
       cursor:default;
@@ -6085,8 +6306,8 @@ setInterval(() => {
     .cbt-content .cbt-white-bold{ color:#fff; font-weight:700; }
     .cbt-copybtn{
       display:block;
-      background-color:#3a1b5e;
-      color:#ffffff;
+      background: var(--cbt-gold-gradient, #d9b45a);
+      color:#1c1608;
       border:none;
       width:100%;
       max-width:280px;
@@ -6095,14 +6316,18 @@ setInterval(() => {
       font-weight:bold;
       font-size:14.5px;
       cursor:pointer;
-      transition:0.3s;
+      box-shadow: 0 8px 24px rgba(217,180,90,0.25);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
       margin:10px 0 16px;
     }
-    .cbt-copybtn:hover{ background-color:#4d2680; }
+    .cbt-copybtn:hover{ filter:brightness(1.08); box-shadow: 0 10px 30px rgba(217,180,90,0.35); transform: translateY(-1px); }
   </style>
 
   <div class="cbt-scope">
     <div class="cbt-panel">
+      <span class="cbt-eyebrow">LAPAK GOLAN</span>
+      <h2 class="cbt-page-title">CARA BETTING TOGEL</h2>
+
       <div class="cbt-select">
         <button type="button" class="cbt-toggle" id="cbtToggle">
           <span id="cbtLabel">-- Ketuk untuk memilih --</span>
@@ -9395,7 +9620,12 @@ window.hitungBetting = hitungBetting;
      ============================================================ -->
 <script>
 (function(){
-  // ---------- Util (tidak butuh Firebase) ----------
+  if (!authApp || !authDB) {
+    console.error('[Auth] Firebase Auth/Database belum siap.');
+    return;
+  }
+
+  // ---------- Util ----------
   function emailToKey(email){
     // Key Firebase RTDB tidak boleh mengandung . # $ [ ]
     return email.trim().toLowerCase().replace(/[.#$\[\]]/g, '_');
@@ -9408,73 +9638,21 @@ window.hitungBetting = hitungBetting;
     return String(Math.floor(100000 + Math.random() * 900000)); // 6 digit
   }
 
-  // ---------- Tab switching (selalu aktif, tidak tergantung Firebase) ----------
+  // ---------- Tab switching ----------
   const authTabs = document.querySelectorAll('.auth-tab');
   const authPanels = {
     login: document.getElementById('authPanelLogin'),
     register: document.getElementById('authPanelRegister'),
     forgot: document.getElementById('authPanelForgot')
   };
-  function gotoAuthTab(tabName){
-    authTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tabName));
-    Object.values(authPanels).forEach(p => p.classList.remove('active'));
-    authPanels[tabName].classList.add('active');
-  }
   authTabs.forEach(tab => {
-    tab.addEventListener('click', () => gotoAuthTab(tab.dataset.tab));
-  });
-  // Link teks "Daftar di sini" / "Lupa password?" / "Kembali ke Login"
-  document.querySelectorAll('.go-daftar, .go-forgot, .auth-back-link').forEach(el => {
-    el.addEventListener('click', () => gotoAuthTab(el.dataset.tab));
-  });
-  // Tombol mata untuk lihat/sembunyikan password (selalu aktif)
-  document.querySelectorAll('.pw-toggle').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const input = document.getElementById(btn.dataset.target);
-      if (!input) return;
-      const showing = input.type === 'text';
-      input.type = showing ? 'password' : 'text';
-      btn.style.opacity = showing ? '1' : '.6';
+    tab.addEventListener('click', () => {
+      authTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      Object.values(authPanels).forEach(p => p.classList.remove('active'));
+      authPanels[tab.dataset.tab].classList.add('active');
     });
   });
-
-  // Tekan Enter di kolom input langsung submit form yang bersangkutan
-  function enterSubmits(inputIds, buttonId){
-    inputIds.forEach(id => {
-      const input = document.getElementById(id);
-      if (!input) return;
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          const btn = document.getElementById(buttonId);
-          if (btn) btn.click();
-        }
-      });
-    });
-  }
-  enterSubmits(['loginEmail', 'loginPassword'], 'btnLoginSubmit');
-  enterSubmits(['regEmail', 'regPassword', 'regPassword2'], 'btnRegisterSubmit');
-  enterSubmits(['forgotEmail'], 'btnKirimOtp');
-  enterSubmits(['forgotOtp', 'forgotNewPass'], 'btnResetPass');
-
-  // ---------- Dari sini butuh Firebase Auth/Database ----------
-  if (!authApp || !authDB) {
-    console.error('[Auth] Firebase Auth/Database belum siap (cek koneksi internet / ad-blocker / buka lewat server, bukan dobel-klik file).');
-    ['loginMsg','regMsg','forgotStep1Msg'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) setMsg(el, 'Gagal terhubung ke server. Cek koneksi internet lalu muat ulang halaman.');
-    });
-    return;
-  }
-
-  // ---------- Daftar email yang OTOMATIS jadi admin ----------
-  // Tambahkan email lain di sini kalau mau lebih dari satu admin.
-  const ADMIN_EMAILS = [
-    'rikismb888@gmail.com'
-  ];
-  function isAdminEmail(email){
-    return ADMIN_EMAILS.includes((email || '').trim().toLowerCase());
-  }
 
   // ---------- LOGIN ----------
   const loginMsg = document.getElementById('loginMsg');
@@ -9500,12 +9678,11 @@ window.hitungBetting = hitungBetting;
     setMsg(regMsg, 'Memproses...', true);
     authApp.createUserWithEmailAndPassword(email, pass)
       .then(cred => {
-        // Role otomatis "admin" kalau emailnya ada di daftar ADMIN_EMAILS,
-        // selain itu default "user". Untuk jadikan admin tambahan, cukup
-        // tambahkan emailnya ke daftar ADMIN_EMAILS di atas.
+        // Simpan role default "user". Untuk jadikan admin, ubah manual
+        // field role di Firebase Console: users/{uid}/role = "admin".
         return authDB.ref('users/' + cred.user.uid).set({
           email: email,
-          role: isAdminEmail(email) ? 'admin' : 'user',
+          role: 'user',
           createdAt: Date.now()
         });
       })
@@ -9594,7 +9771,10 @@ window.hitungBetting = hitungBetting;
         document.getElementById('forgotStep2').style.display = 'none';
         document.getElementById('forgotOtp').value = '';
         document.getElementById('forgotNewPass').value = '';
-        gotoAuthTab('login');
+        authTabs.forEach(t => t.classList.remove('active'));
+        Object.values(authPanels).forEach(p => p.classList.remove('active'));
+        document.querySelector('.auth-tab[data-tab="login"]').classList.add('active');
+        authPanels.login.classList.add('active');
       })
       .catch(err => setMsg(forgotStep2Msg, err.message || 'Gagal reset password.'));
   });
@@ -9623,18 +9803,9 @@ window.hitungBetting = hitungBetting;
 
   authApp.onAuthStateChanged(user => {
     if (user) {
-      const userRef = authDB.ref('users/' + user.uid);
-      userRef.once('value').then(snap => {
+      authDB.ref('users/' + user.uid).once('value').then(snap => {
         const data = snap.val() || {};
-        let role = data.role || 'user';
-
-        // Penyelarasan otomatis: kalau email ini termasuk ADMIN_EMAILS
-        // tapi role di database belum "admin" (mis. akun didaftarkan
-        // sebelum email ditambahkan ke ADMIN_EMAILS), naikkan otomatis.
-        if (isAdminEmail(user.email) && role !== 'admin') {
-          role = 'admin';
-          userRef.update({ email: user.email, role: 'admin' });
-        }
+        const role = data.role || 'user';
 
         document.getElementById('userBadgeEmail').textContent = user.email || '';
         const rolePill = document.getElementById('userBadgeRole');
