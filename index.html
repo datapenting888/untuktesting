@@ -225,16 +225,6 @@
     padding:18px 20px 26px;
     box-shadow: 0 0 30px rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06);
   }
-  /* Kontainer lebar-terbatas & center, dipakai di menu CARA BETTING TOGEL,
-     DATA SCREENSHOT, dan CEK NAWALA supaya kontennya tidak melebar penuh
-     ke tepi layar di layar lebar — senada dengan kartu di menu
-     PERHITUNGAN BOLA PNG. */
-  .narrow-container{
-    max-width: 980px;
-    width:100%;
-    margin: 0 auto;
-    box-sizing: border-box;
-  }
   .market-dropdown{
     position:relative;
     display:inline-block;
@@ -987,11 +977,10 @@
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 .ds-scope .container {
-  max-width: 980px;
+  max-width: 1040px;
   margin: auto;
   background: linear-gradient(180deg, var(--ds-surface) 0%, var(--ds-bg-mid) 100%);
   padding: 36px 40px 44px;
@@ -1438,27 +1427,12 @@
 /* ============================================================
    AUTH GATE — Login / Daftar / Lupa Password (OTP Email)
    ============================================================ */
-#authLoading{
-  position:fixed; inset:0; z-index:100000;
-  background:#000000;
-  display:flex; align-items:center; justify-content:center;
-  flex-direction:column; gap:14px;
-}
-#authLoading .authLoading-spinner{
-  width:34px; height:34px; border-radius:50%;
-  border:3px solid rgba(255,255,255,.15);
-  border-top-color:#35c8f0;
-  animation:authLoadingSpin .8s linear infinite;
-}
-@keyframes authLoadingSpin{ to{ transform:rotate(360deg); } }
-#authLoading .authLoading-text{ font-size:12.5px; color:#9aa3b5; letter-spacing:.3px; }
 #authOverlay{
   position:fixed; inset:0; z-index:99999;
   background:#000000;
-  display:none; align-items:center; justify-content:center;
+  display:flex; align-items:center; justify-content:center;
   padding:20px;
 }
-#authOverlay.show{ display:flex; }
 .auth-box{
   width:100%; max-width:400px;
   background:#0d0d14;
@@ -1573,16 +1547,6 @@
   const OTP_SEND_URL       = OTP_BACKEND_BASE + "/api/send-otp";
   const OTP_RESET_PASS_URL = OTP_BACKEND_BASE + "/api/reset-password";
 </script>
-
-<!-- ============================================================
-     AUTH LOADING — tampil duluan sambil Firebase mengecek sesi
-     login yang tersimpan, supaya form login tidak "kelip" muncul
-     saat refresh padahal user sebenarnya masih login.
-     ============================================================ -->
-<div id="authLoading">
-  <div class="authLoading-spinner"></div>
-  <div class="authLoading-text">Memuat…</div>
-</div>
 
 <!-- ============================================================
      AUTH OVERLAY — Login / Daftar / Lupa Password (Kode OTP Email)
@@ -5838,41 +5802,82 @@ setInterval(() => {
     <h1><span>CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA</span></h1>
   </div>
 
-  <div class="panel" style="padding:16px;">
-    <div class="narrow-container">
-    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
-      <span style="font-family:'Bree Serif', serif; color:#dcdce3; font-size:14.5px;">
-        Menampilkan situs Cek Nawala langsung di dalam dashboard.
-      </span>
-      <!--
-        Kalau iframe di bawah gagal tampil (kosong/blank), biasanya karena
-        situs tujuan memblokir tampilan embed (iframe). Tombol ini jadi
-        cadangan supaya tetap bisa dibuka di tab baru.
-        Ganti href="..." di sini SEKALIGUS id="cekNawalaFrame" src="..." di bawah
-        kalau alamat nawala.asia berubah / tidak berfungsi lagi.
-      -->
-      <a href="https://www.nawala.asia/" target="_blank" rel="noopener noreferrer"
-         title="Buka di tab baru"
-         style="font-family:'Bree Serif', serif; font-size:16px; color:#a78bfa; text-decoration:none; opacity:0.5; padding:4px; line-height:1;">
-        &#8599;
-      </a>
-    </div>
+  <style>
+    /* Kontainer "CEK NAWALA" dibuat senada dan selebar menu PERHITUNGAN BOLA
+       PNG (kartu gelap+emas dengan lebar dibatasi), supaya tidak melebar
+       penuh mengikuti layar pada monitor lebar. Lihat ".bola-scope .container"
+       / ".ds-scope .container" untuk gaya aslinya. */
+    .cn-scope{
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      padding: 40px 20px;
+      background: radial-gradient(1200px 600px at 15% -10%, #1b1440 0%, transparent 60%),
+                  radial-gradient(1000px 500px at 110% 10%, #101c3a 0%, transparent 55%),
+                  linear-gradient(180deg, #0a0d1a 0%, #12162a 100%);
+      background-attachment: fixed;
+      border-radius: 8px;
+    }
+    .cn-scope .container{
+      max-width: 1040px;
+      margin: auto;
+      background: linear-gradient(180deg, #161b31 0%, #12162a 100%);
+      padding: 36px 40px 44px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+      position: relative;
+      overflow: hidden;
+    }
+    .cn-scope .container::before{
+      content:"";
+      position:absolute; top:0; left:0; right:0; height:3px;
+      background: linear-gradient(120deg, #f6e7a8 0%, #d9b45a 45%, #a7782c 100%);
+      box-shadow: 0 0 14px rgba(217,180,90,0.5);
+      border-radius: 18px 18px 0 0;
+    }
+    .cn-scope .container > *{ position:relative; z-index:1; }
+    @media (max-width:720px){
+      .cn-scope{ padding: 24px 12px; }
+      .cn-scope .container{ padding: 24px 18px 30px; }
+    }
+  </style>
 
-    <!--
-      Tinggi kontainer iframe di bawah ini DIATUR LEWAT JAVASCRIPT (lihat fungsi
-      resizeCekNawalaFrame di bawah), bukan lewat CSS flex/vh statis. Ini supaya
-      kontainernya selalu memanjang penuh sampai ke bagian bawah layar (bukan
-      makin kecil), berapa pun tinggi layar/konten di atasnya.
-    -->
-    <div id="cekNawalaWrap" style="position:relative; width:100%; height:70vh; min-height:420px; border-radius:10px; overflow:hidden; border:1px solid var(--border-soft); background:#0a0d1a;">
-      <iframe
-        id="cekNawalaFrame"
-        src="https://www.nawala.asia/"
-        title="Cek Nawala"
-        style="width:100%; height:100%; border:0; display:block; background:#fff;"
-        referrerpolicy="no-referrer-when-downgrade">
-      </iframe>
-    </div>
+  <div class="panel" style="padding:0; background:transparent;">
+    <div class="cn-scope">
+      <div class="container">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
+          <span style="font-family:'Bree Serif', serif; color:#dcdce3; font-size:14.5px;">
+            Menampilkan situs Cek Nawala langsung di dalam dashboard.
+          </span>
+          <!--
+            Kalau iframe di bawah gagal tampil (kosong/blank), biasanya karena
+            situs tujuan memblokir tampilan embed (iframe). Tombol ini jadi
+            cadangan supaya tetap bisa dibuka di tab baru.
+            Ganti href="..." di sini SEKALIGUS id="cekNawalaFrame" src="..." di bawah
+            kalau alamat nawala.asia berubah / tidak berfungsi lagi.
+          -->
+          <a href="https://www.nawala.asia/" target="_blank" rel="noopener noreferrer"
+             title="Buka di tab baru"
+             style="font-family:'Bree Serif', serif; font-size:16px; color:#a78bfa; text-decoration:none; opacity:0.5; padding:4px; line-height:1;">
+            &#8599;
+          </a>
+        </div>
+
+        <!--
+          Tinggi kontainer iframe di bawah ini DIATUR LEWAT JAVASCRIPT (lihat fungsi
+          resizeCekNawalaFrame di bawah), bukan lewat CSS flex/vh statis. Ini supaya
+          kontainernya selalu memanjang penuh sampai ke bagian bawah layar (bukan
+          makin kecil), berapa pun tinggi layar/konten di atasnya.
+        -->
+        <div id="cekNawalaWrap" style="position:relative; width:100%; height:70vh; min-height:420px; border-radius:10px; overflow:hidden; border:1px solid var(--border-soft); background:#0a0d1a;">
+          <iframe
+            id="cekNawalaFrame"
+            src="https://www.nawala.asia/"
+            title="Cek Nawala"
+            style="width:100%; height:100%; border:0; display:block; background:#fff;"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -5956,16 +5961,42 @@ setInterval(() => {
   </div>
 
   <style>
-    .cbt-scope{ font-family:Arial, Helvetica, sans-serif; margin:20px 16px 16px; display:flex; justify-content:center; }
+    /* Kontainer "CARA BETTING TOGEL" dibuat senada dan selebar menu
+       PERHITUNGAN BOLA PNG (kartu gelap+emas dengan lebar dibatasi), supaya
+       tidak melebar penuh mengikuti layar pada monitor lebar. Lihat
+       ".bola-scope .container" / ".ds-scope .container" untuk gaya aslinya. */
+    .cbt-scope{
+      font-family:Arial, Helvetica, sans-serif;
+      margin:0;
+      padding:32px 20px;
+      background: radial-gradient(1200px 600px at 15% -10%, #1b1440 0%, transparent 60%),
+                  radial-gradient(1000px 500px at 110% 10%, #101c3a 0%, transparent 55%),
+                  linear-gradient(180deg, #0a0d1a 0%, #12162a 100%);
+      background-attachment: fixed;
+      border-radius: 8px;
+    }
     .cbt-panel{
-      width:100%;
-      max-width:980px;
-      box-sizing:border-box;
-      background:#0a0d1a;
-      border:1px solid rgba(237,224,212,0.2);
-      border-radius:15px;
-      padding:20px;
-      box-shadow: 0 0 30px rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06);
+      max-width: 1040px;
+      margin: 0 auto;
+      background: linear-gradient(180deg, #161b31 0%, #12162a 100%);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:18px;
+      padding:36px 40px 44px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+      position:relative;
+      overflow:hidden;
+    }
+    .cbt-panel::before{
+      content:"";
+      position:absolute; top:0; left:0; right:0; height:3px;
+      background: linear-gradient(120deg, #f6e7a8 0%, #d9b45a 45%, #a7782c 100%);
+      box-shadow: 0 0 14px rgba(217,180,90,0.5);
+      border-radius: 18px 18px 0 0;
+    }
+    .cbt-panel > *{ position:relative; z-index:1; }
+    @media (max-width:720px){
+      .cbt-scope{ padding:20px 12px; }
+      .cbt-panel{ padding:24px 18px 30px; }
     }
     .cbt-header{
       display:flex;
@@ -9661,13 +9692,8 @@ window.hitungBetting = hitungBetting;
   // ---------- GERBANG AUTH: tampil/sembunyi berdasarkan status login ----------
   const authOverlay = document.getElementById('authOverlay');
   const appShell = document.getElementById('appShell');
-  const authLoading = document.getElementById('authLoading');
 
   authApp.onAuthStateChanged(user => {
-    // Begitu Firebase selesai memutuskan status login (baik ada user
-    // maupun tidak), layar loading disembunyikan sekali di sini.
-    if (authLoading) authLoading.style.display = 'none';
-
     if (user) {
       const userRef = authDB.ref('users/' + user.uid);
       userRef.once('value').then(snap => {
@@ -9694,12 +9720,12 @@ window.hitungBetting = hitungBetting;
           el.style.display = (role === 'admin') ? '' : 'none';
         });
 
-        authOverlay.classList.remove('show');
+        authOverlay.style.display = 'none';
         appShell.classList.add('shell-visible');
       });
     } else {
       appShell.classList.remove('shell-visible');
-      authOverlay.classList.add('show');
+      authOverlay.style.display = 'flex';
     }
   });
 })();
