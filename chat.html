@@ -1186,7 +1186,8 @@
     -webkit-user-select:none;
     user-select:none;
     transform-origin:center bottom;
-    animation:waEmojiBounce 1.6s ease-in-out infinite;
+    animation:waEmojiBounce 1.6s ease-in-out 3;
+    animation-fill-mode:forwards;
     will-change:transform;
   }
   @keyframes waEmojiBounce{
@@ -1195,6 +1196,18 @@
     40%{ transform:translateY(0) scale(0.95) rotate(3deg); }
     60%{ transform:translateY(-4px) scale(1.03) rotate(-2deg); }
     80%{ transform:translateY(0) scale(1) rotate(0deg); }
+  }
+  /* Bubble transparan khusus pesan emoji bergerak: tanpa kotak hijau, hanya emoji + jam */
+  .bubble.bubble-transparent{
+    background:transparent !important;
+    box-shadow:none !important;
+    padding:0 !important;
+    border-radius:0 !important;
+    max-width:none;
+  }
+  .bubble.bubble-transparent .time{
+    text-shadow:0 1px 4px rgba(0,0,0,0.55);
+    margin-top:-6px;
   }
   .img-viewer-modal{
     position:fixed;
@@ -3994,7 +4007,7 @@
     let isAnimEmoji = m.type === 'animemoji' && m.emoji;
     let ticksSpan = isMe ? ticksHtml(computeTickState(m, activeChatId)) : '';
     row.innerHTML =
-      '<div class="bubble">' +
+      '<div class="bubble' + (isAnimEmoji ? ' bubble-transparent' : '') + '">' +
         (showSender ? '<span class="sender">' + escapeHtml(senderDisplayName) + '</span>' : '') +
         (isAnimEmoji ? '<span class="emoji-msg-anim">' + escapeHtml(m.emoji) + '</span>' : '') +
         (isImage ? '<img class="' + (isEmoji ? 'emoji-msg' : 'img-msg') + '" src="' + m.imageData + '" alt="' + (isEmoji ? 'Emoji' : 'Foto') + '">' : '') +
