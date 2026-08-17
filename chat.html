@@ -1163,6 +1163,19 @@
     -webkit-user-select:none;
     user-select:none;
   }
+  .bubble .emoji-msg{
+    display:inline-block;
+    width:30px;
+    height:30px;
+    max-width:30px;
+    max-height:30px;
+    object-fit:contain;
+    vertical-align:middle;
+    margin:2px 0;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    user-select:none;
+  }
   .img-viewer-modal{
     position:fixed;
     inset:0;
@@ -3955,16 +3968,17 @@
     if (showSender) ensureUserProfileSynced(m.sender);
     let senderDisplayName = showSender ? personInfo(m.sender).name || m.senderName || '' : '';
     let isImage = m.type === 'image' && m.imageData;
+    let isEmoji = isImage && m.isEmoji;
     let ticksSpan = isMe ? ticksHtml(computeTickState(m, activeChatId)) : '';
     row.innerHTML =
       '<div class="bubble">' +
         (showSender ? '<span class="sender">' + escapeHtml(senderDisplayName) + '</span>' : '') +
-        (isImage ? '<img class="img-msg" src="' + m.imageData + '" alt="Foto">' : '') +
+        (isImage ? '<img class="' + (isEmoji ? 'emoji-msg' : 'img-msg') + '" src="' + m.imageData + '" alt="' + (isEmoji ? 'Emoji' : 'Foto') + '">' : '') +
         '<span class="text"></span>' +
         '<span class="time">' + fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + ticksSpan + '</span>' +
       '</div>';
     row.querySelector('.text').textContent = isImage ? '' : (m.text || '');
-    if (isImage){
+    if (isImage && !isEmoji){
       row.querySelector('.img-msg').addEventListener('click', function(){
         openImageViewer(m.imageData);
       });
@@ -4020,7 +4034,7 @@
       sendImageMessage(dataUrl);
     });
   });
-  function sendImageMessage(dataUrl, previewText){
+  function sendImageMessage(dataUrl, previewText, isEmoji){
     let msgRef = db.ref('chats/' + activeChatId + '/messages').push();
     let payload = {
       sender: currentUser.uid,
@@ -4030,6 +4044,7 @@
       text: '',
       createdAt: firebase.database.ServerValue.TIMESTAMP
     };
+    if (isEmoji) payload.isEmoji = true;
     let updates = {};
     updates['chats/' + activeChatId + '/messages/' + msgRef.key] = payload;
     updates['chats/' + activeChatId + '/lastMessage'] = previewText || '📷 Foto';
@@ -4131,7 +4146,7 @@
         cell.appendChild(img);
         cell.addEventListener('click', function(){
           if (!activeChatId) return;
-          sendImageMessage(imgUrl, ch + ' Animasi');
+          sendImageMessage(imgUrl, ch + ' Animasi', true);
           pushRecent({ k:'a:'+ch, ch:ch, url:imgUrl });
         });
       } else {
