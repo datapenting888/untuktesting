@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <title>Data Penting — Chat</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ff6b5b'/%3E%3Cstop offset='1' stop-color='%23c81e3a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M32 22c-9 0-16 7.5-16 18.5C16 51 22.5 58 28 58c2.6 0 4-1.4 6-1.4s3.2 1.4 6 1.4c5.5 0 12-8 12-17.5 0-8-5-13-10-14-1.6-.3-3.2.4-4.6 1.1-1 .5-2 .9-2.9.9-1 0-2-.4-3-.9-1.5-.7-3.1-1.4-4.9-1.1z' fill='url(%23g)'/%3E%3Cpath d='M33 22c0-5 3-9 7-11-1 5-3 9-7 11z' fill='%232f7d32'/%3E%3Cpath d='M31 10c1-3 4-5 7-5-1 3-4 5-7 5z' fill='%234caf50'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Fraunces:ital,wght@0,400;0,600;0,700;1,500;1,600;1,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -133,50 +134,156 @@
   .btn.small{ padding:6px 10px; font-size:12px; border-radius:8px; }
 
   /* ---------- Auth screen ---------- */
+  @keyframes authBlobFloat{
+    0%,100%{ transform:translate(0,0) scale(1); }
+    33%{ transform:translate(24px,-18px) scale(1.08); }
+    66%{ transform:translate(-18px,14px) scale(0.96); }
+  }
+  @keyframes authCardIn{
+    from{ opacity:0; transform:translateY(14px) scale(0.98); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
   #authScreen{
     flex:1;
     display:flex;
     align-items:center;
     justify-content:center;
     padding:24px;
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 18% 20%, rgba(46,125,50,0.20), transparent 55%),
+      radial-gradient(circle at 82% 78%, rgba(219,195,110,0.14), transparent 50%),
+      var(--bg-app);
+  }
+  #authScreen::before, #authScreen::after{
+    content:'';
+    position:absolute;
+    width:340px; height:340px;
+    border-radius:50%;
+    filter:blur(70px);
+    opacity:0.5;
+    pointer-events:none;
+    z-index:0;
+    animation:authBlobFloat 14s ease-in-out infinite;
+  }
+  #authScreen::before{
+    top:-90px; left:-90px;
+    background:radial-gradient(circle, #2f7d32, transparent 70%);
+  }
+  #authScreen::after{
+    bottom:-100px; right:-80px;
+    background:radial-gradient(circle, #dbc36e, transparent 70%);
+    animation-delay:-7s;
+  }
+  html.light-theme #authScreen{
+    background:
+      radial-gradient(circle at 18% 20%, rgba(46,125,50,0.12), transparent 55%),
+      radial-gradient(circle at 82% 78%, rgba(184,137,47,0.12), transparent 50%),
+      var(--bg-app);
   }
   .auth-card{
+    position:relative;
+    z-index:1;
     width:100%;
     max-width:380px;
-    background:var(--bg-card);
-    border:1px solid var(--border-soft);
-    border-radius:16px;
-    padding:28px 26px;
+    background:
+      repeating-radial-gradient(circle at 0 0, rgba(76,175,80,0.07) 0, rgba(76,175,80,0.07) 2px, transparent 3px, transparent 13px),
+      repeating-radial-gradient(circle at 13px 13px, rgba(219,195,110,0.06) 0, rgba(219,195,110,0.06) 2px, transparent 3px, transparent 13px),
+      linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0)) , var(--bg-card);
+    background-size:26px 26px, 26px 26px, auto, auto;
+    background-blend-mode:normal, normal, overlay, normal;
+    border:1px solid transparent;
+    background-clip:padding-box, padding-box, padding-box, padding-box;
+    border-radius:20px;
+    padding:32px 28px;
+    box-shadow:
+      0 0 0 1.5px rgba(76,175,80,0.55),
+      0 0 22px -4px rgba(76,175,80,0.35),
+      0 24px 60px -20px rgba(0,0,0,0.55);
+    backdrop-filter:blur(14px);
+    animation:authCardIn .45s cubic-bezier(.2,.8,.2,1);
   }
+  .auth-card::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:20px;
+    padding:1.5px;
+    background:linear-gradient(135deg, #2f7d32, #dbc36e 35%, #4caf50 60%, #b8892f 85%, #2f7d32);
+    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor;
+    mask-composite:exclude;
+    pointer-events:none;
+    opacity:0.85;
+  }
+  .auth-logo{
+    width:54px; height:54px;
+    border-radius:16px;
+    margin:0 auto 16px;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,#2f7d32,#4caf50 45%,#dbc36e 100%);
+    box-shadow:0 10px 24px -8px rgba(76,175,80,0.55);
+  }
+  .auth-logo svg{ width:26px; height:26px; }
   .auth-card h1{
     font-family:'Bree Serif', serif;
-    font-size:22px;
+    font-size:23px;
     margin:0 0 4px;
+    text-align:center;
+    background:linear-gradient(90deg,#4caf50,#dbc36e 50%,#2f7d32);
+    background-size:200% auto;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:authTextShimmer 5s ease-in-out infinite;
+  }
+  @keyframes authTextShimmer{
+    0%,100%{ background-position:0% center; }
+    50%{ background-position:100% center; }
   }
   .auth-card p.sub{
-    margin:0 0 20px;
+    margin:0 0 22px;
     font-size:13px;
     color:var(--text-dim);
+    text-align:center;
   }
-  .field{ margin-bottom:14px; }
+  .field{ margin-bottom:15px; }
   .field label{
     display:block;
     font-size:12px;
     color:var(--text-dim);
     margin-bottom:6px;
     letter-spacing:0.3px;
+    font-weight:600;
+  }
+  .field .input-wrap{ position:relative; }
+  .field .input-icon{
+    position:absolute;
+    top:50%; left:12px;
+    transform:translateY(-50%);
+    width:17px; height:17px;
+    color:var(--text-dim);
+    pointer-events:none;
+    transition:color .15s ease;
   }
   .field input{
     width:100%;
-    background:#0f0f1a;
+    background:rgba(127,127,127,0.06);
     border:1px solid var(--border-soft);
     color:var(--text-light);
-    padding:11px 12px;
-    border-radius:10px;
+    padding:12px 12px 12px 38px;
+    border-radius:12px;
     font-size:14px;
     outline:none;
+    transition:border-color .18s ease, box-shadow .18s ease, background .18s ease;
   }
-  .field input:focus{ border-color:var(--accent-emas); }
+  .field input:focus{
+    border-color:#4caf50;
+    box-shadow:0 0 0 3px rgba(76,175,80,0.18);
+    background:rgba(76,175,80,0.06);
+  }
+  .field input:focus ~ .input-icon, .field .input-wrap:focus-within .input-icon{ color:#4caf50; }
   .field input:disabled{ opacity:0.65; cursor:not-allowed; }
   .field .pw-wrap{ position:relative; }
   .field .pw-wrap input{ padding-right:40px; }
@@ -202,20 +309,38 @@
   .field .pw-toggle .eye-off{ display:none; }
   .field .pw-toggle.showing .eye-on{ display:none; }
   .field .pw-toggle.showing .eye-off{ display:block; }
-  .auth-actions{ margin-top:18px; }
-  .auth-actions .btn{ width:100%; padding:11px; font-size:14px; }
+  .auth-actions{ margin-top:20px; }
+  .auth-actions .btn{
+    width:100%;
+    padding:12.5px;
+    font-size:14.5px;
+    border-radius:12px;
+    letter-spacing:0.2px;
+    box-shadow:0 12px 24px -10px rgba(76,175,80,0.55);
+    transition:filter .15s ease, transform .15s ease, box-shadow .15s ease;
+  }
+  #authScreen .btn.primary{
+    background:linear-gradient(90deg,#2f7d32,#4caf50 50%,#dbc36e);
+    background-size:220% auto;
+    background-position:0% center;
+    border:none;
+    transition:background-position .35s ease, transform .15s ease, box-shadow .15s ease;
+  }
+  #authScreen .btn.primary:hover{ background-position:100% center; }
+  .auth-actions .btn:hover{ transform:translateY(-1px); box-shadow:0 16px 28px -10px rgba(76,175,80,0.65); }
+  .auth-actions .btn:active{ transform:translateY(0); }
   .auth-toggle{
-    margin-top:16px;
+    margin-top:18px;
     text-align:center;
     font-size:13px;
     color:var(--text-dim);
   }
   .auth-toggle span{
-    color:var(--accent-emas);
+    color:#dbc36e;
     cursor:pointer;
     font-weight:600;
   }
-  #authToggleLink{ color:#0a7a0a; }
+  #authToggleLink{ color:#4caf50; }
   .auth-error{
     background:rgba(224,82,82,0.12);
     border:1px solid rgba(224,82,82,0.4);
@@ -240,7 +365,7 @@
   .auth-links-row .link-btn{
     background:none;
     border:none;
-    color:var(--accent-emas);
+    color:#dbc36e;
     font-size:12.5px;
     font-weight:600;
     padding:2px;
@@ -792,9 +917,19 @@
     font-size:10px;
     opacity:0.65;
     margin-top:2px;
-    display:block;
-    text-align:right;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:3px;
   }
+  .msg-ticks{
+    display:inline-flex;
+    align-items:center;
+    flex-shrink:0;
+    color:#ffffff;
+  }
+  .msg-ticks svg{ display:block; }
+  .msg-ticks.read{ color:#53bdeb; }
   .bubble .edited-tag{
     font-size:10px;
     opacity:0.6;
@@ -875,6 +1010,147 @@
   }
   .attach-btn-round:hover{ background:#26263a; }
   .attach-btn-round svg{ width:20px; height:20px; }
+  .msg-input-wrap{
+    flex:1;
+    position:relative;
+    display:flex;
+    align-items:flex-end;
+    min-width:0;
+  }
+  .msg-input-wrap textarea{ padding-right:42px; }
+  .emoji-btn-inline{
+    position:absolute;
+    right:4px;
+    bottom:4px;
+    width:32px;
+    height:32px;
+    border:none;
+    background:transparent;
+    color:var(--text-dim);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+    font-size:19px;
+    line-height:1;
+    border-radius:50%;
+    z-index:2;
+  }
+  .emoji-btn-inline:hover{ background:rgba(255,255,255,0.08); }
+  .emoji-btn-inline.active{ color:var(--accent-emas); background:rgba(219,195,110,0.14); }
+
+  /* ---------- Panel emoji ---------- */
+  .emoji-panel{
+    flex-shrink:0;
+    display:none;
+    flex-direction:column;
+    height:320px;
+    max-height:46vh;
+    background:var(--bg-card);
+    border-top:1px solid var(--border-soft);
+  }
+  .emoji-panel.open{ display:flex; }
+  .emoji-panel-search{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:10px 12px 4px;
+    padding:8px 12px;
+    background:#0f0f1a;
+    border:1px solid var(--border-soft);
+    border-radius:18px;
+    flex-shrink:0;
+  }
+  .emoji-panel-search svg{ width:15px; height:15px; color:var(--text-dim); flex-shrink:0; }
+  .emoji-panel-search input{
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:var(--text-light);
+    font-size:13px;
+  }
+  .emoji-panel-tabs{
+    display:flex;
+    gap:8px;
+    margin:8px 12px 2px;
+    flex-shrink:0;
+  }
+  .emoji-tab-btn{
+    flex:1;
+    padding:7px 8px;
+    border-radius:10px;
+    border:1px solid var(--border-soft);
+    background:transparent;
+    color:var(--text-dim);
+    font-size:12px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+  }
+  .emoji-tab-btn.active{
+    background:var(--accent-emas);
+    color:#1a1a1a;
+    border-color:var(--accent-emas);
+  }
+  .emoji-panel-grid{
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(38px, 1fr));
+    gap:2px;
+    padding:8px 10px;
+    align-content:start;
+  }
+  .emoji-cell{
+    background:transparent;
+    border:none;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:38px;
+    font-size:22px;
+    line-height:1;
+    padding:0;
+  }
+  .emoji-cell:hover{ background:rgba(255,255,255,0.08); }
+  .emoji-cell img{ width:26px; height:26px; object-fit:contain; }
+  .emoji-panel-empty{
+    grid-column:1/-1;
+    text-align:center;
+    color:var(--text-dim);
+    font-size:12.5px;
+    padding:24px 10px;
+  }
+  .emoji-panel-cats{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    gap:2px;
+    padding:6px 8px;
+    border-top:1px solid var(--border-soft);
+    overflow-x:auto;
+  }
+  .emoji-cat-btn{
+    flex-shrink:0;
+    width:32px;
+    height:32px;
+    border-radius:8px;
+    border:none;
+    background:transparent;
+    color:var(--text-dim);
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .emoji-cat-btn.active{ background:rgba(255,255,255,0.1); color:var(--accent-emas); }
+  .emoji-cat-btn.backspace{ margin-left:auto; color:var(--text-dim); }
+  .emoji-cat-btn.backspace svg{ width:17px; height:17px; }
   .bubble .img-msg{
     display:block;
     max-width:100%;
@@ -1017,6 +1293,9 @@
     .chat-input-row textarea{ padding:14px 16px; font-size:16.5px; min-height:46px; }
     .send-btn-round{ width:38px; height:38px; }
     .attach-btn-round{ width:38px; height:38px; }
+    .msg-input-wrap textarea{ padding-right:46px; }
+    .emoji-btn-inline{ width:34px; height:34px; font-size:20px; right:5px; bottom:6px; }
+    .emoji-panel{ max-height:42vh; }
 
     .modal{ padding:16px; max-width:340px; }
     .modal h2{ font-size:20px; }
@@ -1055,6 +1334,9 @@
 <!-- ============ AUTH SCREEN ============ -->
 <div id="authScreen" style="display:none;">
   <div class="auth-card">
+    <div class="auth-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
     <h1 id="authTitle" style="font-family:Arial, Helvetica, sans-serif;">Silahkan Login</h1>
     <p class="sub" id="authSub"></p>
 
@@ -1063,15 +1345,22 @@
 
     <div class="field" id="fieldName" style="display:none;">
       <label>Nama Tampilan</label>
-      <input type="text" id="inputName" placeholder="Nama yang dilihat teman kamu">
+      <div class="input-wrap">
+        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <input type="text" id="inputName" placeholder="Nama yang dilihat teman kamu">
+      </div>
     </div>
     <div class="field">
       <label>Email</label>
-      <input type="email" id="inputEmail" placeholder="nama@email.com" autocomplete="username">
+      <div class="input-wrap">
+        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6 12 13 2 6"/><path d="M2 6h20v12H2z"/></svg>
+        <input type="email" id="inputEmail" placeholder="nama@email.com" autocomplete="username">
+      </div>
     </div>
     <div class="field">
       <label>Password</label>
-      <div class="pw-wrap">
+      <div class="pw-wrap input-wrap">
+        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         <input type="password" id="inputPassword" placeholder="Minimal 6 karakter" autocomplete="current-password">
         <button type="button" class="pw-toggle" data-target="inputPassword" aria-label="Lihat/sembunyikan password">
           <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -1214,12 +1503,41 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </button>
           <input type="file" id="chatPhotoInput" accept="image/*" style="display:none;">
-          <textarea id="msgInput" rows="1" placeholder="Tulis pesan..."></textarea>
+          <div class="msg-input-wrap">
+            <textarea id="msgInput" rows="1" placeholder="Tulis pesan..."></textarea>
+            <button class="emoji-btn-inline" id="btnEmojiToggle" aria-label="Emoji" title="Emoji">🙂</button>
+          </div>
           <button class="send-btn-round" id="btnSendMsg" aria-label="Kirim">
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M3 20l18-8L3 4v6l12 2-12 2v6z" fill="currentColor"/>
             </svg>
           </button>
+        </div>
+        <div class="emoji-panel" id="emojiPanel">
+          <div class="emoji-panel-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="emojiSearchInput" placeholder="Cari Emoji">
+          </div>
+          <div class="emoji-panel-tabs">
+            <button type="button" class="emoji-tab-btn active" id="emojiTabStatic" data-tab="static">🙂 Emoji</button>
+            <button type="button" class="emoji-tab-btn" id="emojiTabAnimated" data-tab="animated">✨ Bergerak</button>
+          </div>
+          <div class="emoji-panel-grid" id="emojiGrid"></div>
+          <div class="emoji-panel-cats" id="emojiCatsBar">
+            <button type="button" class="emoji-cat-btn active" data-cat="recent" title="Terbaru">🕐</button>
+            <button type="button" class="emoji-cat-btn" data-cat="smileys" title="Senyum">😀</button>
+            <button type="button" class="emoji-cat-btn" data-cat="people" title="Orang">👋</button>
+            <button type="button" class="emoji-cat-btn" data-cat="animals" title="Hewan">🐻</button>
+            <button type="button" class="emoji-cat-btn" data-cat="food" title="Makanan">🍔</button>
+            <button type="button" class="emoji-cat-btn" data-cat="activity" title="Aktivitas">⚽</button>
+            <button type="button" class="emoji-cat-btn" data-cat="travel" title="Tempat">✈️</button>
+            <button type="button" class="emoji-cat-btn" data-cat="objects" title="Objek">💡</button>
+            <button type="button" class="emoji-cat-btn" data-cat="symbols" title="Simbol">❤️</button>
+            <button type="button" class="emoji-cat-btn" data-cat="flags" title="Bendera">🚩</button>
+            <button type="button" class="emoji-cat-btn backspace" id="btnEmojiBackspace" title="Hapus">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1617,6 +1935,39 @@
   }
 
   // ---------------------------------------------------------------
+  // Presence (online/offline) untuk centang pesan ala WhatsApp.
+  // Selama koneksi Firebase hidup, users/{uid}/online diset true;
+  // onDisconnect otomatis menyetelnya kembali ke false begitu koneksi
+  // terputus (tutup tab, sinyal hilang, dsb), tanpa perlu logout manual.
+  // ---------------------------------------------------------------
+  let presenceConnectedRef = null;
+  let presenceConnectedCb = null;
+  function setupPresence(uid){
+    teardownPresenceListener();
+    let myStatusRef = db.ref('users/' + uid);
+    presenceConnectedRef = db.ref('.info/connected');
+    presenceConnectedCb = function(snap){
+      if (snap.val() !== true) return;
+      myStatusRef.child('online').onDisconnect().set(false);
+      myStatusRef.child('lastSeen').onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
+      myStatusRef.update({ online: true, lastSeen: firebase.database.ServerValue.TIMESTAMP });
+    };
+    presenceConnectedRef.on('value', presenceConnectedCb);
+  }
+  function teardownPresenceListener(){
+    if (presenceConnectedRef && presenceConnectedCb){
+      presenceConnectedRef.off('value', presenceConnectedCb);
+    }
+    presenceConnectedRef = null;
+    presenceConnectedCb = null;
+  }
+  function goOffline(uid){
+    teardownPresenceListener();
+    if (!uid) return;
+    db.ref('users/' + uid).update({ online: false, lastSeen: firebase.database.ServerValue.TIMESTAMP });
+  }
+
+  // ---------------------------------------------------------------
   // State
   // ---------------------------------------------------------------
   let currentUser = null;      // { uid, name, email }
@@ -1995,6 +2346,7 @@
         initAllUsersListener();
         startInactivityWatcher();
         updateConnIndicator();
+        setupPresence(currentUser.uid);
       }).catch(function(err){
         // Kalau gagal ambil profil (permission denied / koneksi putus),
         // jangan biarkan layar loading muter selamanya — tampilkan
@@ -2005,6 +2357,7 @@
         appScreen.style.display = 'none';
       });
     } else {
+      if (currentUser) goOffline(currentUser.uid);
       currentUser = null;
       document.getElementById('topbarWho').style.display = 'none';
       verifyScreen.style.display = 'none';
@@ -2019,9 +2372,6 @@
       // selalu dikembalikan ke merah/"Offline" — status "Online" hanya
       // berlaku setelah berhasil login.
       updateConnIndicator();
-      if (pendingAutoLogoutNotice){
-        pendingAutoLogoutNotice = false;
-      }
     }
   });
 
@@ -2038,7 +2388,6 @@
   // ---------------------------------------------------------------
   const INACTIVITY_LIMIT_MS = 5 * 60 * 1000; // 5 menit
   let inactivityTimer = null;
-  let pendingAutoLogoutNotice = false;
 
   function isDesktopView(){
     return window.matchMedia('(min-width: 761px)').matches;
@@ -2047,7 +2396,6 @@
   function handleInactivityTimeout(){
     if (!currentUser) return;
     if (!isDesktopView()) return; // jaga-jaga kalau resize terjadi tepat saat timeout
-    pendingAutoLogoutNotice = true;
     auth.signOut();
   }
 
@@ -2416,7 +2764,9 @@
           name: val.name || 'Pengguna',
           email: val.email || '',
           photoURL: val.photoURL || '',
-          status: val.status || ''
+          status: val.status || '',
+          online: !!val.online,
+          lastSeen: val.lastSeen || 0
         };
       }
       onUserProfileChanged();
@@ -2434,6 +2784,7 @@
     if (typeof renderGroupFriendPick === 'function') renderGroupFriendPick();
     if (activeChatId) updateChatHeader();
     refreshRenderedSenderNames();
+    refreshAllTicks();
     if (groupSettingsModal && groupSettingsModal.classList.contains('show')){
       let chat = chatsIndex[groupSettingsChatId];
       if (chat) populateGroupSettings();
@@ -2669,7 +3020,7 @@
       let row = document.createElement('div');
       row.className = 'chat-row-wrap';
       let isPrivateRow = chat.type !== 'group';
-      let deleteLabel = isPrivateRow ? 'Hapus pertemanan' : 'Hapus obrolan';
+      let deleteLabel = 'Hapus obrolan';
       row.innerHTML =
         '<div class="chat-row-delete-bg"><button type="button" class="chat-row-delete-btn" aria-label="' + deleteLabel + '" title="' + deleteLabel + '">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>' +
@@ -2687,7 +3038,7 @@
         if (isPrivateRow){
           let members = chat.members || {};
           let otherUid = Object.keys(members).find(function(u){ return u !== currentUser.uid; });
-          removeFriendAndChat(chatId, otherUid, name);
+          deleteChatForMeOnly(chatId, otherUid, name);
         } else {
           deleteChatFromList(chatId, name);
         }
@@ -2793,26 +3144,79 @@
     let chat = chatsIndex[chatId];
     let isPrivate = chat && chat.type === 'private';
     let msg = simpleConfirm
-      ? 'Hapus semua pesan obrolan dengan "' + name + '"?'
+      ? 'Hapus obrolan dengan "' + name + '"? Pesan yang masih terlihat di layar kamu akan dihapus (tersinkron juga di sisi "' + name + '").'
       : (isPrivate
-        ? 'Apakah anda ingin hapus semua pesan obrolan dengan "' + name + '"? Nama/teman ini akan tetap ada di daftar chat kamu, hanya riwayat pesannya saja yang dihapus.'
+        ? 'Apakah anda ingin hapus obrolan dengan "' + name + '"? Nama/teman ini akan tetap ada di daftar chat kamu, hanya pesan yang masih terlihat di layar kamu saja yang dihapus (tersinkron juga di sisi "' + name + '").'
         : 'Apakah anda ingin hapus semua pesan obrolan grup "' + name + '"? Grup dan anggotanya akan tetap ada seperti biasa, hanya riwayat pesannya saja yang dihapus untuk semua anggota.');
     if (!confirm(msg)) return;
 
-    // Baik chat privat maupun grup: yang dihapus HANYA riwayat
-    // pesan/obrolannya saja. Chat/grup itu sendiri (data chat, nama
-    // teman/grup, keanggotaan) tetap ada dan tetap muncul di daftar
-    // chat semua pihak — cuma kosong tanpa pesan. Untuk menghapus
-    // grup sepenuhnya (bukan cuma pesannya), pakai "Hapus grup" di
-    // Pengaturan Grup.
-    let updates = {};
-    updates['chats/' + chatId + '/messages'] = null;
-    updates['chats/' + chatId + '/lastMessage'] = '';
-    updates['chats/' + chatId + '/lastMessageAt'] = null;
-    db.ref().update(updates);
+    // Chat/grup itu sendiri (data chat, nama teman/grup, keanggotaan)
+    // tetap ada dan tetap muncul di daftar chat semua pihak. Untuk
+    // menghapus grup sepenuhnya (bukan cuma pesannya), pakai
+    // "Hapus grup" di Pengaturan Grup.
+    //
+    // PENTING: yang dihapus di sini HANYA pesan yang masih "tersisa"
+    // / terlihat di layar SAYA saat ini (createdAt-nya setelah waktu
+    // saya terakhir menghapus obrolan ini sendiri lewat "Hapus
+    // obrolan" di daftar chat — chats/{chatId}/clearedFor/{uid saya}).
+    // Karena pesan-pesan itu benar-benar dihapus dari database, aksi
+    // ini otomatis tersinkron: pesan yang sama juga ikut hilang di
+    // layar lawan bicara. Tapi pesan-pesan LEBIH LAMA yang sudah lebih
+    // dulu saya sembunyikan sendiri (dan mungkin masih terlihat di
+    // sisi lawan bicara, karena mereka belum menghapusnya) TIDAK ikut
+    // terhapus di sini — supaya riwayat yang sudah ada di sisi lawan
+    // bicara sebelumnya tidak hilang tanpa sepengetahuan mereka.
+    db.ref('chats/' + chatId + '/clearedFor/' + currentUser.uid).once('value').then(function(clearedSnap){
+      let myClearedAt = clearedSnap.val() || 0;
+      let msgsRef = db.ref('chats/' + chatId + '/messages');
+      let msgsQuery = myClearedAt
+        ? msgsRef.orderByChild('createdAt').startAfter(myClearedAt)
+        : msgsRef;
+      return msgsQuery.once('value').then(function(msgsSnap){
+        let updates = {};
+        msgsSnap.forEach(function(child){
+          updates['chats/' + chatId + '/messages/' + child.key] = null;
+        });
+        return db.ref().update(updates);
+      });
+    }).then(function(){
+      // Hitung ulang preview pesan terakhir berdasarkan sisa pesan yang
+      // benar-benar masih ada di database (bisa jadi pesan lama milik
+      // lawan bicara yang sengaja tidak ikut terhapus di atas).
+      refreshLastMessagePreview(chatId);
+    }).catch(function(err){
+      alert('Gagal menghapus obrolan: ' + err.message);
+    });
     // Chat/grup tetap terbuka & tetap ada di daftar; pesan-pesannya
     // akan otomatis hilang dari layar lewat listener child_removed
     // kalau chat ini sedang dibuka.
+  }
+
+  // Hapus obrolan HANYA dari sisi saya sendiri (seperti "Hapus Chat" di
+  // WhatsApp): chat langsung hilang dari daftar chat saya dan riwayat
+  // pesannya tidak lagi tampil buat saya. Pertemanan TETAP ada, dan di
+  // sisi teman (otherUid) obrolan beserta SELURUH riwayat pesannya
+  // TETAP utuh seperti semula — sama sekali tidak ikut terhapus atau
+  // terpengaruh oleh aksi ini.
+  function deleteChatForMeOnly(chatId, otherUid, name){
+    let msg = 'Hapus obrolan dengan "' + name + '"?\n\nPercakapan ini hanya akan hilang dari daftar chat kamu. Riwayat pesan tetap ada dan tidak terhapus di sisi "' + name + '".';
+    if (!confirm(msg)) return;
+    let updates = {};
+    updates['userChats/' + currentUser.uid + '/' + chatId] = null;
+    updates['chats/' + chatId + '/clearedFor/' + currentUser.uid] = firebase.database.ServerValue.TIMESTAMP;
+    db.ref().update(updates).then(function(){
+      if (activeChatId === chatId){
+        activeChatId = null;
+        detachMessagesListener();
+        chatEmptyState.style.display = 'flex';
+        chatActiveWrap.style.display = 'none';
+        mobileViewMode = 'list';
+        updateMobileView();
+        clearSavedActiveChat();
+      }
+    }).catch(function(err){
+      alert('Gagal menghapus obrolan: ' + err.message);
+    });
   }
 
   function removeFriendAndChat(chatId, otherUid, name){
@@ -3225,6 +3629,9 @@
     }
   }
 
+  let openChatToken = 0;
+  let activeChatClearedAt = 0;
+
   function openChat(chatId, fallbackName){
     activeChatId = chatId;
     chatEmptyState.style.display = 'none';
@@ -3241,8 +3648,40 @@
     saveMobileViewState('chat');
 
     detachMessagesListener();
+    activeChatClearedAt = 0;
+    // Cek dulu kapan SAYA (bukan lawan bicara) terakhir menghapus
+    // obrolan ini (chats/{chatId}/clearedFor/{uid saya}). Kalau ada,
+    // pesan-pesan lama sebelum waktu itu disembunyikan hanya untuk
+    // saya — data aslinya di database tidak disentuh sama sekali,
+    // jadi tetap utuh dan tetap terlihat penuh di sisi lawan bicara.
+    let myToken = ++openChatToken;
+    db.ref('chats/' + chatId + '/clearedFor/' + currentUser.uid).once('value').then(function(snap){
+      if (myToken !== openChatToken || activeChatId !== chatId) return;
+      activeChatClearedAt = snap.val() || 0;
+      attachMessagesListenerForChat(chatId);
+    }).catch(function(){
+      if (myToken !== openChatToken || activeChatId !== chatId) return;
+      activeChatClearedAt = 0;
+      attachMessagesListenerForChat(chatId);
+    });
+
+    attachReadsListener(chatId);
+    markChatAsRead(chatId);
+  }
+
+  function attachMessagesListenerForChat(chatId){
     let msgsRef = db.ref('chats/' + chatId + '/messages').limitToLast(200);
-    let cbAdded = function(snap){ appendMessage(snap.val(), snap.key); };
+    let cbAdded = function(snap){
+      let mv = snap.val();
+      // Pesan yang dibuat sebelum saya menghapus obrolan ini tetap ada
+      // di database (untuk lawan bicara), tapi disembunyikan dari
+      // tampilan saya saja.
+      if (activeChatClearedAt && mv && mv.createdAt && mv.createdAt <= activeChatClearedAt) return;
+      appendMessage(mv, snap.key);
+      if (mv && currentUser && mv.sender !== currentUser.uid && document.visibilityState === 'visible'){
+        markChatAsRead(chatId);
+      }
+    };
     let cbChanged = function(snap){ updateMessageInDOM(snap.key, snap.val()); };
     let cbRemoved = function(snap){ removeMessageFromDOM(snap.key); };
     msgsRef.on('child_added', cbAdded);
@@ -3252,11 +3691,98 @@
   }
 
   function detachMessagesListener(){
+    detachReadsListener();
     if (!messagesListenerRef) return;
     messagesListenerRef.ref.off('child_added', messagesListenerRef.handlers.child_added);
     messagesListenerRef.ref.off('child_changed', messagesListenerRef.handlers.child_changed);
     messagesListenerRef.ref.off('child_removed', messagesListenerRef.handlers.child_removed);
     messagesListenerRef = null;
+  }
+
+  // -------------------------------------------------------------
+  // Status baca (centang 1/2 ala WhatsApp).
+  // chats/{chatId}/reads/{uid} menyimpan waktu terakhir kali user
+  // itu membuka & melihat chat tsb. Pesan dianggap "dibaca" lawan
+  // bicara kalau reads[lawan] >= createdAt pesan tersebut.
+  // -------------------------------------------------------------
+  let activeChatReads = {};
+  let readsListenerRef = null;
+  function attachReadsListener(chatId){
+    detachReadsListener();
+    let ref = db.ref('chats/' + chatId + '/reads');
+    let cb = function(snap){
+      activeChatReads = snap.val() || {};
+      refreshAllTicks();
+    };
+    ref.on('value', cb);
+    readsListenerRef = { ref: ref, cb: cb };
+  }
+  function detachReadsListener(){
+    if (readsListenerRef){
+      readsListenerRef.ref.off('value', readsListenerRef.cb);
+    }
+    readsListenerRef = null;
+    activeChatReads = {};
+  }
+  function markChatAsRead(chatId){
+    if (!chatId || !currentUser) return;
+    db.ref('chats/' + chatId + '/reads/' + currentUser.uid).set(firebase.database.ServerValue.TIMESTAMP);
+  }
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'visible' && activeChatId){
+      markChatAsRead(activeChatId);
+    }
+  });
+
+  // Daftar uid lawan bicara pada sebuah chat (semua anggota selain saya).
+  function chatRecipients(chatId){
+    let chat = chatsIndex[chatId];
+    if (!chat) return [];
+    let members = chat.members || {};
+    return Object.keys(members).filter(function(u){ return u !== (currentUser && currentUser.uid); });
+  }
+
+  // Tentukan status centang untuk pesan milik saya sendiri:
+  // 'single'    -> lawan bicara offline, belum tentu terkirim ke mereka (centang 1, putih)
+  // 'delivered' -> lawan bicara online tapi belum membaca (centang 2, putih)
+  // 'read'      -> sudah dibaca oleh (semua) lawan bicara (centang 2, biru)
+  function computeTickState(msg, chatId){
+    let recipients = chatRecipients(chatId);
+    if (recipients.length === 0) return 'delivered';
+    let createdAt = msg && msg.createdAt;
+    let allRead = recipients.every(function(uid){
+      let ts = activeChatReads[uid];
+      return !!ts && !!createdAt && ts >= createdAt;
+    });
+    if (allRead) return 'read';
+    let anyOnline = recipients.some(function(uid){
+      return userProfiles[uid] && userProfiles[uid].online;
+    });
+    return anyOnline ? 'delivered' : 'single';
+  }
+
+  function ticksHtml(state){
+    if (state === 'single'){
+      return '<span class="msg-ticks single" aria-label="Terkirim">' +
+        '<svg viewBox="0 0 16 15" width="15" height="14"><path d="M11.4 1.6 5.3 9.4 2.7 6.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      '</span>';
+    }
+    let cls = state === 'read' ? 'msg-ticks double read' : 'msg-ticks double';
+    let label = state === 'read' ? 'Dibaca' : 'Diterima';
+    return '<span class="' + cls + '" aria-label="' + label + '">' +
+      '<svg viewBox="0 0 20 15" width="19" height="14"><path d="M13.4 1.6 7.3 9.4 4.7 6.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.9 1.6 11.6 9.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+    '</span>';
+  }
+
+  function refreshAllTicks(){
+    if (!currentUser) return;
+    Object.keys(messageEls).forEach(function(msgId){
+      let el = messageEls[msgId];
+      if (!el || !el.data || el.data.sender !== currentUser.uid) return;
+      let timeEl = el.row.querySelector('.time');
+      if (!timeEl) return;
+      timeEl.innerHTML = fmtTime(el.data.createdAt) + (el.data.edited ? '<span class="edited-tag">diedit</span>' : '') + ticksHtml(computeTickState(el.data, activeChatId));
+    });
   }
 
   // -------------------------------------------------------------
@@ -3429,12 +3955,13 @@
     if (showSender) ensureUserProfileSynced(m.sender);
     let senderDisplayName = showSender ? personInfo(m.sender).name || m.senderName || '' : '';
     let isImage = m.type === 'image' && m.imageData;
+    let ticksSpan = isMe ? ticksHtml(computeTickState(m, activeChatId)) : '';
     row.innerHTML =
       '<div class="bubble">' +
         (showSender ? '<span class="sender">' + escapeHtml(senderDisplayName) + '</span>' : '') +
         (isImage ? '<img class="img-msg" src="' + m.imageData + '" alt="Foto">' : '') +
         '<span class="text"></span>' +
-        '<span class="time">' + fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + '</span>' +
+        '<span class="time">' + fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + ticksSpan + '</span>' +
       '</div>';
     row.querySelector('.text').textContent = isImage ? '' : (m.text || '');
     if (isImage){
@@ -3453,8 +3980,10 @@
     if (!el || !m) return;
     el.data = m;
     let isImage = m.type === 'image' && m.imageData;
+    let isMe = m.sender === currentUser.uid;
     el.row.querySelector('.text').textContent = isImage ? '' : (m.text || '');
-    el.row.querySelector('.time').innerHTML = fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '');
+    let ticksSpan = isMe ? ticksHtml(computeTickState(m, activeChatId)) : '';
+    el.row.querySelector('.time').innerHTML = fmtTime(m.createdAt) + (m.edited ? '<span class="edited-tag">diedit</span>' : '') + ticksSpan;
     if (editingMessageId === msgId){
       editBannerPreview.textContent = m.text || '';
     }
@@ -3491,7 +4020,7 @@
       sendImageMessage(dataUrl);
     });
   });
-  function sendImageMessage(dataUrl){
+  function sendImageMessage(dataUrl, previewText){
     let msgRef = db.ref('chats/' + activeChatId + '/messages').push();
     let payload = {
       sender: currentUser.uid,
@@ -3503,10 +4032,244 @@
     };
     let updates = {};
     updates['chats/' + activeChatId + '/messages/' + msgRef.key] = payload;
-    updates['chats/' + activeChatId + '/lastMessage'] = '📷 Foto';
+    updates['chats/' + activeChatId + '/lastMessage'] = previewText || '📷 Foto';
     updates['chats/' + activeChatId + '/lastMessageAt'] = firebase.database.ServerValue.TIMESTAMP;
     db.ref().update(updates);
   }
+
+  // ================= PANEL EMOJI (statis + bergerak) =================
+  (function(){
+    // Emoji statis per kategori (karakter unicode biasa, disisipkan langsung ke teks pesan)
+    var EMOJI_CATS = {
+      smileys: "😀😃😄😁😆😅🤣😂🙂🙃🫠😉😊😇🥰😍🤩😘😗☺️😚😙🥲😋😛😜🤪😝🤑🤗🤭🫢🫣🤫🤔🫡🤐🤨😐😑😶🫥😏😒🙄😬🤥😌😔😪🤤😴😷🤒🤕🤢🤮🤧🥵🥶🥴😵🤯🤠🥳🥸😎🤓🧐😕🫤😟🙁☹️😮😯😲😳🥺🥹😦😧😨😰😥😢😭😱😖😣😞😓😩😫🥱😤😡😠🤬😈👿💀☠️💩🤡👹👺👻👽👾🤖😺😸😹😻😼😽🙀😿😾",
+      people: "👋🤚🖐️✋🖖👌🤌🤏✌️🤞🤟🤘🤙👈👉👆🖕👇☝️👍👎✊👊🤛🤜👏🙌👐🤲🤝🙏✍️💅🤳💪🦾👂👃🧠🦷👀👁️👅👄💋🩸😴🧑👨👩🧓👴👵👶🧒🧑‍🎓🧑‍💻🧑‍🍳🧑‍🌾🧑‍🔧🧑‍🚀🧑‍🚒👮🕵️💂🥷👷🤴👸🤵👰🤰🤱👼🎅🤶🦸🦹🧙🧚🧛🧜🧝🧞🧟💆💇🚶🧍🧎🏃💃🕺👯🧖👭👬👫",
+      animals: "🐶🐱🐭🐹🐰🦊🐻🐼🐨🐯🦁🐮🐷🐽🐸🐵🙈🙉🙊🐒🐔🐧🐦🐤🐣🐥🦆🦅🦉🦇🐺🐗🐴🦄🐝🐛🦋🐌🐞🐜🪲🦟🕷️🕸️🐢🐍🦎🦖🦕🐙🦑🦐🦞🦀🐡🐠🐟🐬🐳🐋🦈🐊🐅🐆🦓🦍🐘🦛🦏🐪🐫🦒🐃🐂🐄🐎🐖🐑🦙🐐🦌🐕🐩🐈🐓🦃🦚🦜🦢🦩🕊️🐇🦝🦨🦡🦦🦥🐁🐀🐿️🦔🌵🎄🌲🌳🌴🌱🌿☘️🍀🎋🍃🍂🍁🌾🌺🌻🌹🌷🌼🌸💐🍄🌰🦀",
+      food: "🍏🍎🍐🍊🍋🍌🍉🍇🍓🫐🍈🍒🍑🥭🍍🥥🥝🍅🍆🥑🥦🥬🥒🌶️🫑🌽🥕🧄🧅🥔🍠🥐🥯🍞🥖🥨🧀🥚🍳🥞🧇🥓🥩🍗🍖🌭🍔🍟🍕🥪🌮🌯🥗🥘🍝🍜🍲🍛🍣🍱🥟🍤🍙🍚🍘🍥🥠🍢🍡🍧🍨🍦🥧🧁🍰🎂🍮🍭🍬🍫🍿🍩🍪🌰🥜🍯🥛🍼☕🍵🍺🍻🥂🍷🥃🍸🍹🧉🍾🧊🍽️🍴🥄🔪🏺",
+      activity: "⚽🏀🏈⚾🥎🎾🏐🏉🥏🎱🪀🏓🏸🏒🏑🥍🏏🥅⛳🪁🏹🎣🤿🥊🥋🎽🛹🛼🛷⛸️🥌🎿⛷️🏂🏋️🤼🤸⛹️🤺🤾🏌️🏇🧘🏄🏊🤽🚣🧗🚵🚴🏆🥇🥈🥉🏅🎖️🏵️🎗️🎫🎟️🎪🤹🎭🩰🎨🎬🎤🎧🎼🎹🥁🎷🎺🎸🎻🎲♟️🎯🎳🎮🎰🧩🧸",
+      travel: "🚗🚕🚙🚌🚎🏎️🚓🚑🚒🚐🛻🚚🚛🚜🛴🚲🛵🏍️🛺🚨🚔🚍🚘🚖🚡🚠🚟🚃🚋🚞🚝🚄🚅🚈🚂🚆🚇🚊🚉✈️🛫🛬🛩️💺🚀🛸🚁⛵🚤🛥️🛳️⛴️🚢⚓🚧🚦🚥🚏🗺️🗿🗽🗼🏰🏯🎡🎢🎠⛲⛱️🏖️🏝️🏜️🌋⛰️🏔️🗻🏕️⛺🏠🏡🏢🏬🏥🏦🏨🏪🏫🕌🕍⛩️⛪🌁🌃🏙️🌄🌅🌆🌇🌉🌌🌠🎆🎇🌈☀️🌤️⛅🌥️☁️🌦️🌧️⛈️🌩️🌨️❄️☃️⛄🌬️💨🌪️🌫️🌊💧☔⚡",
+      objects: "⌚📱💻⌨️🖥️🖨️🖱️💽💾💿📀📷📸📹🎥📞☎️📟📠📺📻🎙️🕹️🧭⏰🕰️⌛⏳🔋🔌💡🔦🕯️🧯💵💴💶💷💰💳💎⚖️🧰🔧🔨🛠️⛏️🔩⚙️🧱🔗🧲🔫💣🔪🗡️🛡️🚬⚰️🔮📿💈🔭🔬💊💉🩺🚪🪑🛏️🚽🚿🛁🧴🧷🧹🧺🧻🧼🧽🛒🎁🎀🎈🎉🎊🎏🎐🧧✉️📩📦📫📪📬📭📮📯📜📃📄📑🔖🏷️💰📚📖📕📗📘📙📓📒📔📰🗞️🔍🔎🔏🔐🔒🔓🖊️🖋️✒️🖌️🖍️📝✏️📌📍📎🖇️📏📐✂️🗑️",
+      symbols: "❤️🧡💛💚💙💜🖤🤍🤎💔❣️💕💞💓💗💖💘💝💟☮️✝️☪️🕉️☸️✡️🔯☯️♈♉♊♋♌♍♎♏♐♑♒♓🆔⚛️☢️☣️❌⭕🛑⛔💯❗❓‼️⁉️⚠️🚸🔱♻️✅❇️✳️❎🌐💠🌀💤🚹🚺🚻ℹ️🔤🔠🆖🆗🆙🆒🆕🆓0️⃣1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣9️⃣🔟🔢▶️⏸️⏹️⏭️⏮️⏩⏪🔀🔁🔂🔄🔃➡️⬅️⬆️⬇️↗️↘️↙️↖️↔️↩️↪️✔️☑️🔘🔴🟠🟡🟢🔵🟣⚫⚪🟤🔺🔻🔸🔹🔶🔷🔳🔲◼️◻️⬛⬜🟥🟧🟨🟩🟦🟪",
+      flags: "🏁🚩🎌🏳️🏳️‍🌈🏴‍☠️🇮🇩🇺🇸🇬🇧🇯🇵🇰🇷🇨🇳🇸🇦🇮🇳🇩🇪🇫🇷🇮🇹🇪🇸🇧🇷🇷🇺🇨🇦🇦🇺🇲🇾🇸🇬🇹🇭🇻🇳🇵🇭🇳🇱🇹🇷🇲🇽🇵🇹🇦🇪🇪🇬🇿🇦🇳🇬"
+    };
+    var CAT_ORDER = ['smileys','people','animals','food','activity','travel','objects','symbols','flags'];
+    var CAT_LABEL = { smileys:'Senyum', people:'Orang', animals:'Hewan', food:'Makanan', activity:'Aktivitas', travel:'Tempat', objects:'Objek', symbols:'Simbol', flags:'Bendera' };
+
+    // Kata kunci pencarian bahasa Indonesia untuk emoji yang paling sering dicari
+    var KEYWORDS = {
+      "😀":"senyum gembira","😃":"senyum gembira","😄":"senyum tawa","😁":"senyum gigi","😆":"tawa ngakak","😅":"tawa keringat","🤣":"ngakak guling","😂":"tawa nangis lucu","🙂":"senyum","🙃":"terbalik","😉":"kedip","😊":"senyum malu","😇":"malaikat polos","🥰":"cinta sayang gemas","😍":"cinta mata hati","🤩":"kagum bintang","😘":"cium sayang","😚":"cium","😋":"enak lezat lapar","😛":"julur lidah","😜":"julur lidah kedip","🤪":"gila konyol","😝":"julur lidah tutup mata","🤑":"uang duit mata duitan","🤗":"peluk","🤔":"mikir berpikir","😐":"datar","😑":"bosan datar","😏":"senyum sinis genit","😒":"kesal males","🙄":"malas bosan","😬":"nyengir canggung","😌":"lega tenang","😔":"sedih murung","😪":"ngantuk","🤤":"ngiler","😴":"tidur ngantuk","😷":"sakit masker","🤒":"demam sakit","🤕":"luka sakit kepala","🤢":"mual jijik","🤮":"muntah","🤧":"bersin flu","🥵":"panas gerah","🥶":"dingin beku","😵":"pusing","🤯":"kaget meledak pusing","🥳":"pesta ulang tahun senang","😎":"keren kacamata","🤓":"kutu buku pintar","😕":"bingung sedih","😟":"khawatir cemas","😮":"kaget terkejut","😲":"kaget terkejut","😳":"malu kaget","🥺":"memelas mohon sedih","😢":"nangis sedih","😭":"nangis kencang sedih","😱":"takut kaget histeris","😖":"stres bingung","😞":"kecewa sedih","😓":"capek keringat","😩":"lelah capek frustrasi","😫":"lelah capek","🥱":"menguap ngantuk","😤":"kesal ngotot","😡":"marah","😠":"marah kesal","🤬":"marah sumpah","😈":"iblis nakal","💀":"tengkorak mati","💩":"tai poop","🤡":"badut","👻":"hantu","🤖":"robot","😺":"kucing senyum","👋":"halo dadah lambai","👍":"jempol setuju bagus","👎":"jempol tidak setuju jelek","👌":"oke ok","✌️":"damai peace","🤞":"semoga jari silang","👏":"tepuk tangan","🙌":"rayakan angkat tangan","🙏":"terima kasih doa tolong sembah","✊":"kepal semangat","👊":"tinju","💪":"kuat semangat otot","👀":"mata lihat","👶":"bayi","👨":"pria laki","👩":"wanita perempuan","🐶":"anjing","🐱":"kucing","🐭":"tikus","🐰":"kelinci","🦊":"rubah","🐻":"beruang","🐼":"panda","🐨":"koala","🐯":"harimau","🦁":"singa","🐮":"sapi","🐷":"babi","🐸":"kodok katak","🐵":"monyet","🐔":"ayam","🐧":"penguin","🦄":"kuda unicorn","🐝":"lebah","🦋":"kupu kupu","🌹":"bunga mawar","🌸":"bunga","🍕":"pizza","🍔":"burger","🍟":"kentang goreng","🍗":"ayam","🍚":"nasi","🍜":"mie","🍰":"kue","🎂":"kue ulang tahun","🍩":"donat","☕":"kopi","🍺":"bir minum","⚽":"bola sepak","🏀":"basket","🎮":"game","🎵":"musik nada","🎉":"pesta rayakan konfeti","🎊":"pesta konfeti","🔥":"api keren mantap","✨":"kilau bagus","⭐":"bintang","🌟":"bintang kilau","💯":"seratus mantap","💥":"boom ledak","✈️":"pesawat terbang","🚗":"mobil","🏠":"rumah","💡":"lampu ide","💰":"uang duit","💎":"berlian permata","🎁":"hadiah kado","📱":"hp ponsel","💻":"laptop komputer","❤️":"cinta hati merah sayang","🧡":"hati oranye","💛":"hati kuning","💚":"hati hijau","💙":"hati biru","💜":"hati ungu","🖤":"hati hitam","🤍":"hati putih","💔":"hati patah putus sedih","💕":"cinta hati dua","💖":"hati kilau cinta","💗":"hati berdenyut","😻":"kucing cinta","😹":"kucing tawa","😢":"nangis","🤝":"salaman sepakat","😷":"masker sakit","🥇":"medali emas juara","🏆":"piala juara","🎯":"target sasaran","📌":"pin lokasi","✅":"centang benar","❌":"silang salah","❓":"tanya bingung","❗":"seru penting","🇮🇩":"indonesia bendera"
+    };
+
+    function keywordOf(ch){ return (KEYWORDS[ch] || '') + ' ' + ch; }
+
+    // Emoji bergerak (GIF animasi Noto Google) — {char unicode, codepoint hex utk URL}
+    var ANIM_ITEMS = [
+      ["😀","1f600"],["😃","1f603"],["😄","1f604"],["😁","1f601"],["😆","1f606"],["😅","1f605"],["🤣","1f923"],["😂","1f602"],
+      ["🙂","1f642"],["🙃","1f643"],["😉","1f609"],["😊","1f60a"],["😇","1f607"],["🥰","1f970"],["😍","1f60d"],["🤩","1f929"],
+      ["😘","1f618"],["😗","1f617"],["😚","1f61a"],["😙","1f619"],["😋","1f60b"],["😛","1f61b"],["😜","1f61c"],["🤪","1f92a"],
+      ["😝","1f61d"],["🤑","1f911"],["🤗","1f917"],["🤭","1f92d"],["🤫","1f92b"],["🤔","1f914"],["🤐","1f910"],["🤨","1f928"],
+      ["😐","1f610"],["😑","1f611"],["😏","1f60f"],["😒","1f612"],["🙄","1f644"],["😬","1f62c"],["🤥","1f925"],["😌","1f60c"],
+      ["😔","1f614"],["😪","1f62a"],["🤤","1f924"],["😴","1f634"],["😷","1f637"],["🤒","1f912"],["🤕","1f915"],["🤢","1f922"],
+      ["🤮","1f92e"],["🤧","1f927"],["🥵","1f975"],["🥶","1f976"],["🥴","1f974"],["😵","1f635"],["🤯","1f92f"],["🤠","1f920"],
+      ["🥳","1f973"],["😎","1f60e"],["🤓","1f913"],["🧐","1f9d0"],["😕","1f615"],["😟","1f61f"],["😮","1f62e"],["😯","1f62f"],
+      ["😲","1f632"],["😳","1f633"],["🥺","1f97a"],["😦","1f626"],["😧","1f627"],["😨","1f628"],["😰","1f630"],["😥","1f625"],
+      ["😢","1f622"],["😭","1f62d"],["😱","1f631"],["😖","1f616"],["😣","1f623"],["😞","1f61e"],["😓","1f613"],["😩","1f629"],
+      ["😫","1f62b"],["🥱","1f971"],["😤","1f624"],["😡","1f621"],["😠","1f620"],["🤬","1f92c"],["😈","1f608"],["💀","1f480"],
+      ["💩","1f4a9"],["🤡","1f921"],["👻","1f47b"],["🤖","1f916"],["😺","1f63a"],["😸","1f638"],["😹","1f639"],["😻","1f63b"],
+      ["👍","1f44d"],["👎","1f44e"],["👌","1f44c"],["✌️","270c"],["🤞","1f91e"],["🤟","1f91f"],["🤘","1f918"],["🤙","1f919"],
+      ["👋","1f44b"],["✋","270b"],["👏","1f44f"],["🙌","1f64c"],["🤝","1f91d"],["🙏","1f64f"],["✊","270a"],["👊","1f44a"],
+      ["💪","1f4aa"],["❤️","2764"],["🧡","1f9e1"],["💛","1f49b"],["💚","1f49a"],["💙","1f499"],["💜","1f49c"],["🖤","1f5a4"],
+      ["🤍","1f90d"],["🤎","1f90e"],["💔","1f494"],["💕","1f495"],["💖","1f496"],["💗","1f497"],["💘","1f498"],["💝","1f49d"],
+      ["🔥","1f525"],["✨","2728"],["🎉","1f389"],["🎊","1f38a"],["💯","1f4af"],["⭐","2b50"],["🌟","1f31f"],["💥","1f4a5"],
+      ["👀","1f440"],["🐶","1f436"],["🐱","1f431"],["🦁","1f981"],["🦄","1f984"],["🐷","1f437"],["🐸","1f438"],["🐵","1f435"],
+      ["🐧","1f427"],["🍕","1f355"],["🎂","1f382"],["🍺","1f37a"],["☕","2615"]
+    ];
+
+    var STORAGE_KEY = 'chatRecentEmojiV1';
+    function loadRecent(){
+      try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }catch(e){ return []; }
+    }
+    function pushRecent(entry){
+      var list = loadRecent();
+      list = list.filter(function(x){ return x.k !== entry.k; });
+      list.unshift(entry);
+      if (list.length > 24) list = list.slice(0, 24);
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }catch(e){}
+    }
+
+    var panel = document.getElementById('emojiPanel');
+    var btnToggle = document.getElementById('btnEmojiToggle');
+    var grid = document.getElementById('emojiGrid');
+    var searchInput = document.getElementById('emojiSearchInput');
+    var tabStatic = document.getElementById('emojiTabStatic');
+    var tabAnimated = document.getElementById('emojiTabAnimated');
+    var catsBar = document.getElementById('emojiCatsBar');
+    var btnBackspace = document.getElementById('btnEmojiBackspace');
+
+    var activeTab = 'static';
+    var activeCat = 'recent';
+
+    function insertAtCursor(text){
+      var start = msgInput.selectionStart == null ? msgInput.value.length : msgInput.selectionStart;
+      var end = msgInput.selectionEnd == null ? msgInput.value.length : msgInput.selectionEnd;
+      var val = msgInput.value;
+      msgInput.value = val.slice(0, start) + text + val.slice(end);
+      var newPos = start + text.length;
+      msgInput.setSelectionRange(newPos, newPos);
+      autoGrow();
+    }
+
+    function makeCell(ch, imgUrl){
+      var cell = document.createElement('button');
+      cell.type = 'button';
+      cell.className = 'emoji-cell';
+      if (imgUrl){
+        var img = document.createElement('img');
+        img.src = imgUrl;
+        img.alt = ch;
+        img.loading = 'lazy';
+        img.onerror = function(){ cell.remove(); };
+        cell.appendChild(img);
+        cell.addEventListener('click', function(){
+          if (!activeChatId) return;
+          sendImageMessage(imgUrl, ch + ' Animasi');
+          pushRecent({ k:'a:'+ch, ch:ch, url:imgUrl });
+        });
+      } else {
+        cell.textContent = ch;
+        cell.addEventListener('click', function(){
+          insertAtCursor(ch);
+          pushRecent({ k:'s:'+ch, ch:ch });
+        });
+      }
+      return cell;
+    }
+
+    function renderEmpty(msg){
+      grid.innerHTML = '';
+      var d = document.createElement('div');
+      d.className = 'emoji-panel-empty';
+      d.textContent = msg;
+      grid.appendChild(d);
+    }
+
+    function renderGrid(){
+      var q = searchInput.value.trim().toLowerCase();
+      grid.innerHTML = '';
+      var frag = document.createDocumentFragment();
+
+      if (q){
+        // Cari di semua kategori sesuai tab aktif
+        if (activeTab === 'static'){
+          var seen = {};
+          CAT_ORDER.forEach(function(cat){
+            Array.from(EMOJI_CATS[cat]).forEach(function(ch){
+              if (seen[ch]) return;
+              if (keywordOf(ch).toLowerCase().indexOf(q) !== -1){
+                seen[ch] = true;
+                frag.appendChild(makeCell(ch, null));
+              }
+            });
+          });
+        } else {
+          ANIM_ITEMS.forEach(function(item){
+            if (keywordOf(item[0]).toLowerCase().indexOf(q) !== -1){
+              frag.appendChild(makeCell(item[0], 'https://fonts.gstatic.com/s/e/notoemoji/latest/' + item[1] + '/512.gif'));
+            }
+          });
+        }
+        if (!frag.childNodes.length){ renderEmpty('Emoji tidak ditemukan'); return; }
+        grid.appendChild(frag);
+        return;
+      }
+
+      if (activeTab === 'static' && activeCat === 'recent'){
+        var recent = loadRecent().filter(function(r){ return r.k.indexOf('s:') === 0; });
+        if (!recent.length){
+          renderEmpty('Belum ada emoji terbaru');
+          return;
+        }
+        recent.forEach(function(r){ frag.appendChild(makeCell(r.ch, null)); });
+        grid.appendChild(frag);
+        return;
+      }
+
+      if (activeTab === 'static'){
+        var chars = EMOJI_CATS[activeCat] || '';
+        Array.from(chars).forEach(function(ch){ frag.appendChild(makeCell(ch, null)); });
+      } else {
+        // Tab animasi tidak dibagi per kategori — tampilkan semua koleksi bergerak
+        ANIM_ITEMS.forEach(function(item){
+          frag.appendChild(makeCell(item[0], 'https://fonts.gstatic.com/s/e/notoemoji/latest/' + item[1] + '/512.gif'));
+        });
+      }
+      grid.appendChild(frag);
+    }
+
+    function setTab(tab){
+      activeTab = tab;
+      tabStatic.classList.toggle('active', tab === 'static');
+      tabAnimated.classList.toggle('active', tab === 'animated');
+      Array.prototype.forEach.call(catsBar.querySelectorAll('.emoji-cat-btn[data-cat]'), function(btn){
+        btn.style.display = tab === 'static' ? '' : 'none';
+      });
+      renderGrid();
+    }
+
+    function setCat(cat){
+      activeCat = cat;
+      Array.prototype.forEach.call(catsBar.querySelectorAll('.emoji-cat-btn[data-cat]'), function(btn){
+        btn.classList.toggle('active', btn.getAttribute('data-cat') === cat);
+      });
+      searchInput.value = '';
+      renderGrid();
+    }
+
+    tabStatic.addEventListener('click', function(){ setTab('static'); });
+    tabAnimated.addEventListener('click', function(){ setTab('animated'); });
+    catsBar.addEventListener('click', function(e){
+      var btn = e.target.closest('.emoji-cat-btn[data-cat]');
+      if (btn) setCat(btn.getAttribute('data-cat'));
+    });
+    searchInput.addEventListener('input', renderGrid);
+    btnBackspace.addEventListener('click', function(){
+      var start = msgInput.selectionStart == null ? msgInput.value.length : msgInput.selectionStart;
+      var end = msgInput.selectionEnd == null ? msgInput.value.length : msgInput.selectionEnd;
+      var val = msgInput.value;
+      if (start !== end){
+        val = val.slice(0, start) + val.slice(end);
+        msgInput.value = val;
+        msgInput.setSelectionRange(start, start);
+        autoGrow();
+        return;
+      }
+      if (start === 0) return;
+      // Hapus satu unit emoji/karakter (aman untuk pasangan surrogate)
+      var before = Array.from(val.slice(0, start));
+      before.pop();
+      var newBefore = before.join('');
+      msgInput.value = newBefore + val.slice(start);
+      msgInput.setSelectionRange(newBefore.length, newBefore.length);
+      autoGrow();
+    });
+
+    btnToggle.addEventListener('click', function(){
+      var willOpen = !panel.classList.contains('open');
+      if (willOpen){
+        msgInput.blur();
+        panel.classList.add('open');
+        btnToggle.classList.add('active');
+        renderGrid();
+        messagesWrap.scrollTop = messagesWrap.scrollHeight;
+      } else {
+        panel.classList.remove('open');
+        btnToggle.classList.remove('active');
+      }
+    });
+    msgInput.addEventListener('focus', function(){
+      panel.classList.remove('open');
+      btnToggle.classList.remove('active');
+    });
+  })();
   function openImageViewer(src){
     imgViewerImg.src = src;
     imgViewerModal.classList.add('open');
